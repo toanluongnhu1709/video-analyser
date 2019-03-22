@@ -3,4 +3,4 @@ spring:
     stream:
       bindings:
         videos-to-analyse:
-          destination: videos-to-analyse-testing
+          destination: videos-to-analyse-production

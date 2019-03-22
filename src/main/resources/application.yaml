@@ -1,1 +1,6 @@
-
+spring:
+  cloud:
+    stream:
+      bindings:
+        videos-to-analyse:
+          group: video-analyser
