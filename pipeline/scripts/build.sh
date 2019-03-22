@@ -8,7 +8,7 @@ version=$(cat version/version)
 
 (
 cd source
-./gradlew -Pversion=${version} clean build dependencyCheckAnalyze --rerun-tasks --no-daemon
+./gradlew -Pversion=${version} clean build --rerun-tasks --no-daemon
 )
 
 cp -a source/* dist/
