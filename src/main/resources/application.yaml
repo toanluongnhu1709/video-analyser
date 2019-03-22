@@ -1,14 +1,1 @@
 
-spring:
-  cloud:
-    stream:
-      kafka:
-        binder:
-          brokers: localhost:1234
-      bindings:
-        videos_to_analyse_input:
-          destination: queue.videos_to_analyse
-          contentType: application/json
-        videos_to_analyse_output:
-          destination: queue.videos_to_analyse
-          contentType: application/json
