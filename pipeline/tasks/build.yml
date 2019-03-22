@@ -1,0 +1,22 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: openjdk
+    tag: 11.0.2-jdk-stretch
+
+inputs:
+  - name: source
+  - name: version
+
+outputs:
+  - name: dist
+
+caches:
+  - path: .gradle/
+  - path: source/dependency-check-cache
+
+run:
+  path: source/pipeline/scripts/build.sh
