@@ -1,7 +1,7 @@
 package com.boclips.videoanalyser.config
 
 import org.springframework.cloud.stream.annotation.EnableBinding
-import org.springframework.cloud.stream.annotation.Output
+import org.springframework.cloud.stream.annotation.Input
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.SubscribableChannel
 
@@ -11,7 +11,7 @@ class MessagingContext
 
 interface VideosToAnalyseTopic {
 
-    @Output(VideosToAnalyseTopic.INPUT)
+    @Input(VideosToAnalyseTopic.INPUT)
     fun input(): SubscribableChannel
 
     companion object {
