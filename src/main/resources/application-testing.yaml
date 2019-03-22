@@ -4,3 +4,4 @@ spring:
       bindings:
         videos-to-analyse:
           destination: videos-to-analyse-testing
+          group: video-analyser
