@@ -12,25 +12,28 @@ class HttpVideoIndexerClient(
 
     companion object : KLogging()
 
-    override fun submitVideo(url: String): String {
-        logger.info { "Submitting $url to the Video Indexer" }
+    override fun submitVideo(videoId: String, videoUrl: String): String {
+        logger.info { "Submitting $videoUrl to the Video Indexer" }
 
         val videosUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos" +
-                "?videoUrl={videoUrl}" +
+                "?name={externalId}" +
+                "&externalId={externalId}" +
+                "&videoUrl={videoUrl}" +
                 "&externalUrl={videoUrl}" +
                 "&language={language}" +
                 "&indexingPreset={indexingPreset}" +
                 "&privacy={privacy}"
-        val urlParams = submitUrlVariables(url)
+        val urlParams = submitUrlVariables(videoId, videoUrl)
 
         val response = restTemplate.postForEntity(videosUrl, "", VideoResponse::class.java, urlParams).body
 
         return response?.id.orEmpty()
     }
 
-    private fun submitUrlVariables(videoUrl: String) = mapOf(
-            "language" to "auto",
+    private fun submitUrlVariables(videoId: String, videoUrl: String) = mapOf(
+            "externalId" to videoId,
             "videoUrl" to videoUrl,
+            "language" to "auto",
             "indexingPreset" to "AudioOnly",
             "privacy" to "Private"
     )

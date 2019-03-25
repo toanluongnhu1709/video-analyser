@@ -9,6 +9,6 @@ class AnalyseVideo(private val videoIndexer: VideoIndexer) {
 
     @StreamListener(VideosToAnalyseTopic.INPUT)
     fun execute(videoToAnalyse: VideoToAnalyse) {
-        videoIndexer.submitVideo(videoToAnalyse.videoUrl)
+        videoIndexer.submitVideo(videoToAnalyse.videoId, videoToAnalyse.videoUrl)
     }
 }

@@ -4,7 +4,6 @@ import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
-import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -39,6 +38,8 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
 
         wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/account1/Videos"))
                 .withQueryParam("videoUrl", equalTo("https://cdnapisec.example.com/v/1"))
+                .withQueryParam("name", equalTo("video1"))
+                .withQueryParam("externalId", equalTo("video1"))
                 .withQueryParam("externalUrl", equalTo("https://cdnapisec.example.com/v/1"))
                 .withQueryParam("language", equalTo("auto"))
                 .withQueryParam("indexingPreset", equalTo("AudioOnly"))
@@ -49,7 +50,7 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
 
         val videoIndexer = HttpVideoIndexerClient(restTemplate = restTemplateBuilder.build(), properties = properties)
 
-        val videoIndexerId = videoIndexer.submitVideo("https://cdnapisec.example.com/v/1")
+        val videoIndexerId = videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1")
 
         assertThat(videoIndexerId).isEqualTo("3a9220459b")
     }
@@ -59,7 +60,7 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
           "accountId": "account1",
           "id": "3a9220459b",
           "partition": null,
-          "externalId": null,
+          "externalId": "video1",
           "metadata": null,
           "name": "SampleVideo_1280x720_2mb222",
           "description": null,

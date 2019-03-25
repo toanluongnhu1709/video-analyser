@@ -22,9 +22,9 @@ class FakeVideoIndexer : VideoIndexer {
 
     private val submittedVideos = mutableMapOf<String, String>()
 
-    override fun submitVideo(url: String): String {
+    override fun submitVideo(videoId: String, videoUrl: String): String {
         val id = UUID.randomUUID().toString()
-        submittedVideos[id] = url
+        submittedVideos[id] = videoUrl
         return id
     }
 
