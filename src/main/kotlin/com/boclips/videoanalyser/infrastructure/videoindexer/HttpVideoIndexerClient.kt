@@ -2,6 +2,9 @@ package com.boclips.videoanalyser.infrastructure.videoindexer
 
 import com.boclips.videoanalyser.presentation.IndexingProgressCallbackFactory
 import mu.KLogging
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.web.client.RestTemplate
 
 data class VideoResponse(var id: String? = null)
@@ -18,7 +21,8 @@ class HttpVideoIndexerClient(
         logger.info { "Submitting $videoUrl to the Video Indexer" }
 
         val videosUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos" +
-                "?name={externalId}" +
+                "?accessToken={accessToken}" +
+                "&name={externalId}" +
                 "&externalId={externalId}" +
                 "&videoUrl={videoUrl}" +
                 "&externalUrl={videoUrl}" +
@@ -33,7 +37,15 @@ class HttpVideoIndexerClient(
         return response?.id.orEmpty()
     }
 
+    fun getToken(): String {
+        val tokenUrl = "${properties.apiBaseUrl}/auth/northeurope/Accounts/${properties.accountId}/AccessToken"
+        val headers = HttpHeaders().apply { set("Ocp-Apim-Subscription-Key", properties.subscriptionKey) }
+        val response = restTemplate.exchange(tokenUrl, HttpMethod.GET, HttpEntity("", headers), String::class.java)
+        return response.body?.replace("\"", "").orEmpty()
+    }
+
     private fun submitUrlVariables(videoId: String, videoUrl: String) = mapOf(
+            "accessToken" to getToken(),
             "externalId" to videoId,
             "videoUrl" to videoUrl,
             "callbackUrl" to indexingProgressCallbackFactory.forVideo(videoId),

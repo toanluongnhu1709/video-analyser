@@ -37,10 +37,19 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
     fun submit() {
         val properties = VideoIndexerProperties(
                 apiBaseUrl = wireMockServer.baseUrl(),
-                accountId = "account1"
+                accountId = "account1",
+                subscriptionKey = "subs-key"
+        )
+
+        wireMockServer.stubFor(get(urlPathEqualTo("/auth/northeurope/Accounts/account1/AccessToken"))
+                .withHeader("Ocp-Apim-Subscription-Key", equalTo("subs-key"))
+                .willReturn(
+                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("\"test-access-token\"")
+                )
         )
 
         wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/account1/Videos"))
+                .withQueryParam("accessToken", equalTo("test-access-token"))
                 .withQueryParam("name", equalTo("video1"))
                 .withQueryParam("videoUrl", equalTo("https://cdnapisec.example.com/v/1"))
                 .withQueryParam("externalUrl", equalTo("https://cdnapisec.example.com/v/1"))

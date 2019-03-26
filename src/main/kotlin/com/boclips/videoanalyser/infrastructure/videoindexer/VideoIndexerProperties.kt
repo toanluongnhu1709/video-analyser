@@ -7,5 +7,6 @@ import org.springframework.stereotype.Component
 @ConfigurationProperties(prefix = "microsoft.videoindexer")
 data class VideoIndexerProperties(
         var apiBaseUrl: String = "https://api.videoindexer.ai",
-        var accountId: String = ""
+        var accountId: String = "",
+        var subscriptionKey: String = ""
 )
