@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class PresentationContext {
 
-    @Value("\${publicUrl}")
+    @Value("\${public.url}")
     lateinit var publicUrl: String
 
     @Bean
