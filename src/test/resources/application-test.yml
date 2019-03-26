@@ -1,4 +1,4 @@
-publicUrl: https://video-analyser.test-boclips.com
+public.url: https://video-analyser.test-boclips.com
 
 spring:
   cloud:
