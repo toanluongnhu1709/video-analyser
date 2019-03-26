@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer
 
+import com.boclips.videoanalyser.presentation.IndexingProgressCallbackFactory
 import mu.KLogging
 import org.springframework.web.client.RestTemplate
 
@@ -7,7 +8,8 @@ data class VideoResponse(var id: String? = null)
 
 class HttpVideoIndexerClient(
         private val restTemplate: RestTemplate,
-        private val properties: VideoIndexerProperties
+        private val properties: VideoIndexerProperties,
+        private val indexingProgressCallbackFactory: IndexingProgressCallbackFactory
 ) : VideoIndexer {
 
     companion object : KLogging()
@@ -20,6 +22,7 @@ class HttpVideoIndexerClient(
                 "&externalId={externalId}" +
                 "&videoUrl={videoUrl}" +
                 "&externalUrl={videoUrl}" +
+                "&callbackUrl={callbackUrl}" +
                 "&language={language}" +
                 "&indexingPreset={indexingPreset}" +
                 "&privacy={privacy}"
@@ -33,6 +36,7 @@ class HttpVideoIndexerClient(
     private fun submitUrlVariables(videoId: String, videoUrl: String) = mapOf(
             "externalId" to videoId,
             "videoUrl" to videoUrl,
+            "callbackUrl" to indexingProgressCallbackFactory.forVideo(videoId),
             "language" to "auto",
             "indexingPreset" to "AudioOnly",
             "privacy" to "Private"

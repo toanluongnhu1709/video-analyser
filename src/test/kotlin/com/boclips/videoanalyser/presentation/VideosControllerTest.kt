@@ -12,9 +12,16 @@ class VideosControllerTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    @Autowired
+    lateinit var indexingProgressCallbackFactory: IndexingProgressCallbackFactory
+
     @Test
     fun `update process`() {
-        mockMvc.perform(post("/v1/videos/123/check_indexing_progress?id=msid&state=Processed"))
+
+        val callback = indexingProgressCallbackFactory.forVideo("123")
+
+        mockMvc.perform(post("$callback?id=msid&state=Processed"))
                 .andExpect(status().isOk)
     }
 }
+

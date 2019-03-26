@@ -1,3 +1,5 @@
+publicUrl: https://video-analyser.test-boclips.com
+
 spring:
   cloud:
     gcp:

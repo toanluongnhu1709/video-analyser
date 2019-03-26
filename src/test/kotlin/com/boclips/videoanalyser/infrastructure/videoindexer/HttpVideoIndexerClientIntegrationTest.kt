@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer
 
+import com.boclips.videoanalyser.presentation.IndexingProgressCallbackFactory
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
@@ -15,6 +16,9 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var restTemplateBuilder: RestTemplateBuilder
+
+    @Autowired
+    lateinit var indexingProgressCallbackFactory: IndexingProgressCallbackFactory
 
     lateinit var wireMockServer: WireMockServer
 
@@ -37,18 +41,24 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/account1/Videos"))
-                .withQueryParam("videoUrl", equalTo("https://cdnapisec.example.com/v/1"))
                 .withQueryParam("name", equalTo("video1"))
-                .withQueryParam("externalId", equalTo("video1"))
+                .withQueryParam("videoUrl", equalTo("https://cdnapisec.example.com/v/1"))
                 .withQueryParam("externalUrl", equalTo("https://cdnapisec.example.com/v/1"))
+                .withQueryParam("externalId", equalTo("video1"))
+                .withQueryParam("callbackUrl", equalTo("https://video-analyser.test-boclips.com/v1/videos/video1/check_indexing_progress"))
                 .withQueryParam("language", equalTo("auto"))
                 .withQueryParam("indexingPreset", equalTo("AudioOnly"))
                 .withQueryParam("privacy", equalTo("Private"))
                 .willReturn(
-                aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(responseBody)
-        ))
+                    aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(responseBody)
+                )
+        )
 
-        val videoIndexer = HttpVideoIndexerClient(restTemplate = restTemplateBuilder.build(), properties = properties)
+        val videoIndexer = HttpVideoIndexerClient(
+                restTemplate = restTemplateBuilder.build(),
+                properties = properties,
+                indexingProgressCallbackFactory = indexingProgressCallbackFactory
+        )
 
         val videoIndexerId = videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1")
 
