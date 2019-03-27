@@ -1,4 +1,4 @@
-package com.boclips.videoanalyser
+package com.boclips.videoanalyser.application
 
 import com.boclips.eventtypes.VideoToAnalyse
 import com.boclips.videoanalyser.config.VideosToAnalyseTopic
@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.support.MessageBuilder
 
-class VideosToAnalyseTopicIntegrationTest : AbstractSpringIntegrationTest() {
+class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var videosToAnalyseTopic: VideosToAnalyseTopic
