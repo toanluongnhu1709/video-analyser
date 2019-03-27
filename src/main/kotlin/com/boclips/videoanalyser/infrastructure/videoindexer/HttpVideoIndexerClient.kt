@@ -6,6 +6,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.web.client.RestTemplate
+import java.lang.Exception
 
 data class VideoUploadResponse(var id: String? = null)
 
@@ -18,6 +19,16 @@ class HttpVideoIndexerClient(
     companion object : KLogging()
 
     override fun submitVideo(videoId: String, videoUrl: String): String {
+        return try {
+            doSubmitVideo(videoId = videoId, videoUrl = videoUrl)
+        }
+        catch (e: Exception) {
+            logger.error(e) { "Raised exception from doSubmitVideo" }
+            ""
+        }
+    }
+
+    private fun doSubmitVideo(videoId: String, videoUrl: String): String {
         logger.info { "Submitting $videoUrl to the Video Indexer" }
 
         val videosUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos" +
@@ -32,9 +43,9 @@ class HttpVideoIndexerClient(
                 "&privacy={privacy}"
         val urlParams = submitUrlVariables(videoId, videoUrl)
 
-        val response = restTemplate.postForEntity(videosUrl, "", VideoUploadResponse::class.java, urlParams).body
-
-        return response?.id.orEmpty()
+        val response = restTemplate.postForEntity(videosUrl, "", VideoUploadResponse::class.java, urlParams)
+        logger.info { "Made post request to MS Video Indexer and received status code ${response.statusCode}" }
+        return response.body?.id.orEmpty()
     }
 
     override fun getVideoIndex(videoId: String): VideoIndex {
@@ -64,10 +75,13 @@ class HttpVideoIndexerClient(
     }
 
     fun getToken(): String {
+        logger.info { "Requesting a Video Indexer token" }
         val tokenUrl = "${properties.apiBaseUrl}/auth/northeurope/Accounts/${properties.accountId}/AccessToken"
         val headers = HttpHeaders().apply { set("Ocp-Apim-Subscription-Key", properties.subscriptionKey) }
         val response = restTemplate.exchange(tokenUrl, HttpMethod.GET, HttpEntity("", headers), String::class.java)
-        return response.body?.replace("\"", "").orEmpty()
+        val token = response.body?.replace("\"", "").orEmpty()
+        logger.info { "Received a Video Indexer token: ${token.substring(0, 6)}*************" }
+        return token
     }
 
     private fun submitUrlVariables(videoId: String, videoUrl: String) = mapOf(
