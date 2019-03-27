@@ -7,7 +7,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.web.client.RestTemplate
 
-data class VideoResponse(var id: String? = null)
+data class VideoUploadResponse(var id: String? = null)
 
 class HttpVideoIndexerClient(
         private val restTemplate: RestTemplate,
@@ -32,9 +32,29 @@ class HttpVideoIndexerClient(
                 "&privacy={privacy}"
         val urlParams = submitUrlVariables(videoId, videoUrl)
 
-        val response = restTemplate.postForEntity(videosUrl, "", VideoResponse::class.java, urlParams).body
+        val response = restTemplate.postForEntity(videosUrl, "", VideoUploadResponse::class.java, urlParams).body
 
         return response?.id.orEmpty()
+    }
+
+    override fun getVideoIndex(videoId: String): VideoIndex {
+        val externalIdUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/GetIdByExternalId" +
+                "?accessToken={accessToken}" +
+                "&externalId={externalId}"
+
+        val urlParams = mapOf("accessToken" to getToken(), "externalId" to videoId)
+        val microsoftId = restTemplate.getForEntity(externalIdUrl, String::class.java, urlParams).body?.replace("\"", "").orEmpty()
+
+        val getVideoIndexUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId" +
+                "?accessToken={accessToken}"
+
+        val response = restTemplate.getForEntity(getVideoIndexUrl, VideoIndexResource::class.java, mapOf("accessToken" to getToken())).body
+
+        val keywords = response?.videos?.firstOrNull()?.insights?.keywords?.mapNotNull { it.text }.orEmpty()
+
+        val topics = response?.videos?.firstOrNull()?.insights?.topics?.map { Topic(name = it.name!!) }.orEmpty()
+
+        return VideoIndex(videoId = videoId, keywords = keywords, topics = topics)
     }
 
     fun getToken(): String {
@@ -54,3 +74,13 @@ class HttpVideoIndexerClient(
             "privacy" to "Private"
     )
 }
+
+data class VideoIndexResource(var videos: List<VideoResource>? = null)
+
+data class VideoResource(var insights: VideoInsightsResource? = null)
+
+data class VideoInsightsResource(var keywords: List<KeywordResource>? = null, var topics: List<TopicResource>? = null)
+
+data class KeywordResource(var text: String? = null)
+
+data class TopicResource(var name: String? = null)

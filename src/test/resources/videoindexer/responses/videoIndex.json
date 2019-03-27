@@ -1,0 +1,146 @@
+{
+  "accountId": "SampleAccountId",
+  "id": "476892a745",
+  "name": "test2",
+  "description": null,
+  "userName": "SampleUserName",
+  "created": "2018-04-25T17:40:28.2732821+00:00",
+  "privacyMode": "Private",
+  "state": "Processed",
+  "isOwned": true,
+  "isEditable": false,
+  "isBase": true,
+  "durationInSeconds": 13,
+  "summarizedInsights": {
+    "name": "test2",
+    "id": "476892a745",
+    "privacyMode": "Private",
+    "duration": {
+      "time": "00:00:13",
+      "seconds": 13
+    },
+    "thumbnailVideoId": "476892a745",
+    "thumbnailId": "d869021e-2a0b-4355-9c80-144e51aa8f6d",
+    "faces": [],
+    "Keywords": [],
+    "sentiments": [
+      {
+        "sentimentKey": "Neutral",
+        "appearances": [
+          {
+            "startTime": "00:00:00",
+            "endTime": "00:00:13",
+            "startSeconds": 0,
+            "endSeconds": 13
+          }
+        ],
+        "seenDurationRatio": 1
+      }
+    ],
+    "audioEffects": [],
+    "labels": [],
+    "brands": [],
+    "statistics": {
+      "correspondenceCount": 0,
+      "speakerTalkToListenRatio": {},
+      "speakerLongestMonolog": {},
+      "speakerNumberOfFragments": {},
+      "speakerWordCount": {}
+    }
+  },
+  "videos": [
+    {
+      "accountId": "SampleAccountId",
+      "id": "476892a745",
+      "state": "Processed",
+      "privacyMode": "Private",
+      "processingProgress": "100%",
+      "failureCode": "General",
+      "failureMessage": "",
+      "externalId": null,
+      "externalUrl": null,
+      "metadata": null,
+      "insights": {
+        "version": "0.9.0.0",
+        "sourceLanguage": "En-US",
+        "language": "En-US",
+        "transcript": [
+          {
+            "id": 0,
+            "text": "A transcript line",
+            "confidence": 1,
+            "speakerId": -1,
+            "language": "En-US",
+            "instances": [
+              {
+                "adjustedStart": "00:00:00",
+                "adjustedEnd": "00:00:13",
+                "start": "00:00:00",
+                "end": "00:00:13"
+              }
+            ]
+          }
+        ],
+        "keywords": [
+          {
+            "id": 0,
+            "text": "office",
+            "confidence": 1.6666666666666667,
+            "language": "en-US",
+            "instances": [
+              {
+                "start": "00:00:00.5100000",
+                "end": "00:00:02.7200000"
+              },
+              {
+                "start": "00:00:03.9600000",
+                "end": "00:00:12.2700000"
+              }
+            ]
+          }
+        ],
+        "topics": [{
+          "id": 0,
+          "name": "INTERNATIONAL RELATIONS",
+          "referenceId": "POLITICS AND GOVERNMENT/FOREIGN POLICY/INTERNATIONAL RELATIONS",
+          "referenceType": "VideoIndexer",
+          "confidence": 1,
+          "language": "en-US",
+          "instances": [{
+            "adjustedStart": "0:00:00",
+            "adjustedEnd": "0:03:36.25",
+            "start": "0:00:00",
+            "end": "0:03:36.25"
+          }]
+        }, {
+          "id": 1,
+          "name": "Politics and Government",
+          "referenceType": "VideoIndexer",
+          "iptcName": "Politics",
+          "confidence": 0.9041,
+          "language": "en-US",
+          "instances": [{
+            "adjustedStart": "0:00:00",
+            "adjustedEnd": "0:03:36.25",
+            "start": "0:00:00",
+            "end": "0:03:36.25"
+          }]
+        }]
+      },
+      "thumbnailId": "d869021e-2a0b-4355-9c80-144e51aa8f6d",
+      "publishedUrl": "https://videvmediaservices.streaming.mediaservices.windows.net:443/1dda50a1-217b-4988-919c-bd0dc13414a9/SampleVideo_1280x720_2mb222.ism/manifest",
+      "publishedProxyUrl": null,
+      "viewToken": "Bearer=SampleAuthToken",
+      "sourceLanguage": "En-US",
+      "language": "En-US",
+      "indexingPreset": "Default",
+      "linguisticModelId": "00000000-0000-0000-0000-000000000000"
+    }
+  ],
+  "videosRanges": null,
+  "social": {
+    "likedByUser": false,
+    "likes": 0,
+    "views": 0
+  }
+}

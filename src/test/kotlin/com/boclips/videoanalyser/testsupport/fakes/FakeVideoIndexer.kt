@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.testsupport.fakes
 
+import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndex
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -19,13 +20,16 @@ class FakeVideoIndexerConfiguration {
 }
 
 class FakeVideoIndexer : VideoIndexer {
-
     private val submittedVideos = mutableMapOf<String, String>()
 
     override fun submitVideo(videoId: String, videoUrl: String): String {
         val id = UUID.randomUUID().toString()
         submittedVideos[id] = videoUrl
         return id
+    }
+
+    override fun getVideoIndex(videoId: String): VideoIndex {
+        return VideoIndex(videoId = videoId, keywords = emptyList(), topics = emptyList())
     }
 
     fun clear() {

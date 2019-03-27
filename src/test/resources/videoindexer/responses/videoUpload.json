@@ -1,0 +1,30 @@
+{
+  "accountId": "account1",
+  "id": "ms-id-1234",
+  "partition": null,
+  "externalId": "video1",
+  "metadata": null,
+  "name": "SampleVideo_1280x720_2mb222",
+  "description": null,
+  "created": "2018-04-25T16:29:43.0992053+00:00",
+  "lastModified": "2018-04-25T16:29:43.1929511+00:00",
+  "lastIndexed": "2018-04-25T16:29:43.1929511+00:00",
+  "privacyMode": "Private",
+  "userName": "SampleUserName",
+  "isOwned": true,
+  "isBase": true,
+  "state": "Uploaded",
+  "processingProgress": "",
+  "durationInSeconds": 13,
+  "thumbnailVideoId": "ms-id-1234",
+  "thumbnailId": "00000000-0000-0000-0000-000000000000",
+  "social": {
+    "likedByUser": false,
+    "likes": 0,
+    "views": 0
+  },
+  "searchMatches": [],
+  "indexingPreset": "Default",
+  "streamingPreset": "Default",
+  "sourceLanguage": "En-US"
+}

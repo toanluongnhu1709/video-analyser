@@ -11,8 +11,8 @@ class VideosController {
     }
 
     @PostMapping(INDEXING_PROGRESS_PATH_TEMPLATE)
-    fun checkIndexingProgress(@PathVariable videoId: String, @RequestParam id: String, @RequestParam state: String) {
-        logger.info { "Checking for indexing progress in video $videoId: VideoIndexer id $id, state $state" }
+    fun checkIndexingProgress(@PathVariable videoId: String, @RequestParam("id") videoIndexerId: String, @RequestParam state: String) {
+        logger.info { "Checking for indexing progress in video $videoId: VideoIndexer id $videoIndexerId, state $state" }
     }
 }
 

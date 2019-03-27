@@ -10,7 +10,9 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.core.io.Resource
 
 class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -20,12 +22,37 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var indexingProgressCallbackFactory: IndexingProgressCallbackFactory
 
+    @Value("classpath:videoindexer/responses/videoUpload.json")
+    lateinit var videoUploadResponseResource: Resource
+
+    @Value("classpath:videoindexer/responses/videoIndex.json")
+    lateinit var videoIndexResponseResource: Resource
+
     lateinit var wireMockServer: WireMockServer
+
+    lateinit var videoIndexer: HttpVideoIndexerClient
 
     @BeforeEach
     fun setUp() {
         wireMockServer = WireMockServer(wireMockConfig().dynamicPort())
         wireMockServer.start()
+        var properties = VideoIndexerProperties(
+                apiBaseUrl = wireMockServer.baseUrl(),
+                accountId = "account1",
+                subscriptionKey = "subs-key"
+        )
+
+        videoIndexer = HttpVideoIndexerClient(
+                restTemplate = restTemplateBuilder.build(),
+                properties = properties,
+                indexingProgressCallbackFactory = indexingProgressCallbackFactory
+        )
+        wireMockServer.stubFor(get(urlPathEqualTo("/auth/northeurope/Accounts/account1/AccessToken"))
+                .withHeader("Ocp-Apim-Subscription-Key", equalTo("subs-key"))
+                .willReturn(
+                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("\"test-access-token\"")
+                )
+        )
     }
 
     @AfterEach
@@ -35,20 +62,15 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun submit() {
-        val properties = VideoIndexerProperties(
-                apiBaseUrl = wireMockServer.baseUrl(),
-                accountId = "account1",
-                subscriptionKey = "subs-key"
-        )
-
-        wireMockServer.stubFor(get(urlPathEqualTo("/auth/northeurope/Accounts/account1/AccessToken"))
-                .withHeader("Ocp-Apim-Subscription-Key", equalTo("subs-key"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/account1/Videos"))
                 .willReturn(
-                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("\"test-access-token\"")
+                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoUploadResponseResource.inputStream.readAllBytes())
                 )
         )
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/account1/Videos"))
+        videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1")
+
+        wireMockServer.verify(postRequestedFor(urlPathEqualTo("/northeurope/Accounts/account1/Videos"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
                 .withQueryParam("name", equalTo("video1"))
                 .withQueryParam("videoUrl", equalTo("https://cdnapisec.example.com/v/1"))
@@ -57,53 +79,32 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
                 .withQueryParam("callbackUrl", equalTo("https://video-analyser.test-boclips.com/v1/videos/video1/check_indexing_progress"))
                 .withQueryParam("language", equalTo("auto"))
                 .withQueryParam("indexingPreset", equalTo("AudioOnly"))
-                .withQueryParam("privacy", equalTo("Private"))
+                .withQueryParam("privacy", equalTo("Private")))
+    }
+
+    @Test
+    fun getVideoIndex() {
+        val videoId = "video-id-1234"
+        val microsoftVideoId = "ms-id-1234"
+
+        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/account1/Videos/GetIdByExternalId"))
+                .withQueryParam("accessToken", equalTo("test-access-token"))
+                .withQueryParam("externalId", equalTo(videoId))
                 .willReturn(
-                    aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(responseBody)
+                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("\"$microsoftVideoId\"")
                 )
         )
 
-        val videoIndexer = HttpVideoIndexerClient(
-                restTemplate = restTemplateBuilder.build(),
-                properties = properties,
-                indexingProgressCallbackFactory = indexingProgressCallbackFactory
+        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/account1/Videos/$microsoftVideoId"))
+                .withQueryParam("accessToken", equalTo("test-access-token"))
+                .willReturn(
+                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoIndexResponseResource.inputStream.readAllBytes())
+                )
         )
+        val response = videoIndexer.getVideoIndex(videoId)
 
-        val videoIndexerId = videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1")
-
-        assertThat(videoIndexerId).isEqualTo("3a9220459b")
+        assertThat(response.videoId).isEqualTo(videoId)
+        assertThat(response.keywords).contains("office")
+        assertThat(response.topics.map { it.name }).contains("Politics and Government")
     }
-
-    val responseBody = """
-        {
-          "accountId": "account1",
-          "id": "3a9220459b",
-          "partition": null,
-          "externalId": "video1",
-          "metadata": null,
-          "name": "SampleVideo_1280x720_2mb222",
-          "description": null,
-          "created": "2018-04-25T16:29:43.0992053+00:00",
-          "lastModified": "2018-04-25T16:29:43.1929511+00:00",
-          "lastIndexed": "2018-04-25T16:29:43.1929511+00:00",
-          "privacyMode": "Private",
-          "userName": "SampleUserName",
-          "isOwned": true,
-          "isBase": true,
-          "state": "Uploaded",
-          "processingProgress": "",
-          "durationInSeconds": 13,
-          "thumbnailVideoId": "3a9220459b",
-          "thumbnailId": "00000000-0000-0000-0000-000000000000",
-          "social": {
-            "likedByUser": false,
-            "likes": 0,
-            "views": 0
-          },
-          "searchMatches": [],
-          "indexingPreset": "Default",
-          "streamingPreset": "Default",
-          "sourceLanguage": "En-US"
-        }
-    """.trimIndent()
 }
