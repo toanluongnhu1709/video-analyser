@@ -48,13 +48,19 @@ class HttpVideoIndexerClient(
         val getVideoIndexUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId" +
                 "?accessToken={accessToken}"
 
+        val getVideoCaptionsUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId/Captions" +
+                "?accessToken={accessToken}" +
+                "&format=vtt"
+
         val response = restTemplate.getForEntity(getVideoIndexUrl, VideoIndexResource::class.java, mapOf("accessToken" to getToken())).body
+
+        val captionsResponse = restTemplate.getForEntity(getVideoCaptionsUrl, ByteArray::class.java, mapOf("accessToken" to getToken())).body
 
         val keywords = response?.videos?.firstOrNull()?.insights?.keywords?.mapNotNull { it.text }.orEmpty()
 
         val topics = response?.videos?.firstOrNull()?.insights?.topics?.map { Topic(name = it.name!!) }.orEmpty()
 
-        return VideoIndex(videoId = videoId, keywords = keywords, topics = topics)
+        return VideoIndex(videoId = videoId, keywords = keywords, topics = topics, vttCaptions = captionsResponse!!)
     }
 
     fun getToken(): String {

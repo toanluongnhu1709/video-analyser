@@ -29,7 +29,7 @@ class FakeVideoIndexer : VideoIndexer {
     }
 
     override fun getVideoIndex(videoId: String): VideoIndex {
-        return VideoIndex(videoId = videoId, keywords = emptyList(), topics = emptyList())
+        return VideoIndex(videoId = videoId, keywords = emptyList(), topics = emptyList(), vttCaptions = ByteArray(0))
     }
 
     fun clear() {

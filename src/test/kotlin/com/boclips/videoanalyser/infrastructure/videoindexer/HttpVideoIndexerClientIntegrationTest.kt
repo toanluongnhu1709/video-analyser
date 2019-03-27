@@ -101,10 +101,20 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
                         aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoIndexResponseResource.inputStream.readAllBytes())
                 )
         )
+
+        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/account1/Videos/$microsoftVideoId/Captions"))
+                .withQueryParam("accessToken", equalTo("test-access-token"))
+                .withQueryParam("format", equalTo("vtt"))
+                .willReturn(
+                        aResponse().withStatus(200).withHeader("Content-Type", "application/octet-stream").withBody("contents of vtt file".toByteArray())
+                )
+        )
+
         val response = videoIndexer.getVideoIndex(videoId)
 
         assertThat(response.videoId).isEqualTo(videoId)
         assertThat(response.keywords).contains("office")
+        assertThat(response.vttCaptions).isEqualTo("contents of vtt file".toByteArray())
         assertThat(response.topics.map { it.name }).contains("Politics and Government")
     }
 }
