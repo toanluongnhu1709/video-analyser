@@ -5,10 +5,8 @@ import mu.KLogging
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
+import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
-import java.lang.Exception
-
-data class VideoUploadResponse(var id: String? = null)
 
 class HttpVideoIndexerClient(
         private val restTemplate: RestTemplate,
@@ -18,34 +16,34 @@ class HttpVideoIndexerClient(
 
     companion object : KLogging()
 
-    override fun submitVideo(videoId: String, videoUrl: String): String {
-        return try {
-            doSubmitVideo(videoId = videoId, videoUrl = videoUrl)
-        }
-        catch (e: Exception) {
-            logger.error(e) { "Raised exception from doSubmitVideo" }
-            ""
-        }
-    }
-
-    private fun doSubmitVideo(videoId: String, videoUrl: String): String {
+    override fun submitVideo(videoId: String, videoUrl: String) {
         logger.info { "Submitting $videoUrl to the Video Indexer" }
 
         val videosUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos" +
                 "?accessToken={accessToken}" +
-                "&name={externalId}" +
-                "&externalId={externalId}" +
+                "&name={videoId}" +
+                "&externalId={videoId}" +
                 "&videoUrl={videoUrl}" +
                 "&externalUrl={videoUrl}" +
                 "&callbackUrl={callbackUrl}" +
-                "&language={language}" +
-                "&indexingPreset={indexingPreset}" +
-                "&privacy={privacy}"
-        val urlParams = submitUrlVariables(videoId, videoUrl)
+                "&language=auto" +
+                "&indexingPreset=AudioOnly" +
+                "&privacy=Private"
 
-        val response = restTemplate.postForEntity(videosUrl, "", VideoUploadResponse::class.java, urlParams)
-        logger.info { "Made post request to MS Video Indexer and received status code ${response.statusCode}" }
-        return response.body?.id.orEmpty()
+        val urlParams = mapOf(
+                "accessToken" to getToken(),
+                "videoId" to videoId,
+                "videoUrl" to videoUrl,
+                "callbackUrl" to indexingProgressCallbackFactory.forVideo(videoId)
+        )
+
+        try {
+            restTemplate.postForEntity(videosUrl, "", String::class.java, urlParams)
+            logger.info { "Video $videoId submitted to Video Indexer" }
+        } catch(e: HttpStatusCodeException) {
+            logger.error(e.responseBodyAsString)
+            throw VideoIndexerException("Failed to submit video $videoId to Video Indexer")
+        }
     }
 
     override fun getVideoIndex(videoId: String): VideoIndex {
@@ -54,18 +52,36 @@ class HttpVideoIndexerClient(
                 "&externalId={externalId}"
 
         val urlParams = mapOf("accessToken" to getToken(), "externalId" to videoId)
-        val microsoftId = restTemplate.getForEntity(externalIdUrl, String::class.java, urlParams).body?.replace("\"", "").orEmpty()
+        val microsoftId = try {
+            restTemplate.getForEntity(externalIdUrl, String::class.java, urlParams).body?.replace("\"", "").orEmpty()
+        } catch(e: HttpStatusCodeException) {
+            logger.error(e.responseBodyAsString)
+            throw VideoIndexerException("Failed to resolve Video Indexer id for $videoId")
+        }
 
-        val getVideoIndexUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId" +
+        logger.info { "Resolved Video Indexer id for $videoId: $microsoftId" }
+
+        val getVideoIndexUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId/Index" +
                 "?accessToken={accessToken}"
 
         val getVideoCaptionsUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId/Captions" +
                 "?accessToken={accessToken}" +
                 "&format=vtt"
 
-        val response = restTemplate.getForEntity(getVideoIndexUrl, VideoIndexResource::class.java, mapOf("accessToken" to getToken())).body
+        logger.info { "GETting $getVideoIndexUrl" }
+        val response = try {
+                restTemplate.getForEntity(getVideoIndexUrl, VideoIndexResource::class.java, mapOf("accessToken" to getToken())).body
+        } catch(e: HttpStatusCodeException) {
+            logger.error(e.responseBodyAsString)
+            throw VideoIndexerException("Failed to fetch video $videoId from Video Indexer")
+        }
 
-        val captionsResponse = restTemplate.getForEntity(getVideoCaptionsUrl, ByteArray::class.java, mapOf("accessToken" to getToken())).body
+        val captionsResponse = try {
+            restTemplate.getForEntity(getVideoCaptionsUrl, ByteArray::class.java, mapOf("accessToken" to getToken())).body
+        } catch(e: HttpStatusCodeException) {
+            logger.error(e.responseBodyAsString)
+            throw VideoIndexerException("Failed to fetch captions of video $videoId from Video Indexer")
+        }
 
         val keywords = response?.videos?.firstOrNull()?.insights?.keywords?.mapNotNull { it.text }.orEmpty()
 
@@ -74,9 +90,9 @@ class HttpVideoIndexerClient(
         return VideoIndex(videoId = videoId, keywords = keywords, topics = topics, vttCaptions = captionsResponse!!)
     }
 
-    fun getToken(): String {
+    private fun getToken(): String {
         logger.info { "Requesting a Video Indexer token" }
-        val tokenUrl = "${properties.apiBaseUrl}/auth/northeurope/Accounts/${properties.accountId}/AccessToken"
+        val tokenUrl = "${properties.apiBaseUrl}/auth/northeurope/Accounts/${properties.accountId}/AccessToken?allowEdit=true"
         val headers = HttpHeaders().apply { set("Ocp-Apim-Subscription-Key", properties.subscriptionKey) }
         val response = restTemplate.exchange(tokenUrl, HttpMethod.GET, HttpEntity("", headers), String::class.java)
         val token = response.body?.replace("\"", "").orEmpty()
@@ -84,15 +100,6 @@ class HttpVideoIndexerClient(
         return token
     }
 
-    private fun submitUrlVariables(videoId: String, videoUrl: String) = mapOf(
-            "accessToken" to getToken(),
-            "externalId" to videoId,
-            "videoUrl" to videoUrl,
-            "callbackUrl" to indexingProgressCallbackFactory.forVideo(videoId),
-            "language" to "auto",
-            "indexingPreset" to "AudioOnly",
-            "privacy" to "Private"
-    )
 }
 
 data class VideoIndexResource(var videos: List<VideoResource>? = null)

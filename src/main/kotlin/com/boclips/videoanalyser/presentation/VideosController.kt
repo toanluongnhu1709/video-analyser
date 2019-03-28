@@ -1,14 +1,26 @@
 package com.boclips.videoanalyser.presentation
 
+import com.boclips.eventtypes.VideoToAnalyse
+import com.boclips.videoanalyser.application.AnalyseVideo
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
 import mu.KLogging
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class VideosController(val videoIndexer: VideoIndexer) {
-
+class VideosController(
+        val videoIndexer: VideoIndexer,
+        val analyseVideo: AnalyseVideo
+) {
     companion object : KLogging() {
-        const val INDEXING_PROGRESS_PATH_TEMPLATE = "/v1/videos/{videoId}/check_indexing_progress"
+        const val VIDEO_PATH_TEMPLATE = "/v1/videos/{videoId}"
+        const val INDEXING_PROGRESS_PATH_TEMPLATE = "$VIDEO_PATH_TEMPLATE/check_indexing_progress"
+    }
+
+    @PostMapping("$VIDEO_PATH_TEMPLATE/analyse")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    fun analyse(@PathVariable videoId: String, @RequestParam videoUrl: String) {
+        analyseVideo.execute(VideoToAnalyse.builder().videoId(videoId).videoUrl(videoUrl).build())
     }
 
     @PostMapping(INDEXING_PROGRESS_PATH_TEMPLATE)

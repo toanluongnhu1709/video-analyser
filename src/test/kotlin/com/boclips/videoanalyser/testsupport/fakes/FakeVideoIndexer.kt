@@ -22,10 +22,8 @@ class FakeVideoIndexerConfiguration {
 class FakeVideoIndexer : VideoIndexer {
     private val submittedVideos = mutableMapOf<String, String>()
 
-    override fun submitVideo(videoId: String, videoUrl: String): String {
-        val id = UUID.randomUUID().toString()
-        submittedVideos[id] = videoUrl
-        return id
+    override fun submitVideo(videoId: String, videoUrl: String) {
+        submittedVideos[videoId] = videoUrl
     }
 
     override fun getVideoIndex(videoId: String): VideoIndex {
@@ -36,6 +34,6 @@ class FakeVideoIndexer : VideoIndexer {
         submittedVideos.clear()
     }
 
-    fun submittedVideos(): Set<String> = submittedVideos.values.toSet()
+    fun submittedVideo(videoId: String): String? = submittedVideos[videoId]
 
 }

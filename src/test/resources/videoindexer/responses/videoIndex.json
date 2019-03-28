@@ -1,82 +1,859 @@
 {
-  "accountId": "SampleAccountId",
-  "id": "476892a745",
-  "name": "test2",
+  "partition": null,
   "description": null,
-  "userName": "SampleUserName",
-  "created": "2018-04-25T17:40:28.2732821+00:00",
   "privacyMode": "Private",
   "state": "Processed",
+  "accountId": "ac070d09-8314-4023-b330-143f066c7d7c",
+  "id": "e86466f9ee",
+  "name": "123",
+  "userName": "Video Analyser",
+  "created": "2019-03-28T14:29:23.919914+00:00",
   "isOwned": true,
-  "isEditable": false,
+  "isEditable": true,
   "isBase": true,
-  "durationInSeconds": 13,
+  "durationInSeconds": 74,
   "summarizedInsights": {
-    "name": "test2",
-    "id": "476892a745",
+    "name": "123",
+    "id": "e86466f9ee",
     "privacyMode": "Private",
     "duration": {
-      "time": "00:00:13",
-      "seconds": 13
+      "time": "0:01:14.454",
+      "seconds": 74.5
     },
-    "thumbnailVideoId": "476892a745",
-    "thumbnailId": "d869021e-2a0b-4355-9c80-144e51aa8f6d",
+    "thumbnailVideoId": "e86466f9ee",
+    "thumbnailId": "1df069dc-e768-4659-9d11-3c104f948197",
     "faces": [],
-    "Keywords": [],
+    "keywords": [
+      {
+        "isTranscript": true,
+        "id": 0,
+        "name": "genetic testing",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:00:07.89",
+            "startSeconds": 0,
+            "endSeconds": 7.9
+          },
+          {
+            "startTime": "0:00:15",
+            "endTime": "0:00:22.45",
+            "startSeconds": 15,
+            "endSeconds": 22.4
+          },
+          {
+            "startTime": "0:00:25.84",
+            "endTime": "0:00:29.35",
+            "startSeconds": 25.8,
+            "endSeconds": 29.4
+          },
+          {
+            "startTime": "0:00:37.55",
+            "endTime": "0:00:42",
+            "startSeconds": 37.6,
+            "endSeconds": 42
+          },
+          {
+            "startTime": "0:00:45.18",
+            "endTime": "0:00:51.86",
+            "startSeconds": 45.2,
+            "endSeconds": 51.9
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 1,
+        "name": "family history",
+        "appearances": [
+          {
+            "startTime": "0:00:45.18",
+            "endTime": "0:00:51.86",
+            "startSeconds": 45.2,
+            "endSeconds": 51.9
+          },
+          {
+            "startTime": "0:01:02.04",
+            "endTime": "0:01:08.4",
+            "startSeconds": 62,
+            "endSeconds": 68.4
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 2,
+        "name": "asymptomatic",
+        "appearances": [
+          {
+            "startTime": "0:00:15",
+            "endTime": "0:00:22.45",
+            "startSeconds": 15,
+            "endSeconds": 22.4
+          },
+          {
+            "startTime": "0:01:02.04",
+            "endTime": "0:01:08.4",
+            "startSeconds": 62,
+            "endSeconds": 68.4
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 3,
+        "name": "recommend",
+        "appearances": [
+          {
+            "startTime": "0:00:15",
+            "endTime": "0:00:22.45",
+            "startSeconds": 15,
+            "endSeconds": 22.4
+          },
+          {
+            "startTime": "0:00:34.84",
+            "endTime": "0:00:37.55",
+            "startSeconds": 34.8,
+            "endSeconds": 37.6
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 4,
+        "name": "potential",
+        "appearances": [
+          {
+            "startTime": "0:00:51.86",
+            "endTime": "0:01:02.04",
+            "startSeconds": 51.9,
+            "endSeconds": 62
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 5,
+        "name": "doctors",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:00:07.89",
+            "startSeconds": 0,
+            "endSeconds": 7.9
+          },
+          {
+            "startTime": "0:01:08.4",
+            "endTime": "0:01:14.376",
+            "startSeconds": 68.4,
+            "endSeconds": 74.4
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 6,
+        "name": "case",
+        "appearances": [
+          {
+            "startTime": "0:00:07.89",
+            "endTime": "0:00:22.45",
+            "startSeconds": 7.9,
+            "endSeconds": 22.4
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 7,
+        "name": "risk",
+        "appearances": [
+          {
+            "startTime": "0:00:07.89",
+            "endTime": "0:00:15",
+            "startSeconds": 7.9,
+            "endSeconds": 15
+          },
+          {
+            "startTime": "0:00:45.18",
+            "endTime": "0:00:51.86",
+            "startSeconds": 45.2,
+            "endSeconds": 51.9
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 8,
+        "name": "cancer",
+        "appearances": [
+          {
+            "startTime": "0:00:07.89",
+            "endTime": "0:00:15",
+            "startSeconds": 7.9,
+            "endSeconds": 15
+          },
+          {
+            "startTime": "0:00:31.61",
+            "endTime": "0:00:34.84",
+            "startSeconds": 31.6,
+            "endSeconds": 34.8
+          },
+          {
+            "startTime": "0:00:45.18",
+            "endTime": "0:00:51.86",
+            "startSeconds": 45.2,
+            "endSeconds": 51.9
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 9,
+        "name": "asked",
+        "appearances": [
+          {
+            "startTime": "0:00:15",
+            "endTime": "0:00:22.45",
+            "startSeconds": 15,
+            "endSeconds": 22.4
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 10,
+        "name": "doctor",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:00:07.89",
+            "startSeconds": 0,
+            "endSeconds": 7.9
+          },
+          {
+            "startTime": "0:00:15",
+            "endTime": "0:00:22.45",
+            "startSeconds": 15,
+            "endSeconds": 22.4
+          },
+          {
+            "startTime": "0:01:08.4",
+            "endTime": "0:01:14.376",
+            "startSeconds": 68.4,
+            "endSeconds": 74.4
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 11,
+        "name": "screen",
+        "appearances": [
+          {
+            "startTime": "0:00:15",
+            "endTime": "0:00:22.45",
+            "startSeconds": 15,
+            "endSeconds": 22.4
+          },
+          {
+            "startTime": "0:00:31.61",
+            "endTime": "0:00:34.84",
+            "startSeconds": 31.6,
+            "endSeconds": 34.8
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 12,
+        "name": "readers",
+        "appearances": [
+          {
+            "startTime": "0:00:15",
+            "endTime": "0:00:22.45",
+            "startSeconds": 15,
+            "endSeconds": 22.4
+          },
+          {
+            "startTime": "0:00:37.55",
+            "endTime": "0:00:42",
+            "startSeconds": 37.6,
+            "endSeconds": 42
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 13,
+        "name": "patient",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:00:07.89",
+            "startSeconds": 0,
+            "endSeconds": 7.9
+          },
+          {
+            "startTime": "0:00:45.18",
+            "endTime": "0:00:51.86",
+            "startSeconds": 45.2,
+            "endSeconds": 51.9
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 14,
+        "name": "assess",
+        "appearances": [
+          {
+            "startTime": "0:00:45.18",
+            "endTime": "0:00:51.86",
+            "startSeconds": 45.2,
+            "endSeconds": 51.9
+          },
+          {
+            "startTime": "0:01:02.04",
+            "endTime": "0:01:08.4",
+            "startSeconds": 62,
+            "endSeconds": 68.4
+          }
+        ]
+      },
+      {
+        "isTranscript": true,
+        "id": 15,
+        "name": "news",
+        "appearances": [
+          {
+            "startTime": "0:01:08.4",
+            "endTime": "0:01:14.376",
+            "startSeconds": 68.4,
+            "endSeconds": 74.4
+          }
+        ]
+      }
+    ],
     "sentiments": [
       {
         "sentimentKey": "Neutral",
+        "seenDurationRatio": 0.955,
         "appearances": [
           {
-            "startTime": "00:00:00",
-            "endTime": "00:00:13",
+            "startTime": "0:00:00",
+            "endTime": "0:00:14.39",
             "startSeconds": 0,
-            "endSeconds": 13
+            "endSeconds": 14.4
+          },
+          {
+            "startTime": "0:00:17.694",
+            "endTime": "0:01:14.376",
+            "startSeconds": 17.7,
+            "endSeconds": 74.4
           }
-        ],
-        "seenDurationRatio": 1
+        ]
+      },
+      {
+        "sentimentKey": "Negative",
+        "seenDurationRatio": 0.0443,
+        "appearances": [
+          {
+            "startTime": "0:00:14.39",
+            "endTime": "0:00:17.694",
+            "startSeconds": 14.4,
+            "endSeconds": 17.7
+          }
+        ]
       }
     ],
+    "emotions": [],
     "audioEffects": [],
     "labels": [],
     "brands": [],
     "statistics": {
       "correspondenceCount": 0,
-      "speakerTalkToListenRatio": {},
-      "speakerLongestMonolog": {},
-      "speakerNumberOfFragments": {},
-      "speakerWordCount": {}
-    }
+      "speakerTalkToListenRatio": {
+        "1": 1
+      },
+      "speakerLongestMonolog": {
+        "1": 74
+      },
+      "speakerNumberOfFragments": {
+        "1": 1
+      },
+      "speakerWordCount": {
+        "1": 217
+      }
+    },
+    "topics": [
+      {
+        "referenceUrl": null,
+        "iptcName": "Health",
+        "iabName": "Medical Health",
+        "confidence": 0.8254,
+        "id": 0,
+        "name": "Health",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:01:14.376",
+            "startSeconds": 0,
+            "endSeconds": 74.4
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": "Health",
+        "iabName": "Medical Health",
+        "confidence": 0.802,
+        "id": 1,
+        "name": "Health and Wellbeing/Medicine and Healthcare",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:00:29.35",
+            "startSeconds": 0,
+            "endSeconds": 29.4
+          },
+          {
+            "startTime": "0:00:45.18",
+            "endTime": "0:01:14.376",
+            "startSeconds": 45.2,
+            "endSeconds": 74.4
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": null,
+        "iabName": null,
+        "confidence": 0.6963,
+        "id": 2,
+        "name": "Life Sciences",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:00:22.45",
+            "startSeconds": 0,
+            "endSeconds": 22.4
+          },
+          {
+            "startTime": "0:00:45.18",
+            "endTime": "0:01:02.04",
+            "startSeconds": 45.2,
+            "endSeconds": 62
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": "Health",
+        "iabName": "Medical Health",
+        "confidence": 0.6699,
+        "id": 3,
+        "name": "Health and Wellbeing/Genomics/Personalized Medicine",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:01:14.376",
+            "startSeconds": 0,
+            "endSeconds": 74.4
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": "Health",
+        "iabName": "Medical Health",
+        "confidence": 0.6097,
+        "id": 4,
+        "name": "Health and Wellbeing/Genomics/Personalized Genomics",
+        "appearances": [
+          {
+            "startTime": "0:00:22.45",
+            "endTime": "0:01:02.04",
+            "startSeconds": 22.4,
+            "endSeconds": 62
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": "Health",
+        "iabName": "Medical Health",
+        "confidence": 0.5986,
+        "id": 5,
+        "name": "Health and Wellbeing/Genetics and Heredity/Genetic Testing",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:01:08.4",
+            "startSeconds": 0,
+            "endSeconds": 68.4
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": null,
+        "iabName": null,
+        "confidence": 0.5923,
+        "id": 6,
+        "name": "Medical Ethics",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:01:02.04",
+            "startSeconds": 0,
+            "endSeconds": 62
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": "Health",
+        "iabName": "Medical Health",
+        "confidence": 0.5692,
+        "id": 7,
+        "name": "Health and Wellbeing/Medicine and Healthcare/Cancer",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:01:14.376",
+            "startSeconds": 0,
+            "endSeconds": 74.4
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": "Science and Technology",
+        "iabName": "Technology & Computing",
+        "confidence": 0.5388,
+        "id": 8,
+        "name": "Technology/Medical Technology",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:00:22.45",
+            "startSeconds": 0,
+            "endSeconds": 22.4
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": "Science and Technology",
+        "iabName": "Technology & Computing",
+        "confidence": 0.5373,
+        "id": 9,
+        "name": "Technology/Medical Technology/Healthcare it",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:00:22.45",
+            "startSeconds": 0,
+            "endSeconds": 22.4
+          },
+          {
+            "startTime": "0:00:51.86",
+            "endTime": "0:01:14.376",
+            "startSeconds": 51.9,
+            "endSeconds": 74.4
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": "Health",
+        "iabName": "Medical Health",
+        "confidence": 0.5314,
+        "id": 10,
+        "name": "Health and Wellbeing/Genetics and Heredity",
+        "appearances": [
+          {
+            "startTime": "0:00:15",
+            "endTime": "0:01:02.04",
+            "startSeconds": 15,
+            "endSeconds": 62
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": "Health",
+        "iabName": "Medical Health",
+        "confidence": 0.5185,
+        "id": 11,
+        "name": "Health and Wellbeing/Medicine and Healthcare/Medical Conditions and Diseases",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:00:25.84",
+            "startSeconds": 0,
+            "endSeconds": 25.8
+          },
+          {
+            "startTime": "0:00:42",
+            "endTime": "0:01:14.376",
+            "startSeconds": 42,
+            "endSeconds": 74.4
+          }
+        ]
+      },
+      {
+        "referenceUrl": null,
+        "iptcName": "Health",
+        "iabName": "Medical Health",
+        "confidence": 0.4852,
+        "id": 12,
+        "name": "Health and Wellbeing/Medicine and Healthcare/Doctors",
+        "appearances": [
+          {
+            "startTime": "0:00:00",
+            "endTime": "0:00:29.35",
+            "startSeconds": 0,
+            "endSeconds": 29.4
+          },
+          {
+            "startTime": "0:01:02.04",
+            "endTime": "0:01:14.376",
+            "startSeconds": 62,
+            "endSeconds": 74.4
+          }
+        ]
+      }
+    ]
   },
   "videos": [
     {
-      "accountId": "SampleAccountId",
-      "id": "476892a745",
+      "accountId": "ac070d09-8314-4023-b330-143f066c7d7c",
+      "id": "e86466f9ee",
       "state": "Processed",
+      "moderationState": "OK",
+      "reviewState": "None",
       "privacyMode": "Private",
       "processingProgress": "100%",
-      "failureCode": "General",
+      "failureCode": "None",
       "failureMessage": "",
-      "externalId": null,
-      "externalUrl": null,
+      "externalId": "123",
+      "externalUrl": "https://cdnapisec.kaltura.com/p/2394162/sp/239416200/playManifest/entryId/1_e72xmbcb/format/download/protocol/https/flavorParamIds/0",
       "metadata": null,
       "insights": {
-        "version": "0.9.0.0",
-        "sourceLanguage": "En-US",
-        "language": "En-US",
+        "version": "1.0.0.0",
+        "duration": "0:01:14.454",
+        "sourceLanguage": "en-US",
+        "language": "en-US",
         "transcript": [
           {
             "id": 0,
-            "text": "A transcript line",
-            "confidence": 1,
-            "speakerId": -1,
-            "language": "En-US",
+            "text": "As genetic testing becomes more widely available doctors and other healthcare professionals are faced with complex patient care issues.",
+            "confidence": 0.9325,
+            "speakerId": 1,
+            "language": "en-US",
             "instances": [
               {
-                "adjustedStart": "00:00:00",
-                "adjustedEnd": "00:00:13",
-                "start": "00:00:00",
-                "end": "00:00:13"
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:07.89",
+                "start": "0:00:00",
+                "end": "0:00:07.89"
+              }
+            ]
+          },
+          {
+            "id": 1,
+            "text": "The New England Journal of Medicine presented the case of a fictional 45 year old man who is concerned about his risk for cancer.",
+            "confidence": 0.9325,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:07.89",
+                "adjustedEnd": "0:00:15",
+                "start": "0:00:07.89",
+                "end": "0:00:15"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "text": "He was asymptomatic, but asked his doctor about genetic testing readers were asked whether they would recommend screening in this case,",
+            "confidence": 0.9325,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:15",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:15",
+                "end": "0:00:22.45"
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "text": "more than 900 people from 77 countries responded to the poll,",
+            "confidence": 0.9325,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:22.45",
+                "adjustedEnd": "0:00:25.84",
+                "start": "0:00:22.45",
+                "end": "0:00:25.84"
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "text": "40%, said they would not perform any genetic testing of the 60%",
+            "confidence": 0.9325,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:25.84",
+                "adjustedEnd": "0:00:29.35",
+                "start": "0:00:25.84",
+                "end": "0:00:29.35"
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "text": "who said they would. The 7%",
+            "confidence": 0.9316,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:29.35",
+                "adjustedEnd": "0:00:31.61",
+                "start": "0:00:29.35",
+                "end": "0:00:31.61"
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "text": "said they would screen only for cancer susceptibility jeans,",
+            "confidence": 0.9299,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:31.61",
+                "adjustedEnd": "0:00:34.84",
+                "start": "0:00:31.61",
+                "end": "0:00:34.84"
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "text": "while 12% would recommend whole genome sequencing,",
+            "confidence": 0.9299,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:34.84",
+                "adjustedEnd": "0:00:37.55",
+                "start": "0:00:34.84",
+                "end": "0:00:37.55"
+              }
+            ]
+          },
+          {
+            "id": 8,
+            "text": "although a majority of the readers who voted said they would order genetic testing.",
+            "confidence": 0.9299,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:37.55",
+                "adjustedEnd": "0:00:42",
+                "start": "0:00:37.55",
+                "end": "0:00:42"
+              }
+            ]
+          },
+          {
+            "id": 9,
+            "text": "Most of those who provided comments expressed reservations.",
+            "confidence": 0.9299,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:42",
+                "adjustedEnd": "0:00:45.18",
+                "start": "0:00:42",
+                "end": "0:00:45.18"
+              }
+            ]
+          },
+          {
+            "id": 10,
+            "text": "There was interest in obtaining more information about the patient's family history to better assess his genetic cancer risk.",
+            "confidence": 0.9299,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:45.18",
+                "adjustedEnd": "0:00:51.86",
+                "start": "0:00:45.18",
+                "end": "0:00:51.86"
+              }
+            ]
+          },
+          {
+            "id": 11,
+            "text": "Commentors also raised questions about the management of a positive test result and the potential for false reassurance of a normal result the authors say the potential benefit.",
+            "confidence": 0.9299,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:51.86",
+                "adjustedEnd": "0:01:02.04",
+                "start": "0:00:51.86",
+                "end": "0:01:02.04"
+              }
+            ]
+          },
+          {
+            "id": 12,
+            "text": "Meaning an asymptomatic people with no family history of certain diseases needs to be assessed in large long-term trials.",
+            "confidence": 0.9078,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:01:02.04",
+                "adjustedEnd": "0:01:08.4",
+                "start": "0:01:02.04",
+                "end": "0:01:08.4"
+              }
+            ]
+          },
+          {
+            "id": 13,
+            "text": "I'm doctor, Cindy Haynes of Health Day TV with the news that doctors are reading health news for healthier living.",
+            "confidence": 0.9078,
+            "speakerId": 1,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:01:08.4",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:01:08.4",
+                "end": "0:01:14.376"
               }
             ]
           }
@@ -84,63 +861,762 @@
         "keywords": [
           {
             "id": 0,
-            "text": "office",
-            "confidence": 1.6666666666666667,
+            "text": "genetic testing",
+            "confidence": 0.9975,
             "language": "en-US",
             "instances": [
               {
-                "start": "00:00:00.5100000",
-                "end": "00:00:02.7200000"
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:07.89",
+                "start": "0:00:00",
+                "end": "0:00:07.89"
               },
               {
-                "start": "00:00:03.9600000",
-                "end": "00:00:12.2700000"
+                "adjustedStart": "0:00:15",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:15",
+                "end": "0:00:22.45"
+              },
+              {
+                "adjustedStart": "0:00:25.84",
+                "adjustedEnd": "0:00:29.35",
+                "start": "0:00:25.84",
+                "end": "0:00:29.35"
+              },
+              {
+                "adjustedStart": "0:00:37.55",
+                "adjustedEnd": "0:00:42",
+                "start": "0:00:37.55",
+                "end": "0:00:42"
+              }
+            ]
+          },
+          {
+            "id": 1,
+            "text": "family history",
+            "confidence": 0.9975,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:45.18",
+                "adjustedEnd": "0:00:51.86",
+                "start": "0:00:45.18",
+                "end": "0:00:51.86"
+              },
+              {
+                "adjustedStart": "0:01:02.04",
+                "adjustedEnd": "0:01:08.4",
+                "start": "0:01:02.04",
+                "end": "0:01:08.4"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "text": "asymptomatic",
+            "confidence": 0.8041,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:15",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:15",
+                "end": "0:00:22.45"
+              },
+              {
+                "adjustedStart": "0:01:02.04",
+                "adjustedEnd": "0:01:08.4",
+                "start": "0:01:02.04",
+                "end": "0:01:08.4"
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "text": "recommend",
+            "confidence": 0.8041,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:15",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:15",
+                "end": "0:00:22.45"
+              },
+              {
+                "adjustedStart": "0:00:34.84",
+                "adjustedEnd": "0:00:37.55",
+                "start": "0:00:34.84",
+                "end": "0:00:37.55"
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "text": "potential",
+            "confidence": 0.8041,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:51.86",
+                "adjustedEnd": "0:01:02.04",
+                "start": "0:00:51.86",
+                "end": "0:01:02.04"
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "text": "doctors",
+            "confidence": 0.6211,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:07.89",
+                "start": "0:00:00",
+                "end": "0:00:07.89"
+              },
+              {
+                "adjustedStart": "0:01:08.4",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:01:08.4",
+                "end": "0:01:14.376"
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "text": "case",
+            "confidence": 0.6211,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:07.89",
+                "adjustedEnd": "0:00:15",
+                "start": "0:00:07.89",
+                "end": "0:00:15"
+              },
+              {
+                "adjustedStart": "0:00:15",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:15",
+                "end": "0:00:22.45"
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "text": "risk",
+            "confidence": 0.6211,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:07.89",
+                "adjustedEnd": "0:00:15",
+                "start": "0:00:07.89",
+                "end": "0:00:15"
+              },
+              {
+                "adjustedStart": "0:00:45.18",
+                "adjustedEnd": "0:00:51.86",
+                "start": "0:00:45.18",
+                "end": "0:00:51.86"
+              }
+            ]
+          },
+          {
+            "id": 8,
+            "text": "cancer",
+            "confidence": 0.6211,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:07.89",
+                "adjustedEnd": "0:00:15",
+                "start": "0:00:07.89",
+                "end": "0:00:15"
+              },
+              {
+                "adjustedStart": "0:00:31.61",
+                "adjustedEnd": "0:00:34.84",
+                "start": "0:00:31.61",
+                "end": "0:00:34.84"
+              },
+              {
+                "adjustedStart": "0:00:45.18",
+                "adjustedEnd": "0:00:51.86",
+                "start": "0:00:45.18",
+                "end": "0:00:51.86"
+              }
+            ]
+          },
+          {
+            "id": 9,
+            "text": "asked",
+            "confidence": 0.6211,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:15",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:15",
+                "end": "0:00:22.45"
+              }
+            ]
+          },
+          {
+            "id": 10,
+            "text": "doctor",
+            "confidence": 0.6211,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:07.89",
+                "start": "0:00:00",
+                "end": "0:00:07.89"
+              },
+              {
+                "adjustedStart": "0:00:15",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:15",
+                "end": "0:00:22.45"
+              },
+              {
+                "adjustedStart": "0:01:08.4",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:01:08.4",
+                "end": "0:01:14.376"
+              }
+            ]
+          },
+          {
+            "id": 11,
+            "text": "screen",
+            "confidence": 0.6211,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:15",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:15",
+                "end": "0:00:22.45"
+              },
+              {
+                "adjustedStart": "0:00:31.61",
+                "adjustedEnd": "0:00:34.84",
+                "start": "0:00:31.61",
+                "end": "0:00:34.84"
+              }
+            ]
+          },
+          {
+            "id": 12,
+            "text": "readers",
+            "confidence": 0.6211,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:15",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:15",
+                "end": "0:00:22.45"
+              },
+              {
+                "adjustedStart": "0:00:37.55",
+                "adjustedEnd": "0:00:42",
+                "start": "0:00:37.55",
+                "end": "0:00:42"
+              }
+            ]
+          },
+          {
+            "id": 13,
+            "text": "patient",
+            "confidence": 0.6211,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:07.89",
+                "start": "0:00:00",
+                "end": "0:00:07.89"
+              },
+              {
+                "adjustedStart": "0:00:45.18",
+                "adjustedEnd": "0:00:51.86",
+                "start": "0:00:45.18",
+                "end": "0:00:51.86"
+              }
+            ]
+          },
+          {
+            "id": 14,
+            "text": "assess",
+            "confidence": 0.6211,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:45.18",
+                "adjustedEnd": "0:00:51.86",
+                "start": "0:00:45.18",
+                "end": "0:00:51.86"
+              },
+              {
+                "adjustedStart": "0:01:02.04",
+                "adjustedEnd": "0:01:08.4",
+                "start": "0:01:02.04",
+                "end": "0:01:08.4"
+              }
+            ]
+          },
+          {
+            "id": 15,
+            "text": "news",
+            "confidence": 0.6211,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:01:08.4",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:01:08.4",
+                "end": "0:01:14.376"
               }
             ]
           }
         ],
-        "topics": [{
+        "topics": [
+          {
+            "id": 0,
+            "name": "Health and Wellbeing",
+            "referenceId": "Health",
+            "referenceType": "VideoIndexer",
+            "iptcName": "Health",
+            "confidence": 0.8254,
+            "iabName": "Medical Health",
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:00:00",
+                "end": "0:01:14.376"
+              }
+            ]
+          },
+          {
+            "id": 1,
+            "name": "Medicine and Healthcare",
+            "referenceId": "Health and Wellbeing/Medicine and Healthcare",
+            "referenceType": "VideoIndexer",
+            "iptcName": "Health",
+            "confidence": 0.802,
+            "iabName": "Medical Health",
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:29.35",
+                "start": "0:00:00",
+                "end": "0:00:29.35"
+              },
+              {
+                "adjustedStart": "0:00:45.18",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:00:45.18",
+                "end": "0:01:14.376"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "name": "Life Sciences",
+            "referenceId": "Life Sciences",
+            "referenceType": "VideoIndexer",
+            "confidence": 0.6963,
+            "iabName": null,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:00",
+                "end": "0:00:22.45"
+              },
+              {
+                "adjustedStart": "0:00:45.18",
+                "adjustedEnd": "0:01:02.04",
+                "start": "0:00:45.18",
+                "end": "0:01:02.04"
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "name": "Personalized Medicine",
+            "referenceId": "Health and Wellbeing/Genomics/Personalized Medicine",
+            "referenceType": "VideoIndexer",
+            "iptcName": "Health",
+            "confidence": 0.6699,
+            "iabName": "Medical Health",
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:00:00",
+                "end": "0:01:14.376"
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "name": "Personalized Genomics",
+            "referenceId": "Health and Wellbeing/Genomics/Personalized Genomics",
+            "referenceType": "VideoIndexer",
+            "iptcName": "Health",
+            "confidence": 0.6097,
+            "iabName": "Medical Health",
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:22.45",
+                "adjustedEnd": "0:01:02.04",
+                "start": "0:00:22.45",
+                "end": "0:01:02.04"
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "name": "Genetic Testing",
+            "referenceId": "Health and Wellbeing/Genetics and Heredity/Genetic Testing",
+            "referenceType": "VideoIndexer",
+            "iptcName": "Health",
+            "confidence": 0.5986,
+            "iabName": "Medical Health",
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:01:08.4",
+                "start": "0:00:00",
+                "end": "0:01:08.4"
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "name": "Medical Ethics",
+            "referenceId": "Medical Ethics",
+            "referenceType": "VideoIndexer",
+            "confidence": 0.5923,
+            "iabName": null,
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:01:02.04",
+                "start": "0:00:00",
+                "end": "0:01:02.04"
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "name": "Cancer",
+            "referenceId": "Health and Wellbeing/Medicine and Healthcare/Cancer",
+            "referenceType": "VideoIndexer",
+            "iptcName": "Health",
+            "confidence": 0.5692,
+            "iabName": "Medical Health",
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:00:00",
+                "end": "0:01:14.376"
+              }
+            ]
+          },
+          {
+            "id": 8,
+            "name": "Medical Technology",
+            "referenceId": "Technology/Medical Technology",
+            "referenceType": "VideoIndexer",
+            "iptcName": "Science and Technology",
+            "confidence": 0.5388,
+            "iabName": "Technology & Computing",
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:00",
+                "end": "0:00:22.45"
+              }
+            ]
+          },
+          {
+            "id": 9,
+            "name": "Healthcare it",
+            "referenceId": "Technology/Medical Technology/Healthcare it",
+            "referenceType": "VideoIndexer",
+            "iptcName": "Science and Technology",
+            "confidence": 0.5373,
+            "iabName": "Technology & Computing",
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:22.45",
+                "start": "0:00:00",
+                "end": "0:00:22.45"
+              },
+              {
+                "adjustedStart": "0:00:51.86",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:00:51.86",
+                "end": "0:01:14.376"
+              }
+            ]
+          },
+          {
+            "id": 10,
+            "name": "Genetics and Heredity",
+            "referenceId": "Health and Wellbeing/Genetics and Heredity",
+            "referenceType": "VideoIndexer",
+            "iptcName": "Health",
+            "confidence": 0.5314,
+            "iabName": "Medical Health",
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:15",
+                "adjustedEnd": "0:01:02.04",
+                "start": "0:00:15",
+                "end": "0:01:02.04"
+              }
+            ]
+          },
+          {
+            "id": 11,
+            "name": "Medical Conditions and Diseases",
+            "referenceId": "Health and Wellbeing/Medicine and Healthcare/Medical Conditions and Diseases",
+            "referenceType": "VideoIndexer",
+            "iptcName": "Health",
+            "confidence": 0.5185,
+            "iabName": "Medical Health",
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:25.84",
+                "start": "0:00:00",
+                "end": "0:00:25.84"
+              },
+              {
+                "adjustedStart": "0:00:42",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:00:42",
+                "end": "0:01:14.376"
+              }
+            ]
+          },
+          {
+            "id": 12,
+            "name": "Doctors",
+            "referenceId": "Health and Wellbeing/Medicine and Healthcare/Doctors",
+            "referenceType": "VideoIndexer",
+            "iptcName": "Health",
+            "confidence": 0.4852,
+            "iabName": "Medical Health",
+            "language": "en-US",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:29.35",
+                "start": "0:00:00",
+                "end": "0:00:29.35"
+              },
+              {
+                "adjustedStart": "0:01:02.04",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:01:02.04",
+                "end": "0:01:14.376"
+              }
+            ]
+          }
+        ],
+        "sentiments": [
+          {
+            "id": 0,
+            "averageScore": 0.5,
+            "sentimentType": "Neutral",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:14.39",
+                "start": "0:00:00",
+                "end": "0:00:14.39"
+              },
+              {
+                "adjustedStart": "0:00:17.694",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:00:17.694",
+                "end": "0:01:14.376"
+              }
+            ]
+          },
+          {
+            "id": 1,
+            "averageScore": 0.152,
+            "sentimentType": "Negative",
+            "instances": [
+              {
+                "adjustedStart": "0:00:14.39",
+                "adjustedEnd": "0:00:17.694",
+                "start": "0:00:14.39",
+                "end": "0:00:17.694"
+              }
+            ]
+          }
+        ],
+        "blocks": [
+          {
+            "id": 0,
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:31.61",
+                "start": "0:00:00",
+                "end": "0:00:31.61"
+              }
+            ]
+          },
+          {
+            "id": 1,
+            "instances": [
+              {
+                "adjustedStart": "0:00:31.61",
+                "adjustedEnd": "0:01:02.04",
+                "start": "0:00:31.61",
+                "end": "0:01:02.04"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "instances": [
+              {
+                "adjustedStart": "0:01:02.04",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:01:02.04",
+                "end": "0:01:14.376"
+              }
+            ]
+          }
+        ],
+        "speakers": [
+          {
+            "id": 1,
+            "name": "Speaker #1",
+            "instances": [
+              {
+                "adjustedStart": "0:00:00",
+                "adjustedEnd": "0:00:18.69",
+                "start": "0:00:00",
+                "end": "0:00:18.69"
+              },
+              {
+                "adjustedStart": "0:00:22.28",
+                "adjustedEnd": "0:01:09.1",
+                "start": "0:00:22.28",
+                "end": "0:01:09.1"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "name": "Speaker #2",
+            "instances": [
+              {
+                "adjustedStart": "0:00:18.74",
+                "adjustedEnd": "0:00:22.22",
+                "start": "0:00:18.74",
+                "end": "0:00:22.22"
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "name": "Speaker #3",
+            "instances": [
+              {
+                "adjustedStart": "0:01:09.15",
+                "adjustedEnd": "0:01:13.92",
+                "start": "0:01:09.15",
+                "end": "0:01:13.92"
+              }
+            ]
+          },
+          {
+            "id": -1,
+            "name": "Speaker #-1",
+            "instances": [
+              {
+                "adjustedStart": "0:01:13.97",
+                "adjustedEnd": "0:01:14.376",
+                "start": "0:01:13.97",
+                "end": "0:01:14.376"
+              }
+            ]
+          }
+        ],
+        "textualContentModeration": {
           "id": 0,
-          "name": "INTERNATIONAL RELATIONS",
-          "referenceId": "POLITICS AND GOVERNMENT/FOREIGN POLICY/INTERNATIONAL RELATIONS",
-          "referenceType": "VideoIndexer",
-          "confidence": 1,
-          "language": "en-US",
-          "instances": [{
-            "adjustedStart": "0:00:00",
-            "adjustedEnd": "0:03:36.25",
-            "start": "0:00:00",
-            "end": "0:03:36.25"
-          }]
-        }, {
-          "id": 1,
-          "name": "Politics and Government",
-          "referenceType": "VideoIndexer",
-          "iptcName": "Politics",
-          "confidence": 0.9041,
-          "language": "en-US",
-          "instances": [{
-            "adjustedStart": "0:00:00",
-            "adjustedEnd": "0:03:36.25",
-            "start": "0:00:00",
-            "end": "0:03:36.25"
-          }]
-        }]
+          "bannedWordsCount": 0,
+          "bannedWordsRatio": 0,
+          "instances": []
+        },
+        "statistics": {
+          "correspondenceCount": 0,
+          "speakerTalkToListenRatio": {
+            "1": 1
+          },
+          "speakerLongestMonolog": {
+            "1": 74
+          },
+          "speakerNumberOfFragments": {
+            "1": 1
+          },
+          "speakerWordCount": {
+            "1": 217
+          }
+        }
       },
-      "thumbnailId": "d869021e-2a0b-4355-9c80-144e51aa8f6d",
-      "publishedUrl": "https://videvmediaservices.streaming.mediaservices.windows.net:443/1dda50a1-217b-4988-919c-bd0dc13414a9/SampleVideo_1280x720_2mb222.ism/manifest",
+      "thumbnailId": "1df069dc-e768-4659-9d11-3c104f948197",
+      "publishedUrl": "https://videoindexerams2298d9b2-euno.streaming.media.azure.net:443/be968f57-a15d-4662-a301-9e94d219942c/12ad018f-f65a-4ee0-b640-aa2da759.ism/manifest(encryption=cbc)",
       "publishedProxyUrl": null,
-      "viewToken": "Bearer=SampleAuthToken",
-      "sourceLanguage": "En-US",
-      "language": "En-US",
-      "indexingPreset": "Default",
-      "linguisticModelId": "00000000-0000-0000-0000-000000000000"
+      "viewToken": "Bearer=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cm46bWljcm9zb2Z0OmF6dXJlOm1lZGlhc2VydmljZXM6Y29udGVudGtleWlkZW50aWZpZXIiOiJmYTQwZDU0MS00NDE1LTQ4M2MtOTBhMi0xZjQzZDcyZTE3YjMiLCJpc3MiOiJodHRwczovL2JyZWFrZG93bi5tZSIsImF1ZCI6IkJyZWFrZG93blVzZXIiLCJleHAiOjE1NTM4NzA5NTAsIm5iZiI6MTU1Mzc4NDQ5MH0.-KjKzOVgpVEm8CdW_Wf0qcWywlJ8EA5hfsS81IfWcIw",
+      "detectSourceLanguage": true,
+      "sourceLanguage": "en-US",
+      "language": "en-US",
+      "indexingPreset": "AudioOnly",
+      "linguisticModelId": "00000000-0000-0000-0000-000000000000",
+      "personModelId": "00000000-0000-0000-0000-000000000000",
+      "isAdult": false
     }
   ],
-  "videosRanges": null,
-  "social": {
-    "likedByUser": false,
-    "likes": 0,
-    "views": 0
-  }
+  "videosRanges": [
+    {
+      "videoId": "e86466f9ee",
+      "range": {
+        "start": "0:00:00",
+        "end": "0:01:14.454"
+      }
+    }
+  ]
 }

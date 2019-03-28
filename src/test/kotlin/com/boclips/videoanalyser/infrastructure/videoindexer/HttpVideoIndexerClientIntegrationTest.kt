@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -36,7 +37,7 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
     fun setUp() {
         wireMockServer = WireMockServer(wireMockConfig().dynamicPort())
         wireMockServer.start()
-        var properties = VideoIndexerProperties(
+        val properties = VideoIndexerProperties(
                 apiBaseUrl = wireMockServer.baseUrl(),
                 accountId = "account1",
                 subscriptionKey = "subs-key"
@@ -48,6 +49,7 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
                 indexingProgressCallbackFactory = indexingProgressCallbackFactory
         )
         wireMockServer.stubFor(get(urlPathEqualTo("/auth/northeurope/Accounts/account1/AccessToken"))
+                .withQueryParam("allowEdit", equalTo("true"))
                 .withHeader("Ocp-Apim-Subscription-Key", equalTo("subs-key"))
                 .willReturn(
                         aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("\"test-access-token\"")
@@ -64,7 +66,7 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
     fun submit() {
         wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/account1/Videos"))
                 .willReturn(
-                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoUploadResponseResource.inputStream.readAllBytes())
+                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoUploadResponseResource.inputStream.readBytes())
                 )
         )
 
@@ -83,6 +85,21 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `submit throws when there is an error`() {
+        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/account1/Videos"))
+                .willReturn(
+                        aResponse().withStatus(400).withBody("This is a test error")
+                )
+        )
+
+        val exception = assertThrows<VideoIndexerException> {
+            videoIndexer.submitVideo("123", "http://videos.com/1")
+        }
+
+        assertThat(exception).hasMessage("Failed to submit video 123 to Video Indexer")
+    }
+
+    @Test
     fun getVideoIndex() {
         val videoId = "video-id-1234"
         val microsoftVideoId = "ms-id-1234"
@@ -95,10 +112,10 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
                 )
         )
 
-        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/account1/Videos/$microsoftVideoId"))
+        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/account1/Videos/$microsoftVideoId/Index"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
                 .willReturn(
-                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoIndexResponseResource.inputStream.readAllBytes())
+                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoIndexResponseResource.inputStream.readBytes())
                 )
         )
 
@@ -113,8 +130,8 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
         val response = videoIndexer.getVideoIndex(videoId)
 
         assertThat(response.videoId).isEqualTo(videoId)
-        assertThat(response.keywords).contains("office")
+        assertThat(response.keywords).contains("doctors")
         assertThat(response.vttCaptions).isEqualTo("contents of vtt file".toByteArray())
-        assertThat(response.topics.map { it.name }).contains("Politics and Government")
+        assertThat(response.topics.map { it.name }).contains("Medical Ethics")
     }
 }
