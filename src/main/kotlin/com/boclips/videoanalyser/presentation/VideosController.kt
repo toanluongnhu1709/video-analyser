@@ -29,7 +29,7 @@ class VideosController(
 
         val videoIndex = videoIndexer.getVideoIndex(videoId)
 
-        logger.info { "Video index keywords: ${videoIndex.keywords}, video index topics: ${videoIndex.topics}" }
+        logger.info { "Video index keywords: ${videoIndex.keywords}, video index topics: ${videoIndex.topics}, video index captions: ${videoIndex.vttCaptions}" }
     }
 }
 
