@@ -6,6 +6,7 @@ import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import java.nio.charset.StandardCharsets
 
 @RestController
 class VideosController(
@@ -29,7 +30,9 @@ class VideosController(
 
         val videoIndex = videoIndexer.getVideoIndex(videoId)
 
-        logger.info { "Video index keywords: ${videoIndex.keywords}, video index topics: ${videoIndex.topics}, video index captions: ${videoIndex.vttCaptions}" }
+        logger.info { "Keywords for $videoId\n:${videoIndex.keywords}" }
+        logger.info { "Topics for $videoId\n:${videoIndex.topics}" }
+        logger.info { "Captions for $videoId\n${videoIndex.vttCaptions.toString(StandardCharsets.UTF_8)}" }
     }
 }
 
