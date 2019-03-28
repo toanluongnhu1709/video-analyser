@@ -35,6 +35,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.microutils:kotlin-logging:1.6.24")
+	implementation("net.logstash.logback:logstash-logback-encoder:5.3")
 
 	testImplementation("com.nhaarman:mockito-kotlin:1.5.0")
 	testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")

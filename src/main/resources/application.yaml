@@ -6,5 +6,4 @@ spring:
           group: video-analyser
 
 logging:
-  level:
-    org.springframework.security: DEBUG
+  config: "classpath:logback-json.xml"

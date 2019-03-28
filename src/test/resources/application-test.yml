@@ -5,3 +5,6 @@ spring:
     gcp:
       pubsub:
         enabled: false
+
+logging:
+  config: ""
