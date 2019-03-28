@@ -4,10 +4,6 @@ spring:
       bindings:
         videos-to-analyse:
           group: video-analyser
-  security:
-    user:
-      name: jacek
-      password: jacek
 
 logging:
   level:

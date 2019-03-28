@@ -5,6 +5,3 @@ spring:
     gcp:
       pubsub:
         enabled: false
-logging:
-  level:
-    org.springframework.security: DEBUG
