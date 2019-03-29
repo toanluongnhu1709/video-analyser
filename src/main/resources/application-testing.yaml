@@ -4,3 +4,5 @@ spring:
       bindings:
         videos-to-analyse:
           destination: videos-to-analyse-testing
+        analysed-videos:
+          destination: analysed-videos-testing

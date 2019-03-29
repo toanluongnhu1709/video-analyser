@@ -8,4 +8,3 @@ interface VideoIndexer {
     fun getVideoIndex(videoId: String): VideoResource
 }
 
-class VideoIndexerException(message: String) : Exception(message)

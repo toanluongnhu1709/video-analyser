@@ -2,6 +2,7 @@ package com.boclips.videoanalyser.presentation
 
 import com.boclips.eventtypes.VideoToAnalyse
 import com.boclips.videoanalyser.application.AnalyseVideo
+import com.boclips.videoanalyser.application.PublishAnalysedVideo
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
 import mu.KLogging
 import org.springframework.http.HttpStatus
@@ -10,9 +11,10 @@ import java.nio.charset.StandardCharsets
 
 @RestController
 class VideosController(
-        val analyseVideo: AnalyseVideo
+        val analyseVideo: AnalyseVideo,
+        val publishAnalysedVideo: PublishAnalysedVideo
 ) {
-    companion object : KLogging() {
+    companion object {
         const val VIDEO_PATH_TEMPLATE = "/v1/videos/{videoId}"
         const val INDEXING_PROGRESS_PATH_TEMPLATE = "$VIDEO_PATH_TEMPLATE/check_indexing_progress"
     }
@@ -25,7 +27,7 @@ class VideosController(
 
     @PostMapping(INDEXING_PROGRESS_PATH_TEMPLATE)
     fun checkIndexingProgress(@PathVariable videoId: String) {
-        logger.info { "Checking for indexing progress in video $videoId" }
+        publishAnalysedVideo.execute(videoId)
     }
 }
 

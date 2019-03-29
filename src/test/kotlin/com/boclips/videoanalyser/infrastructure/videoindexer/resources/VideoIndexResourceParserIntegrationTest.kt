@@ -25,6 +25,14 @@ class VideoIndexResourceParserIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
+    fun `parses external id`() {
+        val videoIndex = videoIndexResourceParser.parse(videoIndexJsonString)
+        val externalId = videoIndex.videos?.first()?.externalId
+
+        assertThat(externalId).isEqualTo("123")
+    }
+
+    @Test
     fun `parses source language`() {
         val videoIndex = videoIndexResourceParser.parse(videoIndexJsonString)
         val insights = videoIndex.videos?.first()?.insights!!
