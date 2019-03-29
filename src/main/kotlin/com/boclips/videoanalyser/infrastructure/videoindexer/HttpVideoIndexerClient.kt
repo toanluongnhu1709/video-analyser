@@ -1,5 +1,7 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer
 
+import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
+import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResource
 import com.boclips.videoanalyser.presentation.IndexingProgressCallbackFactory
 import mu.KLogging
 import org.springframework.http.HttpEntity
@@ -11,7 +13,8 @@ import org.springframework.web.client.RestTemplate
 class HttpVideoIndexerClient(
         private val restTemplate: RestTemplate,
         private val properties: VideoIndexerProperties,
-        private val indexingProgressCallbackFactory: IndexingProgressCallbackFactory
+        private val indexingProgressCallbackFactory: IndexingProgressCallbackFactory,
+        private val videoIndexResourceParser: VideoIndexResourceParser
 ) : VideoIndexer {
 
     companion object : KLogging()
@@ -46,7 +49,7 @@ class HttpVideoIndexerClient(
         }
     }
 
-    override fun getVideoIndex(videoId: String): VideoIndex {
+    override fun getVideoIndex(videoId: String): VideoResource {
         val externalIdUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/GetIdByExternalId" +
                 "?accessToken={accessToken}" +
                 "&externalId={externalId}"
@@ -70,7 +73,7 @@ class HttpVideoIndexerClient(
 
         logger.info { "GETting $getVideoIndexUrl" }
         val response = try {
-                restTemplate.getForEntity(getVideoIndexUrl, VideoIndexResource::class.java, mapOf("accessToken" to getToken())).body
+                restTemplate.getForEntity(getVideoIndexUrl, String::class.java, mapOf("accessToken" to getToken())).body
         } catch(e: HttpStatusCodeException) {
             logger.error(e.responseBodyAsString)
             throw VideoIndexerException("Failed to fetch video $videoId from Video Indexer")
@@ -83,11 +86,9 @@ class HttpVideoIndexerClient(
             throw VideoIndexerException("Failed to fetch captions of video $videoId from Video Indexer")
         }
 
-        val keywords = response?.videos?.firstOrNull()?.insights?.keywords?.mapNotNull { it.text }.orEmpty()
+        val videoIndexResource = videoIndexResourceParser.parse(response!!)
 
-        val topics = response?.videos?.firstOrNull()?.insights?.topics?.map { Topic(name = it.name!!) }.orEmpty()
-
-        return VideoIndex(videoId = videoId, keywords = keywords, topics = topics, vttCaptions = captionsResponse!!)
+        return VideoResource(index = videoIndexResource, captions = captionsResponse!!)
     }
 
     private fun getToken(): String {
@@ -102,12 +103,3 @@ class HttpVideoIndexerClient(
 
 }
 
-data class VideoIndexResource(var videos: List<VideoResource>? = null)
-
-data class VideoResource(var insights: VideoInsightsResource? = null)
-
-data class VideoInsightsResource(var keywords: List<KeywordResource>? = null, var topics: List<TopicResource>? = null)
-
-data class KeywordResource(var text: String? = null)
-
-data class TopicResource(var name: String? = null)

@@ -1,12 +1,12 @@
 package com.boclips.videoanalyser.testsupport.fakes
 
-import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndex
+import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResource
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
+import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
-import java.util.*
 
 @Profile("fake-video-indexer")
 @Configuration
@@ -26,8 +26,8 @@ class FakeVideoIndexer : VideoIndexer {
         submittedVideos[videoId] = videoUrl
     }
 
-    override fun getVideoIndex(videoId: String): VideoIndex {
-        return VideoIndex(videoId = videoId, keywords = emptyList(), topics = emptyList(), vttCaptions = ByteArray(0))
+    override fun getVideoIndex(videoId: String): VideoResource {
+        return VideoResource(index = VideoIndexResource(videos = emptyList()), captions = ByteArray(0))
     }
 
     fun clear() {

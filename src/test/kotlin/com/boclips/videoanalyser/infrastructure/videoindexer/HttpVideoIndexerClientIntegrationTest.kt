@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer
 
+import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
 import com.boclips.videoanalyser.presentation.IndexingProgressCallbackFactory
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.github.tomakehurst.wiremock.WireMockServer
@@ -22,6 +23,9 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
     lateinit var indexingProgressCallbackFactory: IndexingProgressCallbackFactory
+
+    @Autowired
+    lateinit var videoIndexResourceParser: VideoIndexResourceParser
 
     @Value("classpath:videoindexer/responses/videoUpload.json")
     lateinit var videoUploadResponseResource: Resource
@@ -46,7 +50,9 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
         videoIndexer = HttpVideoIndexerClient(
                 restTemplate = restTemplateBuilder.build(),
                 properties = properties,
-                indexingProgressCallbackFactory = indexingProgressCallbackFactory
+                indexingProgressCallbackFactory = indexingProgressCallbackFactory,
+                videoIndexResourceParser = videoIndexResourceParser
+
         )
         wireMockServer.stubFor(get(urlPathEqualTo("/auth/northeurope/Accounts/account1/AccessToken"))
                 .withQueryParam("allowEdit", equalTo("true"))
@@ -127,11 +133,9 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
                 )
         )
 
-        val response = videoIndexer.getVideoIndex(videoId)
+        val resource = videoIndexer.getVideoIndex(videoId)
 
-        assertThat(response.videoId).isEqualTo(videoId)
-        assertThat(response.keywords).contains("doctors")
-        assertThat(response.vttCaptions).isEqualTo("contents of vtt file".toByteArray())
-        assertThat(response.topics.map { it.name }).contains("Medical Ethics")
+        assertThat(resource.index?.videos?.first()?.insights?.sourceLanguage).isEqualTo("en-US")
+        assertThat(resource.captions).isEqualTo("contents of vtt file".toByteArray())
     }
 }

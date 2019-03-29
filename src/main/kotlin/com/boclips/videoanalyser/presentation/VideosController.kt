@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets
 
 @RestController
 class VideosController(
-        val videoIndexer: VideoIndexer,
         val analyseVideo: AnalyseVideo
 ) {
     companion object : KLogging() {
@@ -27,12 +26,6 @@ class VideosController(
     @PostMapping(INDEXING_PROGRESS_PATH_TEMPLATE)
     fun checkIndexingProgress(@PathVariable videoId: String) {
         logger.info { "Checking for indexing progress in video $videoId" }
-
-        val videoIndex = videoIndexer.getVideoIndex(videoId)
-
-        logger.info { "Keywords for $videoId\n:${videoIndex.keywords}" }
-        logger.info { "Topics for $videoId\n:${videoIndex.topics}" }
-        logger.info { "Captions for $videoId\n${videoIndex.vttCaptions.toString(StandardCharsets.UTF_8)}" }
     }
 }
 
