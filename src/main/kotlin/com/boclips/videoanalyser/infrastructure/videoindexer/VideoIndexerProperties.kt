@@ -8,5 +8,6 @@ import org.springframework.stereotype.Component
 data class VideoIndexerProperties(
         var apiBaseUrl: String = "https://api.videoindexer.ai",
         var accountId: String = "",
-        var subscriptionKey: String = ""
+        var subscriptionKey: String = "",
+        var tokenTtlMinutes: Int = 5
 )

@@ -13,8 +13,6 @@ class HttpVideoIndexerTokenProviderTest(
         @Autowired val videoIndexerProperties: VideoIndexerProperties
 ) : AbstractSpringIntegrationTest() {
 
-    lateinit var videoIndexerTokenProvider: VideoIndexerTokenProvider
-
     @BeforeEach
     fun setUp() {
         wireMockServer.stubFor(get(urlPathEqualTo("/auth/northeurope/Accounts/test-account/AccessToken"))
@@ -24,14 +22,38 @@ class HttpVideoIndexerTokenProviderTest(
                         aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("\"test-access-token\"")
                 )
         )
+    }
 
-        videoIndexerTokenProvider = HttpVideoIndexerTokenProvider(restTemplateBuilder.build(), videoIndexerProperties)
+    private fun tokenProvider(ttlMinutes: Int): HttpVideoIndexerTokenProvider {
+        return HttpVideoIndexerTokenProvider(restTemplateBuilder.build(), videoIndexerProperties.copy(tokenTtlMinutes = ttlMinutes))
     }
 
     @Test
     fun `fetches token from the auth api`() {
-        val token = videoIndexerTokenProvider.getToken()
+        val tokenProvider = tokenProvider(ttlMinutes = 1)
+
+        val token = tokenProvider.getToken()
 
         assertThat(token).isEqualTo("test-access-token")
+    }
+
+    @Test
+    fun `caches the token for subsequent calls`() {
+        val tokenProvider = tokenProvider(ttlMinutes = 1)
+
+        tokenProvider.getToken()
+        tokenProvider.getToken()
+
+        wireMockServer.verify(1, getRequestedFor(urlPathEqualTo("/auth/northeurope/Accounts/test-account/AccessToken")))
+    }
+
+    @Test
+    fun `re-fetches token periodically`() {
+        val tokenProvider = tokenProvider(ttlMinutes = 0)
+
+        tokenProvider.getToken()
+        tokenProvider.getToken()
+
+        wireMockServer.verify(2, getRequestedFor(urlPathEqualTo("/auth/northeurope/Accounts/test-account/AccessToken")))
     }
 }
