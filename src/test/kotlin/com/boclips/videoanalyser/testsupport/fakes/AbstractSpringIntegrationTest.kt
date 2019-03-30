@@ -21,6 +21,9 @@ abstract class AbstractSpringIntegrationTest {
     @Autowired
     lateinit var fakeVideoIndexer: FakeVideoIndexer
 
+    @Autowired
+    lateinit var messageCollector: MessageCollector
+
     lateinit var wireMockServer: WireMockServer
 
     @BeforeEach

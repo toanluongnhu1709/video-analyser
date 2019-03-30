@@ -2,21 +2,18 @@ package com.boclips.videoanalyser.presentation
 
 import com.boclips.eventtypes.VideoToAnalyse
 import com.boclips.videoanalyser.application.AnalyseVideo
-import com.boclips.videoanalyser.application.PublishAnalysedVideo
-import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
-import mu.KLogging
+import com.boclips.videoanalyser.application.PublishAnalysedVideoId
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import java.nio.charset.StandardCharsets
 
 @RestController
 class VideosController(
         val analyseVideo: AnalyseVideo,
-        val publishAnalysedVideo: PublishAnalysedVideo
+        val publishAnalysedVideoId: PublishAnalysedVideoId
 ) {
     companion object {
         const val VIDEO_PATH_TEMPLATE = "/v1/videos/{videoId}"
-        const val INDEXING_PROGRESS_PATH_TEMPLATE = "$VIDEO_PATH_TEMPLATE/check_indexing_progress"
+        const val PUBLISH_ANALYSED_VIDEO_PATH_TEMPLATE = "$VIDEO_PATH_TEMPLATE/publish_analysed_video"
     }
 
     @PostMapping("$VIDEO_PATH_TEMPLATE/analyse")
@@ -25,9 +22,9 @@ class VideosController(
         analyseVideo.execute(VideoToAnalyse.builder().videoId(videoId).videoUrl(videoUrl).build())
     }
 
-    @PostMapping(INDEXING_PROGRESS_PATH_TEMPLATE)
-    fun checkIndexingProgress(@PathVariable videoId: String) {
-        publishAnalysedVideo.execute(videoId)
+    @PostMapping(PUBLISH_ANALYSED_VIDEO_PATH_TEMPLATE)
+    fun publishAnalysedVideo(@PathVariable videoId: String) {
+        publishAnalysedVideoId.execute(videoId)
     }
 }
 

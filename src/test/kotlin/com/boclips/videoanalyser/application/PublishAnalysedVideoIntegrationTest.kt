@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.application
 
+import com.boclips.videoanalyser.config.AnalysedVideoIdsSubscription
 import com.boclips.videoanalyser.config.AnalysedVideosTopic
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 
@@ -10,20 +11,14 @@ import org.springframework.cloud.stream.test.binder.MessageCollector
 import org.springframework.messaging.support.MessageBuilder
 
 
-class PublishAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
-
-    @Autowired
-    lateinit var publishAnalysedVideo : PublishAnalysedVideo
-
-    @Autowired
-    lateinit var messageCollector: MessageCollector
-
-    @Autowired
-    lateinit var analysedVideosTopic: AnalysedVideosTopic
+class PublishAnalysedVideoIntegrationTest(
+        @Autowired val analysedVideoIdsSubscription: AnalysedVideoIdsSubscription,
+        @Autowired val analysedVideosTopic: AnalysedVideosTopic
+) : AbstractSpringIntegrationTest() {
 
     @Test
     fun `videos are received from the video indexer and published`() {
-        publishAnalysedVideo.execute(videoId = "1234")
+        analysedVideoIdsSubscription.input().send(MessageBuilder.withPayload("1234").build())
 
         val message = messageCollector.forChannel(analysedVideosTopic.output()).poll()
 

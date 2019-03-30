@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.config.application
 
-import com.boclips.videoanalyser.presentation.IndexingProgressCallbackFactory
+import com.boclips.videoanalyser.presentation.PublishAnalysedVideoLinkFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,8 +12,8 @@ class PresentationContext {
     lateinit var publicUrl: String
 
     @Bean
-    fun indexingProgressCallbackFactory(): IndexingProgressCallbackFactory {
-        return IndexingProgressCallbackFactory(publicUrl)
+    fun publishAnalysedVideoLinkFactory(): PublishAnalysedVideoLinkFactory {
+        return PublishAnalysedVideoLinkFactory(publicUrl)
     }
 
 }

@@ -2,6 +2,8 @@ package com.boclips.videoanalyser.config.application
 
 import com.boclips.videoanalyser.application.AnalyseVideo
 import com.boclips.videoanalyser.application.PublishAnalysedVideo
+import com.boclips.videoanalyser.application.PublishAnalysedVideoId
+import com.boclips.videoanalyser.config.AnalysedVideoIdsTopic
 import com.boclips.videoanalyser.config.AnalysedVideosTopic
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
@@ -11,6 +13,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class ApplicationContext(
         private val analysedVideosTopic: AnalysedVideosTopic,
+        private val analysedVideoIdsTopic: AnalysedVideoIdsTopic,
         private val videoAnalyserService: VideoAnalyserService
 ) {
 
@@ -25,5 +28,10 @@ class ApplicationContext(
                 analysedVideosTopic,
                 videoAnalyserService
         )
+    }
+
+    @Bean
+    fun publishAnalysedVideoId() : PublishAnalysedVideoId {
+        return PublishAnalysedVideoId(analysedVideoIdsTopic)
     }
 }

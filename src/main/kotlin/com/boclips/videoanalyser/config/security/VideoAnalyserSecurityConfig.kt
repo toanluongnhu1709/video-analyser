@@ -16,7 +16,7 @@ class VideoAnalyserSecurityConfig : WebSecurityConfigurerAdapter() {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(POST, "/v1/videos/*/check_indexing_progress").permitAll()
+                .antMatchers(POST, "/v1/videos/*/publish_analysed_video").permitAll()
                 .antMatchers(GET, "/actuator/health").permitAll()
                 .anyRequest().authenticated()
     }

@@ -1,7 +1,7 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer
 
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
-import com.boclips.videoanalyser.presentation.IndexingProgressCallbackFactory
+import com.boclips.videoanalyser.presentation.PublishAnalysedVideoLinkFactory
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import org.assertj.core.api.Assertions.assertThat
@@ -17,7 +17,7 @@ class HttpVideoIndexerClientIntegrationTest(
         @Autowired val restTemplateBuilder: RestTemplateBuilder,
         @Autowired val videoIndexerProperties: VideoIndexerProperties,
         @Autowired val videoIndexerTokenProvider: VideoIndexerTokenProvider,
-        @Autowired val indexingProgressCallbackFactory: IndexingProgressCallbackFactory,
+        @Autowired val publishAnalysedVideoLinkFactory: PublishAnalysedVideoLinkFactory,
         @Autowired val videoIndexResourceParser: VideoIndexResourceParser,
         @Value("classpath:videoindexer/responses/videoUpload.json") val videoUploadResponseResource: Resource,
         @Value("classpath:videoindexer/responses/videoIndex.json") val videoIndexResponseResource: Resource
@@ -31,7 +31,7 @@ class HttpVideoIndexerClientIntegrationTest(
                 restTemplate = restTemplateBuilder.build(),
                 properties = videoIndexerProperties,
                 videoIndexerTokenProvider = videoIndexerTokenProvider,
-                indexingProgressCallbackFactory = indexingProgressCallbackFactory,
+                publishAnalysedVideoLinkFactory = publishAnalysedVideoLinkFactory,
                 videoIndexResourceParser = videoIndexResourceParser
         )
     }
@@ -52,7 +52,7 @@ class HttpVideoIndexerClientIntegrationTest(
                 .withQueryParam("videoUrl", equalTo("https://cdnapisec.example.com/v/1"))
                 .withQueryParam("externalUrl", equalTo("https://cdnapisec.example.com/v/1"))
                 .withQueryParam("externalId", equalTo("video1"))
-                .withQueryParam("callbackUrl", equalTo("https://video-analyser.test-boclips.com/v1/videos/video1/check_indexing_progress"))
+                .withQueryParam("callbackUrl", equalTo("https://video-analyser.test-boclips.com/v1/videos/video1/publish_analysed_video"))
                 .withQueryParam("language", equalTo("auto"))
                 .withQueryParam("indexingPreset", equalTo("AudioOnly"))
                 .withQueryParam("privacy", equalTo("Private")))

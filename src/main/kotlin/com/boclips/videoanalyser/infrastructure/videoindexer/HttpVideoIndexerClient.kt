@@ -2,11 +2,8 @@ package com.boclips.videoanalyser.infrastructure.videoindexer
 
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResource
-import com.boclips.videoanalyser.presentation.IndexingProgressCallbackFactory
+import com.boclips.videoanalyser.presentation.PublishAnalysedVideoLinkFactory
 import mu.KLogging
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 
@@ -14,7 +11,7 @@ class HttpVideoIndexerClient(
         private val restTemplate: RestTemplate,
         private val properties: VideoIndexerProperties,
         private val videoIndexerTokenProvider: VideoIndexerTokenProvider,
-        private val indexingProgressCallbackFactory: IndexingProgressCallbackFactory,
+        private val publishAnalysedVideoLinkFactory: PublishAnalysedVideoLinkFactory,
         private val videoIndexResourceParser: VideoIndexResourceParser
 ) : VideoIndexer {
 
@@ -38,7 +35,7 @@ class HttpVideoIndexerClient(
                 "accessToken" to getToken(),
                 "videoId" to videoId,
                 "videoUrl" to videoUrl,
-                "callbackUrl" to indexingProgressCallbackFactory.forVideo(videoId)
+                "callbackUrl" to publishAnalysedVideoLinkFactory.forVideo(videoId)
         )
 
         try {
