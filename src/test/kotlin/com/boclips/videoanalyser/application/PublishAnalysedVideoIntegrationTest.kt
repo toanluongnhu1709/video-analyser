@@ -1,7 +1,7 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.videoanalyser.config.Subscriptions
-import com.boclips.videoanalyser.config.Topics
+import com.boclips.videoanalyser.config.messaging.Subscriptions
+import com.boclips.videoanalyser.config.messaging.Topics
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 
 import org.assertj.core.api.Assertions

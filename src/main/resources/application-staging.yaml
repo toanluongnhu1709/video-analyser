@@ -1,12 +1,3 @@
-spring:
-  cloud:
-    stream:
-      bindings:
-        videos-to-analyse-subscription:
-          destination: videos-to-analyse-staging
-        analysed-videos-topic:
-          destination: analysed-videos-staging
-        analysed-video-ids-topic:
-          destination: analysed-video-ids-staging
-        analysed-video-ids-subscription:
-          destination: analysed-video-ids-staging
+pubsub:
+  topic:
+    suffix: staging

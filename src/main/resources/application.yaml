@@ -1,11 +1,2 @@
-spring:
-  cloud:
-    stream:
-      bindings:
-        videos-to-analyse:
-          group: video-analyser
-        analysed-videos:
-          group: video-analyser
-
 logging:
   config: "classpath:logback-json.xml"

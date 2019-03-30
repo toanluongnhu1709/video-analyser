@@ -1,7 +1,7 @@
 package com.boclips.videoanalyser.application
 
 import com.boclips.eventtypes.VideoToAnalyse
-import com.boclips.videoanalyser.config.Subscriptions
+import com.boclips.videoanalyser.config.messaging.Subscriptions
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
