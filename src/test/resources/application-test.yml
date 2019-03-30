@@ -1,5 +1,11 @@
 public.url: https://video-analyser.test-boclips.com
 
+microsoft:
+  videoindexer:
+    apiBaseUrl: "http://localhost:57407"
+    accountId: "test-account"
+    subscriptionKey: "test-subscription-key"
+
 spring:
   cloud:
     gcp:

@@ -1,5 +1,8 @@
 package com.boclips.videoanalyser.testsupport.fakes
 
+import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,9 +21,23 @@ abstract class AbstractSpringIntegrationTest {
     @Autowired
     lateinit var fakeVideoIndexer: FakeVideoIndexer
 
+    lateinit var wireMockServer: WireMockServer
+
     @BeforeEach
     fun resetState() {
         fakeVideoIndexer.clear()
     }
+
+    @BeforeEach
+    fun startWireMockServer() {
+        wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(57407))
+        wireMockServer.start()
+    }
+
+    @AfterEach
+    fun stopWireMockServer() {
+        wireMockServer.stop()
+    }
+
 
 }

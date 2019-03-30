@@ -12,13 +12,20 @@ import org.springframework.context.annotation.Profile
 @Configuration
 class InfrastructureContext(
         private val restTemplateBuilder: RestTemplateBuilder,
-        private val objectMapper: ObjectMapper
+        private val objectMapper: ObjectMapper,
+        private val videoIndexerProperties: VideoIndexerProperties
 ) {
 
     @Profile("!fake-video-indexer")
     @Bean
-    fun videoIndexer(videoIndexerProperties: VideoIndexerProperties, indexingProgressCallbackFactory: IndexingProgressCallbackFactory): VideoIndexer {
-        return HttpVideoIndexerClient(restTemplateBuilder.build(), videoIndexerProperties, indexingProgressCallbackFactory, videoIndexResourceParser())
+    fun videoIndexer(indexingProgressCallbackFactory: IndexingProgressCallbackFactory): VideoIndexer {
+        return HttpVideoIndexerClient(restTemplateBuilder.build(), videoIndexerProperties, videoIndexerTokenProvider(), indexingProgressCallbackFactory, videoIndexResourceParser())
+    }
+
+    @Profile("!fake-video-indexer")
+    @Bean
+    fun videoIndexerTokenProvider(): VideoIndexerTokenProvider {
+        return HttpVideoIndexerTokenProvider(restTemplateBuilder.build(), videoIndexerProperties)
     }
 
     @Bean

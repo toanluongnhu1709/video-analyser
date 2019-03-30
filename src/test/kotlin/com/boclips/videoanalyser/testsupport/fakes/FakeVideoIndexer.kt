@@ -1,6 +1,7 @@
 package com.boclips.videoanalyser.testsupport.fakes
 
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
+import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerTokenProvider
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexItemResource
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResource
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoInsightsResource
@@ -18,6 +19,12 @@ class FakeVideoIndexerConfiguration {
     @Primary
     fun fakeVideoIndexer(): FakeVideoIndexer {
         return FakeVideoIndexer()
+    }
+
+    @Bean
+    @Primary
+    fun fakeVideoIndexerTokenProvider(): FakeVideoIndexerTokenProvider {
+        return FakeVideoIndexerTokenProvider()
     }
 }
 
@@ -47,4 +54,10 @@ class FakeVideoIndexer : VideoIndexer {
 
     fun submittedVideo(videoId: String): String? = submittedVideos[videoId]
 
+}
+
+class FakeVideoIndexerTokenProvider : VideoIndexerTokenProvider {
+    override fun getToken(): String {
+        return "test-access-token"
+    }
 }

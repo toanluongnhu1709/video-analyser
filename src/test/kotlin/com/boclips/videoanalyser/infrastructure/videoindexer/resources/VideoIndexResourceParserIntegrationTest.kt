@@ -21,7 +21,7 @@ class VideoIndexResourceParserIntegrationTest : AbstractSpringIntegrationTest() 
 
     @BeforeEach
     fun setUp() {
-        videoIndexJsonString = videoIndexJsonResource.inputStream.readAllBytes().toString(UTF_8)
+        videoIndexJsonString = videoIndexJsonResource.inputStream.readBytes().toString(UTF_8)
     }
 
     @Test

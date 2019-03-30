@@ -3,11 +3,8 @@ package com.boclips.videoanalyser.infrastructure.videoindexer
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
 import com.boclips.videoanalyser.presentation.IndexingProgressCallbackFactory
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
-import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -16,61 +13,32 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.core.io.Resource
 
-class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
-
-    @Autowired
-    lateinit var restTemplateBuilder: RestTemplateBuilder
-
-    @Autowired
-    lateinit var indexingProgressCallbackFactory: IndexingProgressCallbackFactory
-
-    @Autowired
-    lateinit var videoIndexResourceParser: VideoIndexResourceParser
-
-    @Value("classpath:videoindexer/responses/videoUpload.json")
-    lateinit var videoUploadResponseResource: Resource
-
-    @Value("classpath:videoindexer/responses/videoIndex.json")
-    lateinit var videoIndexResponseResource: Resource
-
-    lateinit var wireMockServer: WireMockServer
+class HttpVideoIndexerClientIntegrationTest(
+        @Autowired val restTemplateBuilder: RestTemplateBuilder,
+        @Autowired val videoIndexerProperties: VideoIndexerProperties,
+        @Autowired val videoIndexerTokenProvider: VideoIndexerTokenProvider,
+        @Autowired val indexingProgressCallbackFactory: IndexingProgressCallbackFactory,
+        @Autowired val videoIndexResourceParser: VideoIndexResourceParser,
+        @Value("classpath:videoindexer/responses/videoUpload.json") val videoUploadResponseResource: Resource,
+        @Value("classpath:videoindexer/responses/videoIndex.json") val videoIndexResponseResource: Resource
+) : AbstractSpringIntegrationTest() {
 
     lateinit var videoIndexer: HttpVideoIndexerClient
 
     @BeforeEach
     fun setUp() {
-        wireMockServer = WireMockServer(wireMockConfig().dynamicPort())
-        wireMockServer.start()
-        val properties = VideoIndexerProperties(
-                apiBaseUrl = wireMockServer.baseUrl(),
-                accountId = "account1",
-                subscriptionKey = "subs-key"
-        )
-
         videoIndexer = HttpVideoIndexerClient(
                 restTemplate = restTemplateBuilder.build(),
-                properties = properties,
+                properties = videoIndexerProperties,
+                videoIndexerTokenProvider = videoIndexerTokenProvider,
                 indexingProgressCallbackFactory = indexingProgressCallbackFactory,
                 videoIndexResourceParser = videoIndexResourceParser
-
         )
-        wireMockServer.stubFor(get(urlPathEqualTo("/auth/northeurope/Accounts/account1/AccessToken"))
-                .withQueryParam("allowEdit", equalTo("true"))
-                .withHeader("Ocp-Apim-Subscription-Key", equalTo("subs-key"))
-                .willReturn(
-                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("\"test-access-token\"")
-                )
-        )
-    }
-
-    @AfterEach
-    fun tearDown() {
-        wireMockServer.stop()
     }
 
     @Test
     fun submit() {
-        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/account1/Videos"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
                 .willReturn(
                         aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoUploadResponseResource.inputStream.readBytes())
                 )
@@ -78,7 +46,7 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
 
         videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1")
 
-        wireMockServer.verify(postRequestedFor(urlPathEqualTo("/northeurope/Accounts/account1/Videos"))
+        wireMockServer.verify(postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
                 .withQueryParam("name", equalTo("video1"))
                 .withQueryParam("videoUrl", equalTo("https://cdnapisec.example.com/v/1"))
@@ -92,7 +60,7 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `submit throws when there is an error`() {
-        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/account1/Videos"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
                 .willReturn(
                         aResponse().withStatus(400).withBody("This is a test error")
                 )
@@ -110,7 +78,7 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
         val videoId = "video-id-1234"
         val microsoftVideoId = "ms-id-1234"
 
-        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/account1/Videos/GetIdByExternalId"))
+        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/GetIdByExternalId"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
                 .withQueryParam("externalId", equalTo(videoId))
                 .willReturn(
@@ -118,14 +86,14 @@ class HttpVideoIndexerClientIntegrationTest : AbstractSpringIntegrationTest() {
                 )
         )
 
-        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/account1/Videos/$microsoftVideoId/Index"))
+        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Index"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
                 .willReturn(
                         aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoIndexResponseResource.inputStream.readBytes())
                 )
         )
 
-        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/account1/Videos/$microsoftVideoId/Captions"))
+        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Captions"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
                 .withQueryParam("format", equalTo("vtt"))
                 .willReturn(
