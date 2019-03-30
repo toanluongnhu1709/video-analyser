@@ -4,6 +4,8 @@ import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoReso
 
 interface VideoIndexer {
 
+    fun isIndexed(videoId: String): Boolean
+
     fun submitVideo(videoId: String, videoUrl: String)
 
     fun getVideo(videoId: String): VideoResource

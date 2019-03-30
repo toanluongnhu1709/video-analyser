@@ -37,6 +37,23 @@ class HttpVideoIndexerClientIntegrationTest(
     }
 
     @Test
+    fun `isIndexed true when id lookup successful`() {
+        val videoId = "video-id-1234"
+        stubLookupByExternalId(videoId, "video-indexer-id")
+
+        val isIndexed = videoIndexer.isIndexed(videoId)
+
+        assertThat(isIndexed).isTrue()
+    }
+
+    @Test
+    fun `isIndexed false when id lookup NOT successful`() {
+        val isIndexed = videoIndexer.isIndexed("unknown-video-id")
+
+        assertThat(isIndexed).isFalse()
+    }
+
+    @Test
     fun submit() {
         wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
                 .willReturn(
@@ -78,13 +95,7 @@ class HttpVideoIndexerClientIntegrationTest(
         val videoId = "video-id-1234"
         val microsoftVideoId = "ms-id-1234"
 
-        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/GetIdByExternalId"))
-                .withQueryParam("accessToken", equalTo("test-access-token"))
-                .withQueryParam("externalId", equalTo(videoId))
-                .willReturn(
-                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("\"$microsoftVideoId\"")
-                )
-        )
+        stubLookupByExternalId(videoId, microsoftVideoId)
 
         wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Index"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
@@ -105,5 +116,15 @@ class HttpVideoIndexerClientIntegrationTest(
 
         assertThat(resource.index?.videos?.first()?.insights?.sourceLanguage).isEqualTo("en-US")
         assertThat(resource.captions).isEqualTo("contents of vtt file".toByteArray())
+    }
+
+    fun stubLookupByExternalId(videoId: String, microsoftVideoId: String) {
+        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/GetIdByExternalId"))
+                .withQueryParam("accessToken", equalTo("test-access-token"))
+                .withQueryParam("externalId", equalTo(videoId))
+                .willReturn(
+                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("\"$microsoftVideoId\"")
+                )
+        )
     }
 }

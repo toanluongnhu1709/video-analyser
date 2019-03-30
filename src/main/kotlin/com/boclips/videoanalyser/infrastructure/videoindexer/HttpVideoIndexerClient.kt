@@ -4,6 +4,7 @@ import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoInde
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResource
 import com.boclips.videoanalyser.presentation.PublishAnalysedVideoLinkFactory
 import mu.KLogging
+import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 
@@ -14,7 +15,6 @@ class HttpVideoIndexerClient(
         private val publishAnalysedVideoLinkFactory: PublishAnalysedVideoLinkFactory,
         private val videoIndexResourceParser: VideoIndexResourceParser
 ) : VideoIndexer {
-
     companion object : KLogging()
 
     override fun submitVideo(videoId: String, videoUrl: String) {
@@ -47,20 +47,36 @@ class HttpVideoIndexerClient(
         }
     }
 
-    override fun getVideo(videoId: String): VideoResource {
+    override fun isIndexed(videoId: String): Boolean {
+        return resolveId(videoId) != null
+    }
+
+    private fun resolveId(videoId: String): String? {
         val externalIdUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/GetIdByExternalId" +
                 "?accessToken={accessToken}" +
                 "&externalId={externalId}"
 
         val urlParams = mapOf("accessToken" to getToken(), "externalId" to videoId)
+
         val microsoftId = try {
             restTemplate.getForEntity(externalIdUrl, String::class.java, urlParams).body?.replace("\"", "").orEmpty()
         } catch(e: HttpStatusCodeException) {
+            if(e.statusCode == HttpStatus.NOT_FOUND) {
+                logger.info { "Video $videoId not known by Video Indexer" }
+                return null
+            }
+
             logger.error(e.responseBodyAsString)
             throw VideoIndexerException("Failed to resolve Video Indexer id for $videoId")
         }
-
         logger.info { "Resolved Video Indexer id for $videoId: $microsoftId" }
+
+        return microsoftId
+    }
+
+    override fun getVideo(videoId: String): VideoResource {
+
+        val microsoftId = resolveId(videoId) ?: throw VideoIndexerException("Video $videoId not known by Video Indexer")
 
         val getVideoIndexUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId/Index" +
                 "?accessToken={accessToken}"
@@ -92,6 +108,4 @@ class HttpVideoIndexerClient(
     private fun getToken(): String {
         return videoIndexerTokenProvider.getToken()
     }
-
 }
-

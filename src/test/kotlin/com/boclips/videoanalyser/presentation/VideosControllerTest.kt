@@ -1,6 +1,5 @@
 package com.boclips.videoanalyser.presentation
 
-import com.boclips.videoanalyser.config.messaging.Topics
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -13,8 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class VideosControllerTest(
         @Autowired val mockMvc: MockMvc,
-        @Autowired val publishAnalysedVideoLinkFactory: PublishAnalysedVideoLinkFactory,
-        @Autowired val topics: Topics
+        @Autowired val publishAnalysedVideoLinkFactory: PublishAnalysedVideoLinkFactory
 ) : AbstractSpringIntegrationTest() {
 
     @Test

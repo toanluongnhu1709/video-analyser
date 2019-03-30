@@ -29,6 +29,11 @@ class FakeVideoIndexerConfiguration {
 }
 
 class FakeVideoIndexer : VideoIndexer {
+
+    override fun isIndexed(videoId: String): Boolean {
+        return submittedVideos.containsKey(videoId)
+    }
+
     private val submittedVideos = mutableMapOf<String, String>()
 
     override fun submitVideo(videoId: String, videoUrl: String) {

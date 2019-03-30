@@ -7,6 +7,10 @@ import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoReso
 
 class VideoIndexerAnalyserService(private val videoIndexer: VideoIndexer) : VideoAnalyserService {
 
+    override fun isAnalysed(videoId: String): Boolean {
+        return videoIndexer.isIndexed(videoId)
+    }
+
     override fun submitVideo(videoId: String, videoUrl: String) {
         videoIndexer.submitVideo(videoId, videoUrl)
     }

@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class PublishAnalysedVideoIdIntegrationTest(
-        @Autowired val publishAnalysedVideoId: PublishAnalysedVideoId,
-        @Autowired val topics: Topics
+        @Autowired val publishAnalysedVideoId: PublishAnalysedVideoId
 ) : AbstractSpringIntegrationTest() {
 
     @Test

@@ -16,7 +16,7 @@ class ApplicationContext(
 
     @Bean
     fun analyseVideo(): AnalyseVideo {
-        return AnalyseVideo(videoAnalyserService)
+        return AnalyseVideo(videoAnalyserService, topics)
     }
 
     @Bean

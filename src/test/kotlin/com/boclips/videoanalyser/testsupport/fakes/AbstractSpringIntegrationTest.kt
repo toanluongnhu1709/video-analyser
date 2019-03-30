@@ -1,5 +1,7 @@
 package com.boclips.videoanalyser.testsupport.fakes
 
+import com.boclips.videoanalyser.config.messaging.Subscriptions
+import com.boclips.videoanalyser.config.messaging.Topics
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.junit.jupiter.api.AfterEach
@@ -22,6 +24,12 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var fakeVideoIndexer: FakeVideoIndexer
 
     @Autowired
+    lateinit var topics: Topics
+
+    @Autowired
+    lateinit var subscriptions: Subscriptions
+
+    @Autowired
     lateinit var messageCollector: MessageCollector
 
     lateinit var wireMockServer: WireMockServer
@@ -29,6 +37,8 @@ abstract class AbstractSpringIntegrationTest {
     @BeforeEach
     fun resetState() {
         fakeVideoIndexer.clear()
+        messageCollector.forChannel(topics.analysedVideoIds()).clear()
+        messageCollector.forChannel(topics.analysedVideos()).clear()
     }
 
     @BeforeEach
