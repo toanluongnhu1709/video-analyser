@@ -6,3 +6,7 @@ spring:
           destination: videos-to-analyse-production
         analysed-videos:
           destination: analysed-videos-production
+        analysed-video-ids-topic:
+          destination: analysed-video-ids-production
+        analysed-video-ids-subscription:
+          destination: analysed-video-ids-production
