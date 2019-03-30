@@ -23,7 +23,7 @@ class AnalyseVideo(
         val alreadyAnalysed = try {
             videoAnalyserService.isAnalysed(videoId)
         } catch(e: Exception) {
-            logger.warn { "Check if video $videoId is already analysed failed and will not be retried." }
+            logger.warn(e) { "Check if video $videoId is already analysed failed and will not be retried." }
             return
         }
 
