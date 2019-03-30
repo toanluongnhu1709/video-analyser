@@ -36,7 +36,7 @@ class AnalyseVideo(
         try {
             videoAnalyserService.submitVideo(videoId, videoToAnalyse.videoUrl)
         } catch (e: Exception) {
-            logger.warn { "Submission of video $videoId to the analyser failed and will not be retried." }
+            logger.warn(e) { "Submission of video $videoId to the analyser failed and will not be retried." }
         }
     }
 }
