@@ -2,9 +2,9 @@ spring:
   cloud:
     stream:
       bindings:
-        videos-to-analyse:
+        videos-to-analyse-subscription:
           destination: videos-to-analyse-staging
-        analysed-videos:
+        analysed-videos-topic:
           destination: analysed-videos-staging
         analysed-video-ids-topic:
           destination: analysed-video-ids-staging

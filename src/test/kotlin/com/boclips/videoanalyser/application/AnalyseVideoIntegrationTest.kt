@@ -1,9 +1,8 @@
 package com.boclips.videoanalyser.application
 
 import com.boclips.eventtypes.VideoToAnalyse
-import com.boclips.videoanalyser.config.VideosToAnalyseTopic
+import com.boclips.videoanalyser.config.Subscriptions
 import com.boclips.videoanalyser.domain.VideoAnalyserService
-import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
@@ -19,7 +18,7 @@ import java.lang.RuntimeException
 class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Autowired
-    lateinit var videosToAnalyseTopic: VideosToAnalyseTopic
+    lateinit var subscriptions: Subscriptions
 
     lateinit var videoToAnalyse: VideoToAnalyse
 
@@ -33,7 +32,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `videos to analyse published as events are submitted to video indexer`() {
-        videosToAnalyseTopic.input().send(MessageBuilder.withPayload(videoToAnalyse).build())
+        subscriptions.videosToAnalyse().send(MessageBuilder.withPayload(videoToAnalyse).build())
 
         assertThat(fakeVideoIndexer.submittedVideo("1")).isEqualTo("http://vid.eo/1.mp4")
     }

@@ -3,17 +3,14 @@ package com.boclips.videoanalyser.config.application
 import com.boclips.videoanalyser.application.AnalyseVideo
 import com.boclips.videoanalyser.application.PublishAnalysedVideo
 import com.boclips.videoanalyser.application.PublishAnalysedVideoId
-import com.boclips.videoanalyser.config.AnalysedVideoIdsTopic
-import com.boclips.videoanalyser.config.AnalysedVideosTopic
+import com.boclips.videoanalyser.config.Topics
 import com.boclips.videoanalyser.domain.VideoAnalyserService
-import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 class ApplicationContext(
-        private val analysedVideosTopic: AnalysedVideosTopic,
-        private val analysedVideoIdsTopic: AnalysedVideoIdsTopic,
+        private val topics: Topics,
         private val videoAnalyserService: VideoAnalyserService
 ) {
 
@@ -23,15 +20,12 @@ class ApplicationContext(
     }
 
     @Bean
-    fun publishAnalysedVideo() : PublishAnalysedVideo {
-        return PublishAnalysedVideo(
-                analysedVideosTopic,
-                videoAnalyserService
-        )
+    fun publishAnalysedVideo(): PublishAnalysedVideo {
+        return PublishAnalysedVideo(topics, videoAnalyserService)
     }
 
     @Bean
-    fun publishAnalysedVideoId() : PublishAnalysedVideoId {
-        return PublishAnalysedVideoId(analysedVideoIdsTopic)
+    fun publishAnalysedVideoId(): PublishAnalysedVideoId {
+        return PublishAnalysedVideoId(topics)
     }
 }

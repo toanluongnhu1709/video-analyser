@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.presentation
 
-import com.boclips.videoanalyser.config.AnalysedVideoIdsTopic
+import com.boclips.videoanalyser.config.Topics
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class VideosControllerTest(
         @Autowired val mockMvc: MockMvc,
         @Autowired val publishAnalysedVideoLinkFactory: PublishAnalysedVideoLinkFactory,
-        @Autowired val videoIndexerVideoReadyTopic: AnalysedVideoIdsTopic
+        @Autowired val topics: Topics
 ) : AbstractSpringIntegrationTest() {
 
     @Test
@@ -41,7 +41,7 @@ class VideosControllerTest(
         mockMvc.perform(post("$callback?id=msid&state=Processed"))
                 .andExpect(status().isOk)
 
-        val videoReadyMessage = messageCollector.forChannel(videoIndexerVideoReadyTopic.output()).poll()
+        val videoReadyMessage = messageCollector.forChannel(topics.analysedVideoIds()).poll()
 
         assertThat(videoReadyMessage.payload.toString()).isEqualTo("123")
     }

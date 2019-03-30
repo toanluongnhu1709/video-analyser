@@ -8,45 +8,34 @@ import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.SubscribableChannel
 
 @Configuration
-@EnableBinding(VideosToAnalyseTopic::class, AnalysedVideosTopic::class, AnalysedVideoIdsTopic::class, AnalysedVideoIdsSubscription::class)
+@EnableBinding(Topics::class, Subscriptions::class)
 class MessagingContext
 
-interface VideosToAnalyseTopic {
+interface Topics {
 
-    @Input(VideosToAnalyseTopic.INPUT)
-    fun input(): SubscribableChannel
+    @Output(ANALYSED_VIDEO_IDS)
+    fun analysedVideoIds(): MessageChannel
+
+    @Output(ANALYSED_VIDEOS)
+    fun analysedVideos(): MessageChannel
 
     companion object {
-        const val INPUT = "videos-to-analyse"
+        const val ANALYSED_VIDEO_IDS = "analysed-video-ids-topic"
+        const val ANALYSED_VIDEOS = "analysed-videos-topic"
     }
 }
 
-interface AnalysedVideosTopic {
+interface Subscriptions {
 
-    @Output(AnalysedVideosTopic.OUTPUT)
-    fun output(): MessageChannel
+    @Input(ANALYSED_VIDEO_IDS)
+    fun analysedVideoIds(): SubscribableChannel
 
-    companion object {
-        const val OUTPUT = "analysed-videos"
-    }
-}
-
-interface AnalysedVideoIdsTopic {
-
-    @Output(AnalysedVideoIdsTopic.OUTPUT)
-    fun output(): MessageChannel
+    @Input(VIDEOS_TO_ANALYSE)
+    fun videosToAnalyse(): SubscribableChannel
 
     companion object {
-        const val OUTPUT = "analysed-video-ids-topic"
+        const val ANALYSED_VIDEO_IDS = "analysed-video-ids-subscription"
+        const val VIDEOS_TO_ANALYSE = "videos-to-analyse-subscription"
     }
-}
 
-interface AnalysedVideoIdsSubscription {
-
-    @Input(AnalysedVideoIdsSubscription.INPUT)
-    fun input(): SubscribableChannel
-
-    companion object {
-        const val INPUT = "analysed-video-ids-subscription"
-    }
 }
