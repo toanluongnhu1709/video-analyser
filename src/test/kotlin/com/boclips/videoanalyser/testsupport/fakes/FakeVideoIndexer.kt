@@ -35,7 +35,7 @@ class FakeVideoIndexer : VideoIndexer {
         submittedVideos[videoId] = videoUrl
     }
 
-    override fun getVideoIndex(videoId: String): VideoResource {
+    override fun getVideo(videoId: String): VideoResource {
         val video = VideoIndexItemResource(
                 externalId = videoId,
                 insights = VideoInsightsResource(

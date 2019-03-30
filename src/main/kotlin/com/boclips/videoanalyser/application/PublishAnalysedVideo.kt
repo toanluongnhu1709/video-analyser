@@ -1,20 +1,16 @@
 package com.boclips.videoanalyser.application
 
 import com.boclips.videoanalyser.config.AnalysedVideosTopic
-import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
-import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResourceToAnalysedVideoConverter
+import com.boclips.videoanalyser.domain.VideoAnalyserService
 import org.springframework.messaging.support.MessageBuilder
 
 class PublishAnalysedVideo(
         private val analysedVideosTopic: AnalysedVideosTopic,
-        private val videoIndexer: VideoIndexer
+        private val videoAnalyserService: VideoAnalyserService
 ) {
-
     fun execute(videoId: String) {
-        val videoResource = videoIndexer.getVideoIndex(videoId = videoId)
+        val video = videoAnalyserService.getVideo(videoId)
 
-        val analysedVideo = VideoResourceToAnalysedVideoConverter.convert(videoResource)
-
-        analysedVideosTopic.output().send(MessageBuilder.withPayload(analysedVideo).build())
+        analysedVideosTopic.output().send(MessageBuilder.withPayload(video).build())
     }
 }

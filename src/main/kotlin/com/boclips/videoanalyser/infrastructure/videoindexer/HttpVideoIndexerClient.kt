@@ -50,7 +50,7 @@ class HttpVideoIndexerClient(
         }
     }
 
-    override fun getVideoIndex(videoId: String): VideoResource {
+    override fun getVideo(videoId: String): VideoResource {
         val externalIdUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/GetIdByExternalId" +
                 "?accessToken={accessToken}" +
                 "&externalId={externalId}"

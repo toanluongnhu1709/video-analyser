@@ -101,7 +101,7 @@ class HttpVideoIndexerClientIntegrationTest(
                 )
         )
 
-        val resource = videoIndexer.getVideoIndex(videoId)
+        val resource = videoIndexer.getVideo(videoId)
 
         assertThat(resource.index?.videos?.first()?.insights?.sourceLanguage).isEqualTo("en-US")
         assertThat(resource.captions).isEqualTo("contents of vtt file".toByteArray())

@@ -2,6 +2,7 @@ package com.boclips.videoanalyser.application
 
 import com.boclips.eventtypes.VideoToAnalyse
 import com.boclips.videoanalyser.config.VideosToAnalyseTopic
+import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
@@ -39,11 +40,11 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `video indexer exceptions are handled`() {
-        val videoIndexer = mock<VideoIndexer>()
+        val videoAnalyserService = mock<VideoAnalyserService>()
 
-        whenever(videoIndexer.submitVideo(any(), any())).thenThrow(RuntimeException("something went wrong"))
+        whenever(videoAnalyserService.submitVideo(any(), any())).thenThrow(RuntimeException("something went wrong"))
 
-        val analyseVideo = AnalyseVideo(videoIndexer)
+        val analyseVideo = AnalyseVideo(videoAnalyserService)
 
         assertThatCode { analyseVideo.execute(videoToAnalyse) }.doesNotThrowAnyException()
     }
