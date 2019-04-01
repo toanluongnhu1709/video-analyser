@@ -1,6 +1,5 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.videoanalyser.config.messaging.Topics
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

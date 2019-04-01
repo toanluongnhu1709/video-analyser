@@ -16,7 +16,12 @@ class PublishAnalysedVideo(
     @StreamListener(ANALYSED_VIDEO_IDS_SUBSCRIPTION)
     fun execute(videoId: String) {
         logger.info { "Requesting analysed video $videoId" }
-        val video = videoAnalyserService.getVideo(videoId)
+        val video = try {
+            videoAnalyserService.getVideo(videoId)
+        } catch(e: Exception) {
+            logger.warn(e) { "Request of analysed video $videoId failed and will not be retried." }
+            return
+        }
 
         logger.info { "Publishing analysed video $videoId" }
         topics.analysedVideos().send(MessageBuilder.withPayload(video).build())
