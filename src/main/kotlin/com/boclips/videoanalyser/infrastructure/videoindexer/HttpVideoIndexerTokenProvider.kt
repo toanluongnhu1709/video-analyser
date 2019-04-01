@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer
 
+import mu.KLogging
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -19,16 +20,18 @@ class HttpVideoIndexerTokenProvider(
         private val properties: VideoIndexerProperties
 ) : VideoIndexerTokenProvider {
 
+    companion object : KLogging()
+
     private var token = Token("", expires = Instant.MIN)
 
     @Synchronized
     override fun getToken(): String {
         if(token.hasExpired()) {
-            HttpVideoIndexerClient.logger.info { "Requesting a Video Indexer token" }
+            logger.info { "Requesting a Video Indexer token" }
             token = doGetToken()
-            HttpVideoIndexerClient.logger.info { "Received a Video Indexer token: ${token.value.substring(0, 5)}..." }
+            logger.info { "Received a Video Indexer token: ${token.value.substring(0, 5)}..." }
         } else {
-            HttpVideoIndexerClient.logger.info { "Re-using the existing Video Indexer token: ${token.value.substring(0, 5)}..." }
+            logger.debug { "Re-using the existing Video Indexer token: ${token.value.substring(0, 5)}..." }
         }
         return token.value
     }

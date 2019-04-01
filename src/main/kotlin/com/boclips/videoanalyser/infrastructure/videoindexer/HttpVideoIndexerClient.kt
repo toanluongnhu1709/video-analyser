@@ -18,7 +18,7 @@ class HttpVideoIndexerClient(
     companion object : KLogging()
 
     override fun submitVideo(videoId: String, videoUrl: String) {
-        logger.info { "Submitting $videoUrl to the Video Indexer" }
+        logger.info { "Submitting $videoId to the Video Indexer" }
 
         val videosUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos" +
                 "?accessToken={accessToken}" +
