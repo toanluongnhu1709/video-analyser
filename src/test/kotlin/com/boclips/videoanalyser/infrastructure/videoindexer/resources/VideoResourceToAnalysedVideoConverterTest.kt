@@ -208,23 +208,19 @@ class VideoResourceToAnalysedVideoConverterTest {
     }
 
     @Test
-    fun `throws when topics are not set`() {
+    fun `returns empty topics when they are not set`() {
         val videoResource = createVideoResource(insights = insights.copy(topics = null))
 
-        val exception = assertThrows<VideoIndexerException> {
-            convert(videoResource)
-        }
-        assertThat(exception.message).isEqualTo("No video topics")
+        val analysedVideo = convert(videoResource)
+        assertThat(analysedVideo.topics).isEmpty()
     }
 
     @Test
-    fun `throws when keywords are not set`() {
+    fun `returns empty keywords when they are not set`() {
         val videoResource = createVideoResource(insights = insights.copy(keywords = null))
 
-        val exception = assertThrows<VideoIndexerException> {
-            convert(videoResource)
-        }
-        assertThat(exception.message).isEqualTo("No video keywords")
+        val analysedVideo = convert(videoResource)
+        assertThat(analysedVideo.keywords).isEmpty()
     }
 
     @Test

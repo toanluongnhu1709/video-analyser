@@ -18,10 +18,10 @@ object VideoResourceToAnalysedVideoConverter {
 
         val language = insights.sourceLanguage ?: throw VideoIndexerException("No video language")
 
-        val keywordsResources = insights.keywords ?: throw VideoIndexerException("No video keywords")
+        val keywordsResources = insights.keywords.orEmpty()
         val keywords = keywordsResources.map(this::convertKeyword)
 
-        val topicResources = insights.topics ?: throw VideoIndexerException("No video topics")
+        val topicResources = insights.topics.orEmpty()
         val topics = topicResources.map(this::convertTopic)
 
         val transcriptResources = insights.transcript ?: throw VideoIndexerException("No video transcript")
