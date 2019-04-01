@@ -85,7 +85,7 @@ class HttpVideoIndexerClient(
                 "?accessToken={accessToken}" +
                 "&format=vtt"
 
-        logger.info { "GETting $getVideoIndexUrl" }
+        logger.debug { "GETting $getVideoIndexUrl" }
         val response = try {
                 restTemplate.getForEntity(getVideoIndexUrl, String::class.java, mapOf("accessToken" to getToken())).body
         } catch(e: HttpStatusCodeException) {
