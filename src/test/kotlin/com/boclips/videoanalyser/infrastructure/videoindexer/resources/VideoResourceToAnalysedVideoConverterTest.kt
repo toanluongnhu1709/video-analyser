@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer.resources
 
+import com.boclips.eventtypes.AnalysedVideo
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerException
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResourceToAnalysedVideoConverter.convert
 import org.assertj.core.api.Assertions.assertThat
@@ -103,7 +104,8 @@ class VideoResourceToAnalysedVideoConverterTest {
 
         val analysedVideo = convert(videoResource)
 
-        assertThat(analysedVideo.captions).isEqualTo("The caption text")
+        assertThat(analysedVideo.captions.content).isEqualTo("The caption text")
+        assertThat(analysedVideo.captions.format).isEqualTo(AnalysedVideo.CaptionsFormat.VTT)
     }
 
     @Test
