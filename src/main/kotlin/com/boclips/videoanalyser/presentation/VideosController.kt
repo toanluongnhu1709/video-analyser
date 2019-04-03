@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.presentation
 
-import com.boclips.eventtypes.VideoToAnalyse
+import com.boclips.events.types.VideoToAnalyse
 import com.boclips.videoanalyser.application.AnalyseVideo
 import com.boclips.videoanalyser.application.PublishAnalysedVideoId
 import org.springframework.http.HttpStatus

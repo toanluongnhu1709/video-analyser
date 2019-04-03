@@ -1,7 +1,7 @@
 package com.boclips.videoanalyser.config.messaging
 
-import com.boclips.eventtypes.Topics.ANALYSED_VIDEOS_TOPIC
-import com.boclips.eventtypes.Topics.ANALYSED_VIDEO_IDS_TOPIC
+import com.boclips.events.types.Topics.ANALYSED_VIDEOS_TOPIC
+import com.boclips.events.types.Topics.ANALYSED_VIDEO_IDS_TOPIC
 import org.springframework.cloud.stream.annotation.Output
 import org.springframework.messaging.MessageChannel
 

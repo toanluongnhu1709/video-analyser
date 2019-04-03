@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.eventtypes.Topics.ANALYSED_VIDEO_IDS_SUBSCRIPTION
+import com.boclips.events.types.Topics.ANALYSED_VIDEO_IDS_SUBSCRIPTION
 import com.boclips.videoanalyser.config.messaging.Topics
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import mu.KLogging
