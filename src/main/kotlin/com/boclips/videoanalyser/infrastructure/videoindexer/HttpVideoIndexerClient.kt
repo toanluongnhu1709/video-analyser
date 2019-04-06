@@ -31,12 +31,10 @@ class HttpVideoIndexerClient(
                 "&indexingPreset=AudioOnly" +
                 "&privacy=Private"
 
-        val urlParams = mapOf(
-                "accessToken" to getToken(),
-                "videoId" to videoId,
-                "videoUrl" to videoUrl,
-                "callbackUrl" to publishAnalysedVideoLinkFactory.forVideo(videoId)
-        )
+        val urlParams = params()
+                .plus("videoId" to videoId)
+                .plus("videoUrl" to videoUrl)
+                .plus("callbackUrl" to publishAnalysedVideoLinkFactory.forVideo(videoId))
 
         try {
             restTemplate.postForEntity(videosUrl, "", String::class.java, urlParams)
@@ -54,9 +52,9 @@ class HttpVideoIndexerClient(
     private fun resolveId(videoId: String): String? {
         val externalIdUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/GetIdByExternalId" +
                 "?accessToken={accessToken}" +
-                "&externalId={externalId}"
+                "&externalId={videoId}"
 
-        val urlParams = mapOf("accessToken" to getToken(), "externalId" to videoId)
+        val urlParams = params().plus("videoId" to videoId)
 
         val microsoftId = try {
             restTemplate.getForEntity(externalIdUrl, String::class.java, urlParams).body?.replace("\"", "").orEmpty()
@@ -75,26 +73,25 @@ class HttpVideoIndexerClient(
     }
 
     override fun getVideo(videoId: String): VideoResource {
-
         val microsoftId = resolveId(videoId) ?: throw VideoIndexerException("Video $videoId not known by Video Indexer")
 
-        val getVideoIndexUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId/Index" +
+        val videoIndexUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId/Index" +
                 "?accessToken={accessToken}"
 
-        val getVideoCaptionsUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId/Captions" +
+        val videoCaptionsUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId/Captions" +
                 "?accessToken={accessToken}" +
                 "&format=vtt"
 
-        logger.debug { "GETting $getVideoIndexUrl" }
+        logger.debug { "GETting $videoIndexUrl" }
         val response = try {
-                restTemplate.getForEntity(getVideoIndexUrl, String::class.java, mapOf("accessToken" to getToken())).body
+                restTemplate.getForEntity(videoIndexUrl, String::class.java, params()).body
         } catch(e: HttpStatusCodeException) {
             logger.error(e.responseBodyAsString)
             throw VideoIndexerException("Failed to fetch video $videoId from Video Indexer")
         }
 
         val captionsResponse = try {
-            restTemplate.getForEntity(getVideoCaptionsUrl, ByteArray::class.java, mapOf("accessToken" to getToken())).body
+            restTemplate.getForEntity(videoCaptionsUrl, ByteArray::class.java, params()).body
         } catch(e: HttpStatusCodeException) {
             logger.error(e.responseBodyAsString)
             throw VideoIndexerException("Failed to fetch captions of video $videoId from Video Indexer")
@@ -105,7 +102,18 @@ class HttpVideoIndexerClient(
         return VideoResource(index = videoIndexResource, captions = captionsResponse!!)
     }
 
-    private fun getToken(): String {
-        return videoIndexerTokenProvider.getToken()
+    override fun deleteSourceFile(videoId: String) {
+        val microsoftId = resolveId(videoId) ?: throw VideoIndexerException("Video $videoId not known by Video Indexer")
+
+        val sourceFileUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId/SourceFile" +
+                "?accessToken={accessToken}"
+
+        logger.info { "Deleting source file of video $videoId" }
+        restTemplate.delete(sourceFileUrl, params())
+        logger.info { "Source file of video $videoId deleted" }
+    }
+
+    private fun params(): Map<String, Any> {
+        return mapOf("accessToken" to videoIndexerTokenProvider.getToken())
     }
 }

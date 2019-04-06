@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
+import java.lang.RuntimeException
 
 @Profile("fake-video-indexer")
 @Configuration
@@ -28,19 +29,24 @@ class FakeVideoIndexerConfiguration {
     }
 }
 
+data class IndexerVideo(val videoUrl: String, val sourceFileAvailable: Boolean)
+
 class FakeVideoIndexer : VideoIndexer {
+    private val submittedVideos = mutableMapOf<String, IndexerVideo>()
 
     override fun isIndexed(videoId: String): Boolean {
         return submittedVideos.containsKey(videoId)
     }
 
-    private val submittedVideos = mutableMapOf<String, String>()
-
     override fun submitVideo(videoId: String, videoUrl: String) {
-        submittedVideos[videoId] = videoUrl
+        submittedVideos[videoId] = IndexerVideo(videoUrl = videoUrl, sourceFileAvailable = true)
     }
 
     override fun getVideo(videoId: String): VideoResource {
+        if(!submittedVideos.containsKey(videoId)) {
+            throw RuntimeException("no such video")
+        }
+
         val video = VideoIndexItemResource(
                 externalId = videoId,
                 insights = VideoInsightsResource(
@@ -53,12 +59,17 @@ class FakeVideoIndexer : VideoIndexer {
         return VideoResource(index = VideoIndexResource(videos = listOf(video)), captions = ByteArray(0))
     }
 
+    override fun deleteSourceFile(videoId: String) {
+        submittedVideos[videoId]?.let { video ->
+            submittedVideos[videoId] = video.copy(sourceFileAvailable = false)
+        }
+    }
+
     fun clear() {
         submittedVideos.clear()
     }
 
-    fun submittedVideo(videoId: String): String? = submittedVideos[videoId]
-
+    fun submittedVideo(videoId: String): IndexerVideo? = submittedVideos[videoId]
 }
 
 class FakeVideoIndexerTokenProvider : VideoIndexerTokenProvider {

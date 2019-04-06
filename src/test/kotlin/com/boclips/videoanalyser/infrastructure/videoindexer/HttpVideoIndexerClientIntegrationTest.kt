@@ -118,6 +118,24 @@ class HttpVideoIndexerClientIntegrationTest(
         assertThat(resource.captions).isEqualTo("contents of vtt file".toByteArray())
     }
 
+    @Test
+    fun deleteSourceFile() {
+        val videoId = "video-id-1234"
+        val microsoftVideoId = "ms-id-1234"
+
+        stubLookupByExternalId(videoId, microsoftVideoId)
+
+        wireMockServer.stubFor(delete(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/SourceFile"))
+                .willReturn(aResponse().withStatus(204))
+        )
+
+        videoIndexer.deleteSourceFile(videoId)
+
+        wireMockServer.verify(1, deleteRequestedFor(
+                urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/SourceFile")
+        ).withQueryParam("accessToken", equalTo("test-access-token")))
+    }
+
     fun stubLookupByExternalId(videoId: String, microsoftVideoId: String) {
         wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/GetIdByExternalId"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))

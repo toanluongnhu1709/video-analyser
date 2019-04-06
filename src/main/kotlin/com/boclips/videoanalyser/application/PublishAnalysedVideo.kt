@@ -25,5 +25,12 @@ class PublishAnalysedVideo(
 
         logger.info { "Publishing analysed video $videoId" }
         topics.analysedVideos().send(MessageBuilder.withPayload(video).build())
+
+        logger.info { "Deleting source file of analysed video $videoId"}
+        try {
+            videoAnalyserService.deleteSourceFile(videoId)
+        } catch(e: Exception) {
+            logger.error(e) { "Error deleting source file for video $videoId" }
+        }
     }
 }

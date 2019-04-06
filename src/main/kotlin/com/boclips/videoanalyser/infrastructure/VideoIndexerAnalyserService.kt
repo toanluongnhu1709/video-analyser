@@ -6,7 +6,6 @@ import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResourceToAnalysedVideoConverter
 
 class VideoIndexerAnalyserService(private val videoIndexer: VideoIndexer) : VideoAnalyserService {
-
     override fun isAnalysed(videoId: String): Boolean {
         return videoIndexer.isIndexed(videoId)
     }
@@ -18,6 +17,10 @@ class VideoIndexerAnalyserService(private val videoIndexer: VideoIndexer) : Vide
     override fun getVideo(videoId: String): AnalysedVideo {
         val videoResource = videoIndexer.getVideo(videoId)
         return VideoResourceToAnalysedVideoConverter.convert(videoResource)
+    }
+
+    override fun deleteSourceFile(videoId: String) {
+        videoIndexer.deleteSourceFile(videoId)
     }
 
 }
