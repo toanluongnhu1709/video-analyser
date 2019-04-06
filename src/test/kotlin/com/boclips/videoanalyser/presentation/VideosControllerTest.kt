@@ -21,7 +21,7 @@ class VideosControllerTest(
         mockMvc.perform(post("/v1/videos/123/analyse").param("videoUrl", "http://videos.com/v1").contentType(APPLICATION_JSON))
                 .andExpect(status().isAccepted)
 
-        assertThat(fakeVideoIndexer.submittedVideo("123")).isEqualTo("http://videos.com/v1")
+        assertThat(fakeVideoIndexer.submittedVideo("123")?.videoUrl).isEqualTo("http://videos.com/v1")
     }
 
     @Test

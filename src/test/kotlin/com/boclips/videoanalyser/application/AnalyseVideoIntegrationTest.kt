@@ -31,7 +31,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `videos get submitted to video indexer if not indexed yet`() {
         subscriptions.videosToAnalyse().send(MessageBuilder.withPayload(videoToAnalyse).build())
 
-        assertThat(fakeVideoIndexer.submittedVideo("1")).isEqualTo("http://vid.eo/1.mp4")
+        assertThat(fakeVideoIndexer.submittedVideo("1")?.videoUrl).isEqualTo("http://vid.eo/1.mp4")
     }
 
     @Test
@@ -49,7 +49,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         subscriptions.videosToAnalyse().send(MessageBuilder.withPayload(videoToAnalyse).build())
 
-        assertThat(fakeVideoIndexer.submittedVideo("1")).isEqualTo("http://old.url")
+        assertThat(fakeVideoIndexer.submittedVideo("1")?.videoUrl).isEqualTo("http://old.url")
     }
 
     @Test
