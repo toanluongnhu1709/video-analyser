@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer.resources
 
-import com.boclips.events.types.AnalysedVideo
+import com.boclips.events.types.CaptionsFormat
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerException
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResourceToAnalysedVideoConverter.convert
 import org.assertj.core.api.Assertions.assertThat
@@ -105,7 +105,7 @@ class VideoResourceToAnalysedVideoConverterTest {
         val analysedVideo = convert(videoResource)
 
         assertThat(analysedVideo.captions.content).isEqualTo("The caption text")
-        assertThat(analysedVideo.captions.format).isEqualTo(AnalysedVideo.CaptionsFormat.VTT)
+        assertThat(analysedVideo.captions.format).isEqualTo(CaptionsFormat.VTT)
     }
 
     @Test
@@ -115,11 +115,11 @@ class VideoResourceToAnalysedVideoConverterTest {
         val analysedVideo = convert(videoResource)
 
         val topic = analysedVideo.topics.first()
-        assertThat(topic.value.name).isEqualTo("Child topic")
-        assertThat(topic.value.language).isEqualTo("pl-PL")
-        assertThat(topic.value.parent.name).isEqualTo("Parent topic")
-        assertThat(topic.value.parent.language).isEqualTo("pl-PL")
-        assertThat(topic.value.parent.parent).isNull()
+        assertThat(topic.name).isEqualTo("Child topic")
+        assertThat(topic.language).isEqualTo("pl-PL")
+        assertThat(topic.parent.name).isEqualTo("Parent topic")
+        assertThat(topic.parent.language).isEqualTo("pl-PL")
+        assertThat(topic.parent.parent).isNull()
         assertThat(topic.confidence).isEqualTo(0.85)
         assertThat(topic.segments.first().startSecond).isEqualTo(0)
         assertThat(topic.segments.first().endSecond).isEqualTo(74)
@@ -132,8 +132,8 @@ class VideoResourceToAnalysedVideoConverterTest {
         val analysedVideo = convert(videoResource)
 
         val topic = analysedVideo.keywords.first()
-        assertThat(topic.value.name).isEqualTo("keyword")
-        assertThat(topic.value.language).isEqualTo("es-ES")
+        assertThat(topic.name).isEqualTo("keyword")
+        assertThat(topic.language).isEqualTo("es-ES")
         assertThat(topic.confidence).isEqualTo(0.6)
         assertThat(topic.segments.first().startSecond).isEqualTo(88)
         assertThat(topic.segments.first().endSecond).isEqualTo(89)

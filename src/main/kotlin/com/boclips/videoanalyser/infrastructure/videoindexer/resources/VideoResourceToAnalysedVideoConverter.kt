@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer.resources
 
-import com.boclips.events.types.AnalysedVideo
+import com.boclips.events.types.*
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerException
 import java.nio.charset.StandardCharsets
 
@@ -33,9 +33,10 @@ object VideoResourceToAnalysedVideoConverter {
                 .videoId(videoId)
                 .language(language)
                 .transcript(transcript)
-                .captions(AnalysedVideo.Captions.builder()
+                .captions(Captions.builder()
                         .content(String(captions, StandardCharsets.UTF_8))
-                        .format(AnalysedVideo.CaptionsFormat.VTT)
+                        .language(language)
+                        .format(CaptionsFormat.VTT)
                         .build()
                 )
                 .topics(topics)
@@ -43,48 +44,45 @@ object VideoResourceToAnalysedVideoConverter {
                 .build()
     }
 
-    private fun convertKeyword(keywordResource: KeywordResource): AnalysedVideo.Assigned<AnalysedVideo.Keyword> {
-        val keyword = AnalysedVideo.Keyword.builder()
-                .name(keywordResource.text!!)
-                .language(keywordResource.language!!)
-                .build()
+    private fun convertKeyword(keywordResource: KeywordResource): AnalysedVideoKeyword {
         val segments = convertTimeRanges(keywordResource.instances!!)
 
-        return AnalysedVideo.Assigned.builder<AnalysedVideo.Keyword>()
-                .value(keyword)
+        return AnalysedVideoKeyword.builder()
+                .name(keywordResource.text!!)
+                .language(keywordResource.language!!)
                 .confidence(keywordResource.confidence!!)
                 .segments(segments)
                 .build()
     }
 
-    private fun convertTopic(topicResource: TopicResource): AnalysedVideo.Assigned<AnalysedVideo.Topic> {
-        val topic = parseTopicReferenceId(topicResource.referenceId!!, topicResource.language!!)
+    private fun convertTopic(topicResource: TopicResource): AnalysedVideoTopic {
         val segments = convertTimeRanges(topicResource.instances!!)
-        return AnalysedVideo.Assigned.builder<AnalysedVideo.Topic>()
-                .confidence(topicResource.confidence!!)
-                .value(topic)
+        return parseTopicReferenceId(topicResource.referenceId!!, topicResource.language!!).toBuilder()
                 .segments(segments)
+                .confidence(topicResource.confidence!!)
                 .build()
     }
 
-    private fun parseTopicReferenceId(referenceId: String, language: String): AnalysedVideo.Topic {
+    private fun parseTopicReferenceId(referenceId: String, language: String): AnalysedVideoTopic {
         return referenceId
                 .split('/')
-                .fold(null) { parentTopic: AnalysedVideo.Topic?, topicName: String ->
-                    AnalysedVideo.Topic.builder()
+                .fold(null) { parentTopic: AnalysedVideoTopic?, topicName: String ->
+                    AnalysedVideoTopic.builder()
                             .language(language)
                             .name(topicName)
+                            .confidence(1.0)
+                            .segments(emptyList())
                             .parent(parentTopic)
                             .build()
                 }!!
     }
 
-    private fun convertTimeRanges(instances: List<TimeRangeResource>): List<AnalysedVideo.TimeSegment> {
+    private fun convertTimeRanges(instances: List<TimeRangeResource>): List<TimeSegment> {
         return instances.map(this::convertTimeRange)
     }
 
-    private fun convertTimeRange(instance: TimeRangeResource): AnalysedVideo.TimeSegment {
-        return AnalysedVideo.TimeSegment.builder()
+    private fun convertTimeRange(instance: TimeRangeResource): TimeSegment {
+        return TimeSegment.builder()
                 .startSecond(TimeParser.parseToSeconds(instance.start!!))
                 .endSecond(TimeParser.parseToSeconds(instance.end!!))
                 .build()
