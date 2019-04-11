@@ -30,7 +30,7 @@ class FakeVideoIndexerConfiguration {
     }
 }
 
-data class IndexerVideo(val videoUrl: String, val sourceFileAvailable: Boolean)
+data class IndexerVideo(val videoUrl: String, val language: Locale?, val sourceFileAvailable: Boolean)
 
 class FakeVideoIndexer : VideoIndexer {
     private val submittedVideos = mutableMapOf<String, IndexerVideo>()
@@ -40,7 +40,7 @@ class FakeVideoIndexer : VideoIndexer {
     }
 
     override fun submitVideo(videoId: String, videoUrl: String, language: Locale?) {
-        submittedVideos[videoId] = IndexerVideo(videoUrl = videoUrl, sourceFileAvailable = true)
+        submittedVideos[videoId] = IndexerVideo(videoUrl = videoUrl, language = language, sourceFileAvailable = true)
     }
 
     override fun getVideo(videoId: String): VideoResource {

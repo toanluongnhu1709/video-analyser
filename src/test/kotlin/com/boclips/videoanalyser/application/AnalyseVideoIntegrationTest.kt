@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.support.MessageBuilder
 import java.lang.RuntimeException
+import java.util.*
 
 class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -24,6 +25,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
         videoToAnalyse = VideoToAnalyse.builder()
                 .videoId("1")
                 .videoUrl("http://vid.eo/1.mp4")
+                .language(Locale.ENGLISH)
                 .build()
     }
 
@@ -32,6 +34,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
         subscriptions.videosToAnalyse().send(MessageBuilder.withPayload(videoToAnalyse).build())
 
         assertThat(fakeVideoIndexer.submittedVideo("1")?.videoUrl).isEqualTo("http://vid.eo/1.mp4")
+        assertThat(fakeVideoIndexer.submittedVideo("1")?.language).isEqualTo(Locale.ENGLISH)
     }
 
     @Test
