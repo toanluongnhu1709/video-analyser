@@ -29,6 +29,7 @@ class HttpVideoIndexerClient(
                 "&callbackUrl={callbackUrl}" +
                 "&language=auto" +
                 "&indexingPreset=AudioOnly" +
+                "&streamingPreset=NoStreaming" +
                 "&privacy=Private"
 
         val urlParams = params()

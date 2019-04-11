@@ -72,6 +72,7 @@ class HttpVideoIndexerClientIntegrationTest(
                 .withQueryParam("callbackUrl", equalTo("https://video-analyser.test-boclips.com/v1/videos/video1/publish_analysed_video"))
                 .withQueryParam("language", equalTo("auto"))
                 .withQueryParam("indexingPreset", equalTo("AudioOnly"))
+                .withQueryParam("streamingPreset", equalTo("NoStreaming"))
                 .withQueryParam("privacy", equalTo("Private")))
     }
 
