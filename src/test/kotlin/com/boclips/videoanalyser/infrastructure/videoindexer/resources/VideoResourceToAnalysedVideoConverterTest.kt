@@ -6,6 +6,7 @@ import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoReso
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.*
 
 class VideoResourceToAnalysedVideoConverterTest {
 
@@ -86,7 +87,7 @@ class VideoResourceToAnalysedVideoConverterTest {
         val videoResource = VideoResource(index = VideoIndexResource(videos = listOf(video)), captions = captions)
 
         val analysedVideo = convert(videoResource)
-        assertThat(analysedVideo.language).isEqualTo("en-GB")
+        assertThat(analysedVideo.language).isEqualTo(Locale.UK)
     }
 
     @Test

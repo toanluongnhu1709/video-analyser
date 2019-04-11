@@ -3,6 +3,7 @@ package com.boclips.videoanalyser.infrastructure.videoindexer.resources
 import com.boclips.events.types.*
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerException
 import java.nio.charset.StandardCharsets
+import java.util.*
 
 object VideoResourceToAnalysedVideoConverter {
 
@@ -31,7 +32,7 @@ object VideoResourceToAnalysedVideoConverter {
 
         return AnalysedVideo.builder()
                 .videoId(videoId)
-                .language(language)
+                .language(Locale.forLanguageTag(language))
                 .transcript(transcript)
                 .captions(Captions.builder()
                         .content(String(captions, StandardCharsets.UTF_8))
