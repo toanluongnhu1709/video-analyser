@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 import java.lang.RuntimeException
+import java.util.*
 
 @Profile("fake-video-indexer")
 @Configuration
@@ -38,7 +39,7 @@ class FakeVideoIndexer : VideoIndexer {
         return submittedVideos.containsKey(videoId)
     }
 
-    override fun submitVideo(videoId: String, videoUrl: String) {
+    override fun submitVideo(videoId: String, videoUrl: String, language: Locale?) {
         submittedVideos[videoId] = IndexerVideo(videoUrl = videoUrl, sourceFileAvailable = true)
     }
 

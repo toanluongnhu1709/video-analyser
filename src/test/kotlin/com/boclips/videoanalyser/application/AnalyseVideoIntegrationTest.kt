@@ -45,7 +45,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `videos do NOT get submitted to video indexer if already indexed`() {
-        fakeVideoIndexer.submitVideo("1", "http://old.url")
+        fakeVideoIndexer.submitVideo("1", "http://old.url", language = null)
 
         subscriptions.videosToAnalyse().send(MessageBuilder.withPayload(videoToAnalyse).build())
 
@@ -54,7 +54,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `video id immediately published as analysed if already indexed`() {
-        fakeVideoIndexer.submitVideo("1", "http://old.url")
+        fakeVideoIndexer.submitVideo("1", "http://old.url", language = null)
 
         subscriptions.videosToAnalyse().send(MessageBuilder.withPayload(videoToAnalyse).build())
 
@@ -67,7 +67,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `video indexer exceptions during submission are handled`() {
         val videoAnalyserService = mock<VideoAnalyserService>()
 
-        whenever(videoAnalyserService.submitVideo(any(), any())).thenThrow(RuntimeException("something went wrong"))
+        whenever(videoAnalyserService.submitVideo(any(), any(), any())).thenThrow(RuntimeException("something went wrong"))
 
         val analyseVideo = AnalyseVideo(videoAnalyserService, topics)
 

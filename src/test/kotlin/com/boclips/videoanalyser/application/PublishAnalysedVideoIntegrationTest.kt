@@ -15,7 +15,7 @@ class PublishAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `videos are received from the video indexer and published`() {
-        fakeVideoIndexer.submitVideo("1234", "http://example.com")
+        fakeVideoIndexer.submitVideo("1234", "http://example.com", language = null)
 
         subscriptions.analysedVideoIds().send(MessageBuilder.withPayload("1234").build())
 
@@ -38,7 +38,7 @@ class PublishAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `source files get deleted in video indexer`() {
-        fakeVideoIndexer.submitVideo("1234", "http://example.com")
+        fakeVideoIndexer.submitVideo("1234", "http://example.com", language = null)
 
         subscriptions.analysedVideoIds().send(MessageBuilder.withPayload("1234").build())
 

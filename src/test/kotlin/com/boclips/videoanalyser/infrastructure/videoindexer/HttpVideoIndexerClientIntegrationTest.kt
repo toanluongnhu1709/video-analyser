@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.core.io.Resource
+import java.util.*
 
 class HttpVideoIndexerClientIntegrationTest(
         @Autowired val restTemplateBuilder: RestTemplateBuilder,
@@ -61,7 +62,7 @@ class HttpVideoIndexerClientIntegrationTest(
                 )
         )
 
-        videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1")
+        videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1", language = null)
 
         wireMockServer.verify(postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
@@ -73,7 +74,23 @@ class HttpVideoIndexerClientIntegrationTest(
                 .withQueryParam("language", equalTo("auto"))
                 .withQueryParam("indexingPreset", equalTo("AudioOnly"))
                 .withQueryParam("streamingPreset", equalTo("NoStreaming"))
-                .withQueryParam("privacy", equalTo("Private")))
+                .withQueryParam("privacy", equalTo("Private"))
+        )
+    }
+
+    @Test
+    fun `submit with language`() {
+        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
+                .willReturn(
+                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoUploadResponseResource.inputStream.readBytes())
+                )
+        )
+
+        videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1", language = Locale.ENGLISH)
+
+        wireMockServer.verify(postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
+                .withQueryParam("language", equalTo("en-US"))
+        )
     }
 
     @Test
@@ -85,7 +102,7 @@ class HttpVideoIndexerClientIntegrationTest(
         )
 
         val exception = assertThrows<VideoIndexerException> {
-            videoIndexer.submitVideo("123", "http://videos.com/1")
+            videoIndexer.submitVideo("123", "http://videos.com/1", language = null)
         }
 
         assertThat(exception).hasMessage("Failed to submit video 123 to Video Indexer")
