@@ -18,7 +18,7 @@ class AnalyseVideo(
     fun execute(videoToAnalyse: VideoToAnalyse) {
         val videoId = videoToAnalyse.videoId
 
-        logger.info { "Video $videoId received to analyse" }
+        logger.info { "Video $videoId received to analyse (language: ${videoToAnalyse.language?.toLanguageTag() ?: "detect"})" }
 
         val alreadyAnalysed = try {
             videoAnalyserService.isAnalysed(videoId)
