@@ -25,6 +25,13 @@ class VideoIndexResourceParserIntegrationTest : AbstractSpringIntegrationTest() 
     }
 
     @Test
+    fun `keeps raw response`() {
+        val videoIndex = videoIndexResourceParser.parse(videoIndexJsonString)
+
+        assertThat(videoIndex.raw).isEqualTo(videoIndexJsonString)
+    }
+
+    @Test
     fun `parses external id`() {
         val videoIndex = videoIndexResourceParser.parse(videoIndexJsonString)
         val externalId = videoIndex.videos?.first()?.externalId
