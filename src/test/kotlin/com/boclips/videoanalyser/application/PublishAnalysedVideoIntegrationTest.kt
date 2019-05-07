@@ -22,7 +22,7 @@ class PublishAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val message = messageCollector.forChannel(topics.analysedVideos()).poll()
 
         Assertions.assertThat(message.payload.toString()).contains("1234")
-        Assertions.assertThat(message.payload.toString()).contains("en-GB")
+        Assertions.assertThat(message.payload.toString()).contains("en_GB")
     }
 
     @Test

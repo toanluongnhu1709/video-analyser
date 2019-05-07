@@ -30,7 +30,7 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-gcp-starter-pubsub")
 	implementation("org.springframework.cloud:spring-cloud-gcp-pubsub-stream-binder")
 
-	implementation("com.github.boclips:events:0.6.0")
+	implementation("com.github.boclips:events:0.13.0")
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

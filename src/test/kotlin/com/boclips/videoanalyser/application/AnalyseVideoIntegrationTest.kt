@@ -1,7 +1,6 @@
 package com.boclips.videoanalyser.application
 
 import com.boclips.events.types.VideoToAnalyse
-import com.boclips.videoanalyser.config.messaging.Subscriptions
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
@@ -11,7 +10,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.support.MessageBuilder
 import java.lang.RuntimeException
 import java.util.*

@@ -1,7 +1,7 @@
 package com.boclips.videoanalyser.testsupport.fakes
 
-import com.boclips.videoanalyser.config.messaging.Subscriptions
-import com.boclips.videoanalyser.config.messaging.Topics
+import com.boclips.events.config.Subscriptions
+import com.boclips.events.config.Topics
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.junit.jupiter.api.AfterEach

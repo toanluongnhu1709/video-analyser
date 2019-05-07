@@ -1,9 +1,9 @@
 package com.boclips.videoanalyser.config.application
 
+import com.boclips.events.config.Topics
 import com.boclips.videoanalyser.application.AnalyseVideo
 import com.boclips.videoanalyser.application.PublishAnalysedVideo
 import com.boclips.videoanalyser.application.PublishAnalysedVideoId
-import com.boclips.videoanalyser.config.messaging.Topics
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

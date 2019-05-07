@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.videoanalyser.config.messaging.Topics
+import com.boclips.events.config.Topics
 import mu.KLogging
 import org.springframework.messaging.support.MessageBuilder
 

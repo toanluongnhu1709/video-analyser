@@ -118,9 +118,9 @@ class VideoResourceToAnalysedVideoConverterTest {
 
         val topic = analysedVideo.topics.first()
         assertThat(topic.name).isEqualTo("Child topic")
-        assertThat(topic.language).isEqualTo("pl-PL")
+        assertThat(topic.language).isEqualTo(Locale("pl", "PL"))
         assertThat(topic.parent.name).isEqualTo("Parent topic")
-        assertThat(topic.parent.language).isEqualTo("pl-PL")
+        assertThat(topic.parent.language).isEqualTo(Locale("pl", "PL"))
         assertThat(topic.parent.parent).isNull()
         assertThat(topic.confidence).isEqualTo(0.85)
         assertThat(topic.segments.first().startSecond).isEqualTo(0)
@@ -135,7 +135,7 @@ class VideoResourceToAnalysedVideoConverterTest {
 
         val topic = analysedVideo.keywords.first()
         assertThat(topic.name).isEqualTo("keyword")
-        assertThat(topic.language).isEqualTo("es-ES")
+        assertThat(topic.language).isEqualTo(Locale("es", "ES"))
         assertThat(topic.confidence).isEqualTo(0.6)
         assertThat(topic.segments.first().startSecond).isEqualTo(88)
         assertThat(topic.segments.first().endSecond).isEqualTo(89)
