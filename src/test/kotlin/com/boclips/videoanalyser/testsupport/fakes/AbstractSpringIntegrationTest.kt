@@ -37,8 +37,8 @@ abstract class AbstractSpringIntegrationTest {
     @BeforeEach
     fun resetState() {
         fakeVideoIndexer.clear()
-        messageCollector.forChannel(topics.analysedVideoIds()).clear()
-        messageCollector.forChannel(topics.analysedVideos()).clear()
+        messageCollector.forChannel(topics.videoIndexed()).clear()
+        messageCollector.forChannel(topics.videoAnalysed()).clear()
     }
 
     @BeforeEach

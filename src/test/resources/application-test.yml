@@ -12,9 +12,5 @@ spring:
       pubsub:
         enabled: false
 
-pubsub:
-  topic:
-    suffix: test
-
 logging:
   config: ""

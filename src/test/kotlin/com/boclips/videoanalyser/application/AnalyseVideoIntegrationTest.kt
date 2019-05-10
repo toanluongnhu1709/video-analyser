@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.events.types.VideoToAnalyse
+import com.boclips.events.types.VideoAnalysisRequested
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
@@ -16,11 +16,11 @@ import java.util.*
 
 class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
-    lateinit var videoToAnalyse: VideoToAnalyse
+    lateinit var videoAnalysisRequested: VideoAnalysisRequested
 
     @BeforeEach
     fun setUp() {
-        videoToAnalyse = VideoToAnalyse.builder()
+        videoAnalysisRequested = VideoAnalysisRequested.builder()
                 .videoId("1")
                 .videoUrl("http://vid.eo/1.mp4")
                 .language(Locale.ENGLISH)
@@ -29,7 +29,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `videos get submitted to video indexer if not indexed yet`() {
-        subscriptions.videosToAnalyse().send(MessageBuilder.withPayload(videoToAnalyse).build())
+        subscriptions.videoAnalysisRequested().send(MessageBuilder.withPayload(videoAnalysisRequested).build())
 
         assertThat(fakeVideoIndexer.submittedVideo("1")?.videoUrl).isEqualTo("http://vid.eo/1.mp4")
         assertThat(fakeVideoIndexer.submittedVideo("1")?.language).isEqualTo(Locale.ENGLISH)
@@ -37,9 +37,9 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `videos NOT published as analysed if not indexed yet`() {
-        subscriptions.videosToAnalyse().send(MessageBuilder.withPayload(videoToAnalyse).build())
+        subscriptions.videoAnalysisRequested().send(MessageBuilder.withPayload(videoAnalysisRequested).build())
 
-        val analysedVideoIdMessage = messageCollector.forChannel(topics.analysedVideoIds()).poll()
+        val analysedVideoIdMessage = messageCollector.forChannel(topics.videoIndexed()).poll()
 
         assertThat(analysedVideoIdMessage).isNull()
     }
@@ -48,7 +48,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `videos do NOT get submitted to video indexer if already indexed`() {
         fakeVideoIndexer.submitVideo("1", "http://old.url", language = null)
 
-        subscriptions.videosToAnalyse().send(MessageBuilder.withPayload(videoToAnalyse).build())
+        subscriptions.videoAnalysisRequested().send(MessageBuilder.withPayload(videoAnalysisRequested).build())
 
         assertThat(fakeVideoIndexer.submittedVideo("1")?.videoUrl).isEqualTo("http://old.url")
     }
@@ -57,9 +57,9 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `video id immediately published as analysed if already indexed`() {
         fakeVideoIndexer.submitVideo("1", "http://old.url", language = null)
 
-        subscriptions.videosToAnalyse().send(MessageBuilder.withPayload(videoToAnalyse).build())
+        subscriptions.videoAnalysisRequested().send(MessageBuilder.withPayload(videoAnalysisRequested).build())
 
-        val analysedVideoIdMessage = messageCollector.forChannel(topics.analysedVideoIds()).poll()
+        val analysedVideoIdMessage = messageCollector.forChannel(topics.videoIndexed()).poll()
 
         assertThat(analysedVideoIdMessage.payload.toString()).isEqualTo("1")
     }
@@ -72,7 +72,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val analyseVideo = AnalyseVideo(videoAnalyserService, topics)
 
-        assertThatCode { analyseVideo.execute(videoToAnalyse) }.doesNotThrowAnyException()
+        assertThatCode { analyseVideo.execute(videoAnalysisRequested) }.doesNotThrowAnyException()
     }
 
     @Test
@@ -83,6 +83,6 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         val analyseVideo = AnalyseVideo(videoAnalyserService, topics)
 
-        assertThatCode { analyseVideo.execute(videoToAnalyse) }.doesNotThrowAnyException()
+        assertThatCode { analyseVideo.execute(videoAnalysisRequested) }.doesNotThrowAnyException()
     }
 }

@@ -2,7 +2,7 @@ package com.boclips.videoanalyser.application
 
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
-import com.boclips.events.types.VideoToAnalyse
+import com.boclips.events.types.VideoAnalysisRequested
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import mu.KLogging
 import org.springframework.cloud.stream.annotation.StreamListener
@@ -14,11 +14,11 @@ class AnalyseVideo(
 ) {
     companion object : KLogging()
 
-    @StreamListener(Subscriptions.VIDEOS_TO_ANALYSE)
-    fun execute(videoToAnalyse: VideoToAnalyse) {
-        val videoId = videoToAnalyse.videoId
+    @StreamListener(Subscriptions.VIDEO_ANALYSIS_REQUESTED)
+    fun execute(videoAnalysisRequested: VideoAnalysisRequested) {
+        val videoId = videoAnalysisRequested.videoId
 
-        logger.info { "Video $videoId received to analyse (language: ${videoToAnalyse.language?.toLanguageTag() ?: "detect"})" }
+        logger.info { "Video $videoId received to analyse (language: ${videoAnalysisRequested.language?.toLanguageTag() ?: "detect"})" }
 
         val alreadyAnalysed = try {
             videoAnalyserService.isAnalysed(videoId)
@@ -29,12 +29,12 @@ class AnalyseVideo(
 
         if(alreadyAnalysed) {
             logger.info { "Video $videoId has already been analysed. Enqueuing it to be retrieved." }
-            topics.analysedVideoIds().send(MessageBuilder.withPayload(videoId).build())
+            topics.videoIndexed().send(MessageBuilder.withPayload(videoId).build())
             return
         }
 
         try {
-            videoAnalyserService.submitVideo(videoId, videoToAnalyse.videoUrl, videoToAnalyse.language)
+            videoAnalyserService.submitVideo(videoId, videoAnalysisRequested.videoUrl, videoAnalysisRequested.language)
         } catch (e: Exception) {
             logger.warn(e) { "Submission of video $videoId to the analyser failed and will not be retried." }
         }

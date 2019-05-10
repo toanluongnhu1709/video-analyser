@@ -39,7 +39,7 @@ class VideosControllerTest(
         mockMvc.perform(post("$callback?id=msid&state=Processed"))
                 .andExpect(status().isOk)
 
-        val videoReadyMessage = messageCollector.forChannel(topics.analysedVideoIds()).poll()
+        val videoReadyMessage = messageCollector.forChannel(topics.videoIndexed()).poll()
 
         assertThat(videoReadyMessage.payload.toString()).isEqualTo("123")
     }

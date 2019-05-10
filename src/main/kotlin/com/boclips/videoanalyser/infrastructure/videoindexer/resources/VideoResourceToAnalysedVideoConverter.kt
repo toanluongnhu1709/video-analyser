@@ -7,7 +7,7 @@ import java.util.*
 
 object VideoResourceToAnalysedVideoConverter {
 
-    fun convert(videoResource: VideoResource): AnalysedVideo {
+    fun convert(videoResource: VideoResource): VideoAnalysed {
         val index = videoResource.index ?: throw VideoIndexerException("No video index")
         val videos = index.videos ?: throw VideoIndexerException("No videos in the index")
         if (videos.size != 1) throw VideoIndexerException("Expecting 1 video in the index, found ${videos.size}.")
@@ -30,7 +30,7 @@ object VideoResourceToAnalysedVideoConverter {
 
         val captions = videoResource.captions ?: throw VideoIndexerException("No video captions")
 
-        return AnalysedVideo.builder()
+        return VideoAnalysed.builder()
                 .videoId(videoId)
                 .language(Locale.forLanguageTag(language))
                 .transcript(transcript)
@@ -46,10 +46,10 @@ object VideoResourceToAnalysedVideoConverter {
                 .build()
     }
 
-    private fun convertKeyword(keywordResource: KeywordResource): AnalysedVideoKeyword {
+    private fun convertKeyword(keywordResource: KeywordResource): VideoAnalysedKeyword {
         val segments = convertTimeRanges(keywordResource.instances!!)
 
-        return AnalysedVideoKeyword.builder()
+        return VideoAnalysedKeyword.builder()
                 .name(keywordResource.text!!)
                 .language(Locale.forLanguageTag(keywordResource.language!!))
                 .confidence(keywordResource.confidence!!)
@@ -57,7 +57,7 @@ object VideoResourceToAnalysedVideoConverter {
                 .build()
     }
 
-    private fun convertTopic(topicResource: TopicResource): AnalysedVideoTopic {
+    private fun convertTopic(topicResource: TopicResource): VideoAnalysedTopic {
         val segments = convertTimeRanges(topicResource.instances!!)
         return parseTopicReferenceId(topicResource.referenceId!!, Locale.forLanguageTag(topicResource.language!!)).toBuilder()
                 .segments(segments)
@@ -65,11 +65,11 @@ object VideoResourceToAnalysedVideoConverter {
                 .build()
     }
 
-    private fun parseTopicReferenceId(referenceId: String, language: Locale): AnalysedVideoTopic {
+    private fun parseTopicReferenceId(referenceId: String, language: Locale): VideoAnalysedTopic {
         return referenceId
                 .split('/')
-                .fold(null) { parentTopic: AnalysedVideoTopic?, topicName: String ->
-                    AnalysedVideoTopic.builder()
+                .fold(null) { parentTopic: VideoAnalysedTopic?, topicName: String ->
+                    VideoAnalysedTopic.builder()
                             .language(language)
                             .name(topicName)
                             .confidence(1.0)

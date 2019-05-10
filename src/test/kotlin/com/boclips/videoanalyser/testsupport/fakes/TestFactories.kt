@@ -1,11 +1,11 @@
 package com.boclips.videoanalyser.testsupport.fakes
 
-import com.boclips.events.types.AnalysedVideo
+import com.boclips.events.types.VideoAnalysed
 
 object TestFactories {
 
 
-    fun createAnalysedVideo(): AnalysedVideo {
-        return AnalysedVideo()
+    fun createVideoAnalysed(): VideoAnalysed {
+        return VideoAnalysed()
     }
 }

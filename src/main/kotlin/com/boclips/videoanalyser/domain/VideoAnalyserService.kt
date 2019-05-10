@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.domain
 
-import com.boclips.events.types.AnalysedVideo
+import com.boclips.events.types.VideoAnalysed
 import java.util.*
 
 interface VideoAnalyserService {
@@ -9,7 +9,7 @@ interface VideoAnalyserService {
 
     fun submitVideo(videoId: String, videoUrl: String, language: Locale?)
 
-    fun getVideo(videoId: String): AnalysedVideo
+    fun getVideo(videoId: String): VideoAnalysed
 
     fun deleteSourceFile(videoId: String)
 }

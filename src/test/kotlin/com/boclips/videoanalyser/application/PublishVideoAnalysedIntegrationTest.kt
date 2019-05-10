@@ -11,15 +11,15 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.messaging.support.MessageBuilder
 
-class PublishAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
+class PublishVideoAnalysedIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `videos are received from the video indexer and published`() {
         fakeVideoIndexer.submitVideo("1234", "http://example.com", language = null)
 
-        subscriptions.analysedVideoIds().send(MessageBuilder.withPayload("1234").build())
+        subscriptions.videoIndexed().send(MessageBuilder.withPayload("1234").build())
 
-        val message = messageCollector.forChannel(topics.analysedVideos()).poll()
+        val message = messageCollector.forChannel(topics.videoAnalysed()).poll()
 
         Assertions.assertThat(message.payload.toString()).contains("1234")
         Assertions.assertThat(message.payload.toString()).contains("en_GB")
@@ -31,7 +31,7 @@ class PublishAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         whenever(videoAnalyserService.getVideo(any())).thenThrow(RuntimeException("something went wrong"))
 
-        val publishAnalysedVideo = PublishAnalysedVideo(topics, videoAnalyserService)
+        val publishAnalysedVideo = PublishVideoAnalysed(topics, videoAnalyserService)
 
         Assertions.assertThatCode { publishAnalysedVideo.execute("video id") }.doesNotThrowAnyException()
     }
@@ -40,7 +40,7 @@ class PublishAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `source files get deleted in video indexer`() {
         fakeVideoIndexer.submitVideo("1234", "http://example.com", language = null)
 
-        subscriptions.analysedVideoIds().send(MessageBuilder.withPayload("1234").build())
+        subscriptions.videoIndexed().send(MessageBuilder.withPayload("1234").build())
 
         assertThat(fakeVideoIndexer.submittedVideo("1234")?.sourceFileAvailable).isFalse()
     }
@@ -49,10 +49,10 @@ class PublishAnalysedVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `exceptions when deleting source files are handled`() {
         val videoAnalyserService = mock<VideoAnalyserService>()
 
-        whenever(videoAnalyserService.getVideo(any())).thenReturn(TestFactories.createAnalysedVideo())
+        whenever(videoAnalyserService.getVideo(any())).thenReturn(TestFactories.createVideoAnalysed())
         whenever(videoAnalyserService.deleteSourceFile(any())).thenThrow(RuntimeException("something went wrong"))
 
-        val publishAnalysedVideo = PublishAnalysedVideo(topics, videoAnalyserService)
+        val publishAnalysedVideo = PublishVideoAnalysed(topics, videoAnalyserService)
 
         Assertions.assertThatCode { publishAnalysedVideo.execute("video id") }.doesNotThrowAnyException()
     }

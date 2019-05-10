@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.infrastructure
 
-import com.boclips.events.types.AnalysedVideo
+import com.boclips.events.types.VideoAnalysed
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerException
@@ -20,7 +20,7 @@ class VideoIndexerAnalyserService(private val videoIndexer: VideoIndexer) : Vide
         videoIndexer.submitVideo(videoId, videoUrl, language)
     }
 
-    override fun getVideo(videoId: String): AnalysedVideo {
+    override fun getVideo(videoId: String): VideoAnalysed {
         val videoResource = videoIndexer.getVideo(videoId)
         try {
             return VideoResourceToAnalysedVideoConverter.convert(videoResource)

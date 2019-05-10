@@ -7,13 +7,13 @@ import mu.KLogging
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.messaging.support.MessageBuilder
 
-class PublishAnalysedVideo(
+class PublishVideoAnalysed(
         private val topics: Topics,
         private val videoAnalyserService: VideoAnalyserService
 ) {
     companion object : KLogging()
 
-    @StreamListener(Subscriptions.ANALYSED_VIDEO_IDS)
+    @StreamListener(Subscriptions.VIDEO_INDEXED)
     fun execute(videoId: String) {
         logger.info { "Requesting analysed video $videoId" }
         val video = try {
@@ -24,7 +24,7 @@ class PublishAnalysedVideo(
         }
 
         logger.info { "Publishing analysed video $videoId" }
-        topics.analysedVideos().send(MessageBuilder.withPayload(video).build())
+        topics.videoAnalysed().send(MessageBuilder.withPayload(video).build())
 
         logger.info { "Deleting source file of analysed video $videoId"}
         try {

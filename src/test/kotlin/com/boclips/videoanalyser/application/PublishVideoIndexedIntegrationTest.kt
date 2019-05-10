@@ -5,15 +5,15 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class PublishAnalysedVideoIdIntegrationTest(
-        @Autowired val publishAnalysedVideoId: PublishAnalysedVideoId
+class PublishVideoIndexedIntegrationTest(
+        @Autowired val publishAnalysedVideoId: PublishVideoIndexed
 ) : AbstractSpringIntegrationTest() {
 
     @Test
     fun `publishes the id`() {
         publishAnalysedVideoId.execute("abc")
 
-        val publishedId = messageCollector.forChannel(topics.analysedVideoIds()).poll()
+        val publishedId = messageCollector.forChannel(topics.videoIndexed()).poll()
 
         assertThat(publishedId.payload.toString()).isEqualTo("abc")
     }
