@@ -6,4 +6,5 @@ spring:
     gcp:
       pubsub:
         subscriber:
+          executor-threads: 1
           max-ack-extension-period: 60
