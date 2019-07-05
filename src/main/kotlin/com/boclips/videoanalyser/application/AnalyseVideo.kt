@@ -2,7 +2,7 @@ package com.boclips.videoanalyser.application
 
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.config.Topics
-import com.boclips.events.types.VideoAnalysisRequested
+import com.boclips.events.types.video.VideoAnalysisRequested
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import mu.KLogging
 import org.springframework.cloud.stream.annotation.StreamListener
