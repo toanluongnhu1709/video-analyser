@@ -2,7 +2,7 @@ package com.boclips.videoanalyser.application
 
 import com.boclips.eventbus.BoclipsEvent
 
-@BoclipsEvent("VIDEO_ANALYSER_VIDEO_INDEXED")
+@BoclipsEvent("video-analyser-video-indexed")
 data class VideoIndexed(
     var videoId: String? = null
 )
