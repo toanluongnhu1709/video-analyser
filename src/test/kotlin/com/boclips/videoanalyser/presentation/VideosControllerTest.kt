@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.presentation
 
+import com.boclips.videoanalyser.application.VideoIndexed
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -39,8 +40,8 @@ class VideosControllerTest(
         mockMvc.perform(post("$callback?id=msid&state=Processed"))
                 .andExpect(status().isOk)
 
-        val videoReadyMessage = messageCollector.forChannel(topics.videoIndexed()).poll()
+        val videoReadyMessage = eventBus.getEventOfType(VideoIndexed::class.java)
 
-        assertThat(videoReadyMessage.payload.toString()).isEqualTo("123")
+        assertThat(videoReadyMessage.videoId).isEqualTo("123")
     }
 }

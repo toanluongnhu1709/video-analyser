@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.events.types.video.VideoAnalysisRequested
+import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.nhaarman.mockito_kotlin.any
@@ -10,7 +10,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.messaging.support.MessageBuilder
 import java.lang.RuntimeException
 import java.util.*
 
@@ -29,7 +28,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `videos get submitted to video indexer if not indexed yet`() {
-        subscriptions.videoAnalysisRequested().send(MessageBuilder.withPayload(videoAnalysisRequested).build())
+        eventBus.publish(videoAnalysisRequested)
 
         assertThat(fakeVideoIndexer.submittedVideo("1")?.videoUrl).isEqualTo("http://vid.eo/1.mp4")
         assertThat(fakeVideoIndexer.submittedVideo("1")?.language).isEqualTo(Locale.ENGLISH)
@@ -37,18 +36,16 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `videos NOT published as analysed if not indexed yet`() {
-        subscriptions.videoAnalysisRequested().send(MessageBuilder.withPayload(videoAnalysisRequested).build())
+        eventBus.publish(videoAnalysisRequested)
 
-        val analysedVideoIdMessage = messageCollector.forChannel(topics.videoIndexed()).poll()
-
-        assertThat(analysedVideoIdMessage).isNull()
+        assertThat(eventBus.countEventsOfType(VideoIndexed::class.java)).isEqualTo(0)
     }
 
     @Test
     fun `videos do NOT get submitted to video indexer if already indexed`() {
         fakeVideoIndexer.submitVideo("1", "http://old.url", language = null)
 
-        subscriptions.videoAnalysisRequested().send(MessageBuilder.withPayload(videoAnalysisRequested).build())
+        eventBus.publish(videoAnalysisRequested)
 
         assertThat(fakeVideoIndexer.submittedVideo("1")?.videoUrl).isEqualTo("http://old.url")
     }
@@ -57,11 +54,11 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
     fun `video id immediately published as analysed if already indexed`() {
         fakeVideoIndexer.submitVideo("1", "http://old.url", language = null)
 
-        subscriptions.videoAnalysisRequested().send(MessageBuilder.withPayload(videoAnalysisRequested).build())
+        eventBus.publish(videoAnalysisRequested)
 
-        val analysedVideoIdMessage = messageCollector.forChannel(topics.videoIndexed()).poll()
+        val analysedVideoIdMessage = eventBus.getEventOfType(VideoIndexed::class.java)
 
-        assertThat(analysedVideoIdMessage.payload.toString()).isEqualTo("1")
+        assertThat(analysedVideoIdMessage.videoId).isEqualTo("1")
     }
 
     @Test
@@ -70,7 +67,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         whenever(videoAnalyserService.submitVideo(any(), any(), any())).thenThrow(RuntimeException("something went wrong"))
 
-        val analyseVideo = AnalyseVideo(videoAnalyserService, topics)
+        val analyseVideo = AnalyseVideo(videoAnalyserService, eventBus)
 
         assertThatCode { analyseVideo.execute(videoAnalysisRequested) }.doesNotThrowAnyException()
     }
@@ -81,7 +78,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         whenever(videoAnalyserService.isAnalysed(any())).thenThrow(RuntimeException("something went wrong"))
 
-        val analyseVideo = AnalyseVideo(videoAnalyserService, topics)
+        val analyseVideo = AnalyseVideo(videoAnalyserService, eventBus)
 
         assertThatCode { analyseVideo.execute(videoAnalysisRequested) }.doesNotThrowAnyException()
     }

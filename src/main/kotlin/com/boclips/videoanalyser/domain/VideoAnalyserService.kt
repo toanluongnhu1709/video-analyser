@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.domain
 
-import com.boclips.events.types.video.VideoAnalysed
+import com.boclips.eventbus.events.video.VideoAnalysed
 import java.util.*
 
 interface VideoAnalyserService {

@@ -13,8 +13,6 @@ class PublishVideoIndexedIntegrationTest(
     fun `publishes the id`() {
         publishAnalysedVideoId.execute("abc")
 
-        val publishedId = messageCollector.forChannel(topics.videoIndexed()).poll()
-
-        assertThat(publishedId.payload.toString()).isEqualTo("abc")
+        assertThat(eventBus.getEventOfType(VideoIndexed::class.java)).isEqualTo(VideoIndexed("abc"))
     }
 }

@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer.resources
 
-import com.boclips.events.types.CaptionsFormat
+import com.boclips.eventbus.events.video.CaptionsFormat
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerException
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResourceToAnalysedVideoConverter.convert
 import org.assertj.core.api.Assertions.assertThat

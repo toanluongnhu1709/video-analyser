@@ -1,7 +1,6 @@
 package com.boclips.videoanalyser.testsupport.fakes
 
-import com.boclips.events.config.Subscriptions
-import com.boclips.events.config.Topics
+import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.junit.jupiter.api.AfterEach
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.cloud.stream.test.binder.MessageCollector
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
@@ -24,21 +22,14 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var fakeVideoIndexer: FakeVideoIndexer
 
     @Autowired
-    lateinit var topics: Topics
-
-    @Autowired
-    lateinit var subscriptions: Subscriptions
-
-    @Autowired
-    lateinit var messageCollector: MessageCollector
+    lateinit var eventBus: SynchronousFakeEventBus
 
     lateinit var wireMockServer: WireMockServer
 
     @BeforeEach
     fun resetState() {
         fakeVideoIndexer.clear()
-        messageCollector.forChannel(topics.videoIndexed()).clear()
-        messageCollector.forChannel(topics.videoAnalysed()).clear()
+        eventBus.clearState()
     }
 
     @BeforeEach

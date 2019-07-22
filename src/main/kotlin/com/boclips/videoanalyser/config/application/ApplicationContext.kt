@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.config.application
 
-import com.boclips.events.config.Topics
+import com.boclips.eventbus.EventBus
 import com.boclips.videoanalyser.application.AnalyseVideo
 import com.boclips.videoanalyser.application.PublishVideoAnalysed
 import com.boclips.videoanalyser.application.PublishVideoIndexed
@@ -10,22 +10,22 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class ApplicationContext(
-        private val topics: Topics,
+        private val eventBus: EventBus,
         private val videoAnalyserService: VideoAnalyserService
 ) {
 
     @Bean
     fun analyseVideo(): AnalyseVideo {
-        return AnalyseVideo(videoAnalyserService, topics)
+        return AnalyseVideo(videoAnalyserService, eventBus)
     }
 
     @Bean
     fun publishAnalysedVideo(): PublishVideoAnalysed {
-        return PublishVideoAnalysed(topics, videoAnalyserService)
+        return PublishVideoAnalysed(eventBus, videoAnalyserService)
     }
 
     @Bean
     fun publishAnalysedVideoId(): PublishVideoIndexed {
-        return PublishVideoIndexed(topics)
+        return PublishVideoIndexed(eventBus)
     }
 }

@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.testsupport.fakes
 
-import com.boclips.events.types.video.VideoAnalysed
+import com.boclips.eventbus.events.video.VideoAnalysed
 
 object TestFactories {
 

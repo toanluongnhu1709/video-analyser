@@ -1,20 +1,18 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.events.config.Subscriptions
-import com.boclips.events.config.Topics
-import com.boclips.events.types.video.VideoAnalysisRequested
+import com.boclips.eventbus.BoclipsEventListener
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import mu.KLogging
-import org.springframework.cloud.stream.annotation.StreamListener
-import org.springframework.messaging.support.MessageBuilder
 
 class AnalyseVideo(
         private val videoAnalyserService: VideoAnalyserService,
-        private val topics: Topics
+        private val eventBus: EventBus
 ) {
     companion object : KLogging()
 
-    @StreamListener(Subscriptions.VIDEO_ANALYSIS_REQUESTED)
+    @BoclipsEventListener
     fun execute(videoAnalysisRequested: VideoAnalysisRequested) {
         val videoId = videoAnalysisRequested.videoId
 
@@ -29,7 +27,7 @@ class AnalyseVideo(
 
         if(alreadyAnalysed) {
             logger.info { "Video $videoId has already been analysed. Enqueuing it to be retrieved." }
-            topics.videoIndexed().send(MessageBuilder.withPayload(videoId).build())
+            eventBus.publish(VideoIndexed(videoId = videoId))
             return
         }
 

@@ -1,9 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer.resources
 
-import com.boclips.events.types.*
-import com.boclips.events.types.video.VideoAnalysed
-import com.boclips.events.types.video.VideoAnalysedKeyword
-import com.boclips.events.types.video.VideoAnalysedTopic
+import com.boclips.eventbus.events.video.*
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerException
 import java.nio.charset.StandardCharsets
 import java.util.*

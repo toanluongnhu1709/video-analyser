@@ -1,20 +1,19 @@
 package com.boclips.videoanalyser.application
 
-import com.boclips.events.config.Subscriptions
-import com.boclips.events.config.Topics
+import com.boclips.eventbus.BoclipsEventListener
+import com.boclips.eventbus.EventBus
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import mu.KLogging
-import org.springframework.cloud.stream.annotation.StreamListener
-import org.springframework.messaging.support.MessageBuilder
 
 class PublishVideoAnalysed(
-        private val topics: Topics,
+        private val eventBus: EventBus,
         private val videoAnalyserService: VideoAnalyserService
 ) {
     companion object : KLogging()
 
-    @StreamListener(Subscriptions.VIDEO_INDEXED)
-    fun execute(videoId: String) {
+    @BoclipsEventListener
+    fun execute(videoIndexed: VideoIndexed) {
+        val videoId = videoIndexed.videoId!!
         logger.info { "Requesting analysed video $videoId" }
         val video = try {
             videoAnalyserService.getVideo(videoId)
@@ -24,7 +23,7 @@ class PublishVideoAnalysed(
         }
 
         logger.info { "Publishing analysed video $videoId" }
-        topics.videoAnalysed().send(MessageBuilder.withPayload(video).build())
+        eventBus.publish(video)
 
         logger.info { "Deleting source file of analysed video $videoId"}
         try {

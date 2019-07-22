@@ -8,3 +8,6 @@ spring:
         subscriber:
           executor-threads: 1
           max-ack-extension-period: 60
+
+pubsub:
+  consumerGroup: video-analyser

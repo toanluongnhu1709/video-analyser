@@ -1,6 +1,6 @@
 package com.boclips.videoanalyser.infrastructure
 
-import com.boclips.events.types.video.VideoAnalysed
+import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerException
