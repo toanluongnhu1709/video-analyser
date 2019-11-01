@@ -96,7 +96,7 @@ class VideoResourceToAnalysedVideoConverterTest {
 
         val analysedVideo = convert(videoResource)
 
-        assertThat(analysedVideo.transcript).isEqualTo("First line. Second line.")
+        assertThat(analysedVideo.transcript).isEqualTo("First line.\n\nSecond line.")
     }
 
     @Test

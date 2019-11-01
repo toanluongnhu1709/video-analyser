@@ -26,7 +26,7 @@ object VideoResourceToAnalysedVideoConverter {
         val topics = topicResources.map(this::convertTopic)
 
         val transcriptResources = insights.transcript ?: throw VideoIndexerException("No video transcript")
-        val transcript = transcriptResources.map { it.text }.joinToString(" ")
+        val transcript = transcriptResources.map { it.text }.joinToString("\n\n")
 
         val captions = videoResource.captions ?: throw VideoIndexerException("No video captions")
 
