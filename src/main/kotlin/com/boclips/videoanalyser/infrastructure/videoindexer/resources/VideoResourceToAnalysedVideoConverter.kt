@@ -1,6 +1,7 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer.resources
 
 import com.boclips.eventbus.events.video.*
+import com.boclips.eventbus.domain.video.*
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerException
 import java.nio.charset.StandardCharsets
 import java.util.*
