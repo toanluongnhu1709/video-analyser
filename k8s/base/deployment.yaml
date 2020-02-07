@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-analyser
+  annotations:
+    sidecar.jaegertracing.io/inject: jaeger
+spec:
+  template:
+    metadata:
+      name: video-analyser
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: video-analyser
+        image: app:0
+        env:
+        - name: SENTRY_RELEASE
+          value: video-analyser-$(VERSION)
+        ports:
+        - name: http
+          containerPort: 8080
+        envFrom:
+        - secretRef:
+            name: video-analyser
