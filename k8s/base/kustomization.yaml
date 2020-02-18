@@ -7,11 +7,11 @@ resources:
 commonLabels:
   app: video-analyser
 commonAnnotations:
-  boclips-version: "14"
+  boclips-version: "15"
 images:
 - name: app
   newName: eu.gcr.io/boclips-prod/boclips/video-analyser
-  newTag: "14"
+  newTag: "15"
 patches:
 - path: spread-across-zones.yaml
   target:
