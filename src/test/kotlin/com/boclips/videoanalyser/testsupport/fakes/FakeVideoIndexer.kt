@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
-import java.lang.RuntimeException
 import java.util.*
 
 @Profile("fake-video-indexer")
@@ -44,7 +43,7 @@ class FakeVideoIndexer : VideoIndexer {
     }
 
     override fun getVideo(videoId: String): VideoResource {
-        if(!submittedVideos.containsKey(videoId)) {
+        if (!submittedVideos.containsKey(videoId)) {
             throw RuntimeException("no such video")
         }
 
@@ -64,6 +63,10 @@ class FakeVideoIndexer : VideoIndexer {
         submittedVideos[videoId]?.let { video ->
             submittedVideos[videoId] = video.copy(sourceFileAvailable = false)
         }
+    }
+
+    override fun deleteVideo(videoId: String) {
+        submittedVideos.remove(videoId)
     }
 
     fun clear() {

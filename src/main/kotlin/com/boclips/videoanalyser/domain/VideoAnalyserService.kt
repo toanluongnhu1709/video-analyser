@@ -12,4 +12,6 @@ interface VideoAnalyserService {
     fun getVideo(videoId: String): VideoAnalysed
 
     fun deleteSourceFile(videoId: String)
+
+    fun deleteVideo(videoId: String)
 }

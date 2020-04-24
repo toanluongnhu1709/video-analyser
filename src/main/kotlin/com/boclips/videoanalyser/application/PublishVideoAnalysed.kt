@@ -17,18 +17,19 @@ class PublishVideoAnalysed(
         logger.info { "Requesting analysed video $videoId" }
         val video = try {
             videoAnalyserService.getVideo(videoId)
-        } catch(e: Exception) {
-            logger.warn(e) { "Request of analysed video $videoId failed and will not be retried." }
+        } catch (e: Exception) {
+            logger.warn(e) { "Request of analysed video $videoId failed. Deleting." }
+            videoAnalyserService.deleteVideo(videoId)
             return
         }
 
         logger.info { "Publishing analysed video $videoId" }
         eventBus.publish(video)
 
-        logger.info { "Deleting source file of analysed video $videoId"}
+        logger.info { "Deleting source file of analysed video $videoId" }
         try {
             videoAnalyserService.deleteSourceFile(videoId)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             logger.error(e) { "Error deleting source file for video $videoId" }
         }
     }

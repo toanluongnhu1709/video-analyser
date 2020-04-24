@@ -12,5 +12,7 @@ interface VideoIndexer {
     fun getVideo(videoId: String): VideoResource
 
     fun deleteSourceFile(videoId: String)
+
+    fun deleteVideo(videoId: String)
 }
 

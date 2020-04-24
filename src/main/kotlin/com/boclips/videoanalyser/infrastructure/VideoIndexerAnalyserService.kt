@@ -34,4 +34,8 @@ class VideoIndexerAnalyserService(private val videoIndexer: VideoIndexer) : Vide
         videoIndexer.deleteSourceFile(videoId)
     }
 
+    override fun deleteVideo(videoId: String) {
+        videoIndexer.deleteVideo(videoId)
+    }
+
 }

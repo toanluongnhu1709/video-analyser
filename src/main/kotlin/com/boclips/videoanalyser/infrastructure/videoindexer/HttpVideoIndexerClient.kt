@@ -105,6 +105,17 @@ class HttpVideoIndexerClient(
         return VideoResource(index = videoIndexResource, captions = captionsResponse!!)
     }
 
+    override fun deleteVideo(videoId: String) {
+        val microsoftId = resolveId(videoId) ?: throw VideoIndexerException("Video $videoId not known by Video Indexer")
+
+        val videoUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId" +
+                "?accessToken={accessToken}"
+
+        logger.info { "Deleting video $videoId" }
+        restTemplate.delete(videoUrl, params())
+        logger.info { "Video $videoId deleted" }
+    }
+
     override fun deleteSourceFile(videoId: String) {
         val microsoftId = resolveId(videoId) ?: throw VideoIndexerException("Video $videoId not known by Video Indexer")
 

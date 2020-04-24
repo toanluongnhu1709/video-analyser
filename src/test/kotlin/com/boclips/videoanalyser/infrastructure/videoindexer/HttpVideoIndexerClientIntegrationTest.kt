@@ -137,6 +137,24 @@ class HttpVideoIndexerClientIntegrationTest(
     }
 
     @Test
+    fun deleteVideo() {
+        val videoId = "video-id-1234"
+        val microsoftVideoId = "ms-id-1234"
+
+        stubLookupByExternalId(videoId, microsoftVideoId)
+
+        wireMockServer.stubFor(delete(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId"))
+                .willReturn(aResponse().withStatus(204))
+        )
+
+        videoIndexer.deleteVideo(videoId)
+
+        wireMockServer.verify(1, deleteRequestedFor(
+                urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId")
+        ).withQueryParam("accessToken", equalTo("test-access-token")))
+    }
+
+    @Test
     fun deleteSourceFile() {
         val videoId = "video-id-1234"
         val microsoftVideoId = "ms-id-1234"
