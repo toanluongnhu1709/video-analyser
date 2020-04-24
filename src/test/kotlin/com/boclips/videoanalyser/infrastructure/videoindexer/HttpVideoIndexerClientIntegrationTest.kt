@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer
 
+import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexItemResource
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
 import com.boclips.videoanalyser.presentation.PublishAnalysedVideoLinkFactory
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
@@ -109,7 +110,7 @@ class HttpVideoIndexerClientIntegrationTest(
     }
 
     @Test
-    fun getVideoIndex() {
+    fun getVideo() {
         val videoId = "video-id-1234"
         val microsoftVideoId = "ms-id-1234"
 
@@ -133,7 +134,30 @@ class HttpVideoIndexerClientIntegrationTest(
         val resource = videoIndexer.getVideo(videoId)
 
         assertThat(resource.index?.videos?.first()?.insights?.sourceLanguage).isEqualTo("en-US")
+        assertThat(resource.index?.videos?.first()?.state).isEqualTo("Processed")
         assertThat(resource.captions).isEqualTo("contents of vtt file".toByteArray())
+    }
+
+    @Test
+    fun `getVideo when processing returns null captions`() {
+        val videoId = "video-id-1234"
+        val microsoftVideoId = "ms-id-1234"
+
+        stubLookupByExternalId(videoId, microsoftVideoId)
+
+        val response = String(videoIndexResponseResource.inputStream.readBytes()).replace(VideoIndexItemResource.STATE_PROCESSED, "Processing")
+        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Index"))
+                .withQueryParam("accessToken", equalTo("test-access-token"))
+                .willReturn(
+                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(response)
+                )
+        )
+
+        val resource = videoIndexer.getVideo(videoId)
+
+        assertThat(resource.index?.videos?.first()?.insights?.sourceLanguage).isEqualTo("en-US")
+        assertThat(resource.index?.videos?.first()?.state).isEqualTo("Processing")
+        assertThat(resource.captions).isNull()
     }
 
     @Test

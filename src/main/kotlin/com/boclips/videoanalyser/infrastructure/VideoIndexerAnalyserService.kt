@@ -4,6 +4,7 @@ import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexer
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerException
+import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexItemResource
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResourceToAnalysedVideoConverter
 import mu.KLogging
 import java.util.*
@@ -20,8 +21,15 @@ class VideoIndexerAnalyserService(private val videoIndexer: VideoIndexer) : Vide
         videoIndexer.submitVideo(videoId, videoUrl, language)
     }
 
-    override fun getVideo(videoId: String): VideoAnalysed {
+    override fun getVideo(videoId: String): VideoAnalysed? {
         val videoResource = videoIndexer.getVideo(videoId)
+        val state = videoResource.index?.videos?.first()?.state
+
+        if(state != VideoIndexItemResource.STATE_PROCESSED) {
+            logger.info { "Video $videoId has status $state" }
+            return null
+        }
+
         try {
             return VideoResourceToAnalysedVideoConverter.convert(videoResource)
         } catch (e: VideoIndexerException) {

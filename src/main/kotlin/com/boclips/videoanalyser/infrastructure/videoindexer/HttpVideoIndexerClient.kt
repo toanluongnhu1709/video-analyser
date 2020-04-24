@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer
 
+import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexItemResource
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResource
 import com.boclips.videoanalyser.presentation.PublishAnalysedVideoLinkFactory
@@ -92,6 +93,11 @@ class HttpVideoIndexerClient(
             logger.error(e.responseBodyAsString)
             throw VideoIndexerException("Failed to fetch video $videoId from Video Indexer")
         }
+        val videoIndexResource = videoIndexResourceParser.parse(response!!)
+        val state = videoIndexResource.videos?.first()?.state
+        if(state != VideoIndexItemResource.STATE_PROCESSED) {
+            return VideoResource(index = videoIndexResource, captions = null)
+        }
 
         val captionsResponse = try {
             restTemplate.getForEntity(videoCaptionsUrl, ByteArray::class.java, params()).body
@@ -100,7 +106,6 @@ class HttpVideoIndexerClient(
             throw VideoIndexerException("Failed to fetch captions of video $videoId from Video Indexer")
         }
 
-        val videoIndexResource = videoIndexResourceParser.parse(response!!)
 
         return VideoResource(index = videoIndexResource, captions = captionsResponse!!)
     }

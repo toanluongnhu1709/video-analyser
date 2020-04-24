@@ -23,6 +23,11 @@ class PublishVideoAnalysed(
             return
         }
 
+        if(video == null) {
+            logger.info { "NOT publishing video $videoId because it is not ready." }
+            return
+        }
+
         logger.info { "Publishing analysed video $videoId" }
         eventBus.publish(video)
 

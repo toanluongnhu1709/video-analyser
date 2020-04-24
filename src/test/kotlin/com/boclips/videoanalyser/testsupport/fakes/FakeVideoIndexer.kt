@@ -48,6 +48,7 @@ class FakeVideoIndexer : VideoIndexer {
         }
 
         val video = VideoIndexItemResource(
+                state = VideoIndexItemResource.STATE_PROCESSED,
                 externalId = videoId,
                 insights = VideoInsightsResource(
                         sourceLanguage = "en-GB",
