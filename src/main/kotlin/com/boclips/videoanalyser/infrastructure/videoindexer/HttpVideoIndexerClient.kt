@@ -5,8 +5,10 @@ import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoInde
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResource
 import com.boclips.videoanalyser.presentation.PublishAnalysedVideoLinkFactory
 import mu.KLogging
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpStatusCodeException
+import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 import java.util.*
 
@@ -117,9 +119,18 @@ class HttpVideoIndexerClient(
                 "?accessToken={accessToken}"
 
         logger.info { "Deleting video $videoId" }
-        restTemplate.delete(videoUrl, params())
-        logger.info { "Video $videoId deleted" }
+        try {
+            val response = restTemplate.exchange(videoUrl, HttpMethod.DELETE, null, Unit.javaClass, params())
+
+            when (response.statusCode.is2xxSuccessful) {
+                true -> logger.info { "Video $videoId deleted" }
+                else -> logger.warn { "Video $videoId deletion failed with error ${response.statusCode} ${response.body}" }
+            }
+        } catch (ex: RestClientException) {
+            logger.warn { "Video $videoId deletion failed with error ${ex.message}" }
+        }
     }
+
 
     override fun deleteSourceFile(videoId: String) {
         val microsoftId = resolveId(videoId) ?: throw VideoIndexerException("Video $videoId not known by Video Indexer")

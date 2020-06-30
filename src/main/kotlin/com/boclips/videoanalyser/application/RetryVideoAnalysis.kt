@@ -20,7 +20,9 @@ class RetryVideoAnalysis(
         AnalyseVideo.logger.info { "Video $videoId received to retry analysis (language: ${request.language?.toLanguageTag() ?: "detect"})" }
 
         try {
-            videoAnalyserService.deleteVideo(videoId)
+            if (videoAnalyserService.isAnalysed(videoId)) {
+                videoAnalyserService.deleteVideo(videoId)
+            }
             analyseVideo.execute(VideoAnalysisRequested(videoId, request.videoUrl, request.language))
         } catch (e: Exception) {
             AnalyseVideo.logger.warn(e) { "Retry analysis of video $videoId failed and will not be retried." }
