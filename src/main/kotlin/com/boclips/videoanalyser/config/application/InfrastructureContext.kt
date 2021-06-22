@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.config.application
 
+import com.boclips.videoanalyser.infrastructure.RealDelayer
 import com.boclips.videoanalyser.infrastructure.videoindexer.*
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
 import com.boclips.videoanalyser.presentation.PublishAnalysedVideoLinkFactory
@@ -19,7 +20,14 @@ class InfrastructureContext(
     @Profile("!fake-video-indexer")
     @Bean
     fun videoIndexer(publishAnalysedVideoLinkFactory: PublishAnalysedVideoLinkFactory): VideoIndexer {
-        return HttpVideoIndexerClient(restTemplateBuilder.build(), videoIndexerProperties, videoIndexerTokenProvider(), publishAnalysedVideoLinkFactory, videoIndexResourceParser())
+        return HttpVideoIndexerClient(
+            restTemplateBuilder.build(),
+            videoIndexerProperties,
+            videoIndexerTokenProvider(),
+            publishAnalysedVideoLinkFactory,
+            videoIndexResourceParser(),
+            RealDelayer()
+        )
     }
 
     @Profile("!fake-video-indexer")

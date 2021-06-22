@@ -4,7 +4,9 @@ import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoInde
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
 import com.boclips.videoanalyser.presentation.PublishAnalysedVideoLinkFactory
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
+import com.boclips.videoanalyser.testsupport.fakes.FakeDelayer
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,15 +28,18 @@ class HttpVideoIndexerClientIntegrationTest(
 ) : AbstractSpringIntegrationTest() {
 
     lateinit var videoIndexer: HttpVideoIndexerClient
+    lateinit var fakeDelayer: FakeDelayer
 
     @BeforeEach
     fun setUp() {
+        fakeDelayer = FakeDelayer()
         videoIndexer = HttpVideoIndexerClient(
                 restTemplate = restTemplateBuilder.build(),
                 properties = videoIndexerProperties,
                 videoIndexerTokenProvider = videoIndexerTokenProvider,
                 publishAnalysedVideoLinkFactory = publishAnalysedVideoLinkFactory,
-                videoIndexResourceParser = videoIndexResourceParser
+                videoIndexResourceParser = videoIndexResourceParser,
+                delayer = fakeDelayer
         )
     }
 
@@ -57,11 +62,7 @@ class HttpVideoIndexerClientIntegrationTest(
 
     @Test
     fun submit() {
-        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
-                .willReturn(
-                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoUploadResponseResource.inputStream.readBytes())
-                )
-        )
+        stubPostWithStatusAndBody(200, videoUploadResponseResource.inputStream.readBytes().toString())
 
         videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1", language = null)
 
@@ -81,11 +82,7 @@ class HttpVideoIndexerClientIntegrationTest(
 
     @Test
     fun `submit with language`() {
-        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
-                .willReturn(
-                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoUploadResponseResource.inputStream.readBytes())
-                )
-        )
+        stubPostWithStatusAndBody(200, videoUploadResponseResource.inputStream.readBytes().toString())
 
         videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1", language = Locale.ENGLISH)
 
@@ -96,17 +93,49 @@ class HttpVideoIndexerClientIntegrationTest(
 
     @Test
     fun `submit throws when there is an error`() {
-        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
-                .willReturn(
-                        aResponse().withStatus(400).withBody("This is a test error")
-                )
-        )
+        stubPostWithStatusAndBody(400, "This is a test error")
 
         val exception = assertThrows<VideoIndexerException> {
             videoIndexer.submitVideo("123", "http://videos.com/1", language = null)
         }
 
         assertThat(exception).hasMessage("Failed to submit video 123 to Video Indexer")
+    }
+
+    @Test
+    fun `submit retries after a delay specified in a 429 (Too Many Requests) response body`() {
+        val rateLimited = stubPostWithStatusAndBody(429, """"{ "statusCode": 429, "message": "Rate limit is exceeded. Try again in 28 seconds." }",""")
+
+        videoIndexer.submitVideo("123", "http://videos.com/1", language = null)
+
+        wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
+        fakeDelayer.advance(27);
+        wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
+
+        wireMockServer.removeStub(rateLimited);
+
+        stubPostWithStatusAndBody(200, videoUploadResponseResource.inputStream.readBytes().toString())
+
+        fakeDelayer.advance(1);
+        wireMockServer.verify(2, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
+    }
+
+    @Test
+    fun `submit retries after a default delay if it can't parse the 429 response body`() {
+        val rateLimited = stubPostWithStatusAndBody(429, """"{ "statusCode": 429, "message": "Rate limit is poo pants wee bum" }",""")
+
+        videoIndexer.submitVideo("123", "http://videos.com/1", language = null)
+
+        wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
+        fakeDelayer.advance(9);
+        wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
+
+        wireMockServer.removeStub(rateLimited);
+
+        stubPostWithStatusAndBody(200, videoUploadResponseResource.inputStream.readBytes().toString())
+
+        fakeDelayer.advance(1);
+        wireMockServer.verify(2, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
     }
 
     @Test
@@ -224,4 +253,12 @@ class HttpVideoIndexerClientIntegrationTest(
                 )
         )
     }
+
+    private fun stubPostWithStatusAndBody(status: Int, body: String) : StubMapping =
+        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
+            .willReturn(
+                aResponse().withHeader("Content-Type", "application/json").withStatus(status).withBody(body)
+            )
+        )
+
 }

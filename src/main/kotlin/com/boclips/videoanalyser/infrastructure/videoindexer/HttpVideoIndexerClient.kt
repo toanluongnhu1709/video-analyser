@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer
 
+import com.boclips.videoanalyser.infrastructure.Delayer
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexItemResource
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResource
@@ -17,7 +18,8 @@ class HttpVideoIndexerClient(
         private val properties: VideoIndexerProperties,
         private val videoIndexerTokenProvider: VideoIndexerTokenProvider,
         private val publishAnalysedVideoLinkFactory: PublishAnalysedVideoLinkFactory,
-        private val videoIndexResourceParser: VideoIndexResourceParser
+        private val videoIndexResourceParser: VideoIndexResourceParser,
+        private val delayer: Delayer
 ) : VideoIndexer {
     companion object : KLogging()
 
@@ -46,8 +48,20 @@ class HttpVideoIndexerClient(
             restTemplate.postForEntity(videosUrl, "", String::class.java, urlParams)
             logger.info { "Video $videoId submitted to Video Indexer" }
         } catch (e: HttpStatusCodeException) {
-            logger.error(e.responseBodyAsString)
-            throw VideoIndexerException("Failed to submit video $videoId to Video Indexer")
+            if (e.statusCode == HttpStatus.TOO_MANY_REQUESTS) {
+                val seconds : String? = ".*Try again in ([0-9]+) seconds.*".toRegex().let { pattern ->
+                    e.message?.let { pattern.matchEntire(it) }
+                        ?.groups
+                        ?.get(1)
+                        ?.value
+                }
+                delayer.delay(seconds?.toInt() ?: 10) {
+                    submitVideo(videoId, videoUrl, language)
+                }
+            } else {
+                logger.error(e.responseBodyAsString)
+                throw VideoIndexerException("Failed to submit video $videoId to Video Indexer")
+            }
         }
     }
 
