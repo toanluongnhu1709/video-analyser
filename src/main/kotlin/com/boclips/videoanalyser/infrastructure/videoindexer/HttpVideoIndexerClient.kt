@@ -88,9 +88,9 @@ class HttpVideoIndexerClient(
             }
 
             logger.error(e.responseBodyAsString)
-            throw VideoIndexerException("Failed to resolve Video Indexer id for $videoId")
+            throw VideoIndexerException("Failed to resolve Video Indexer ID for $videoId")
         }
-        logger.info { "Resolved Video Indexer id for $videoId: $microsoftId" }
+        logger.info { "Resolved Video Indexer ID for $videoId: $microsoftId" }
 
         return microsoftId
     }
