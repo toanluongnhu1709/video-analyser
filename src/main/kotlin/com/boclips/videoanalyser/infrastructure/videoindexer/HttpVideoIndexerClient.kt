@@ -49,13 +49,16 @@ class HttpVideoIndexerClient(
             logger.info { "Video $videoId submitted to Video Indexer" }
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.TOO_MANY_REQUESTS) {
-                val seconds : String? = ".*Try again in ([0-9]+) seconds.*".toRegex().let { pattern ->
+                val parsedSeconds : String? = ".*Try again in ([0-9]+) seconds.*".toRegex().let { pattern ->
                     e.message?.let { pattern.matchEntire(it) }
                         ?.groups
                         ?.get(1)
                         ?.value
                 }
-                delayer.delay(seconds?.toInt() ?: 10) {
+                val seconds = parsedSeconds?.toInt() ?: 10
+                logger.info { "Received request to delay analysing video $videoId further processing by $seconds seconds"}
+                delayer.delay(seconds) {
+                    logger.info { "Finished delaying for video $videoId, resubmitting." }
                     submitVideo(videoId, videoUrl, language)
                 }
             } else {

@@ -109,14 +109,13 @@ class HttpVideoIndexerClientIntegrationTest(
         videoIndexer.submitVideo("123", "http://videos.com/1", language = null)
 
         wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
-        fakeDelayer.advance(27);
+        fakeDelayer.advance(27)
         wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
 
-        wireMockServer.removeStub(rateLimited);
-
+        wireMockServer.removeStub(rateLimited)
         stubPostWithStatusAndBody(200, videoUploadResponseResource.inputStream.readBytes().toString())
 
-        fakeDelayer.advance(1);
+        fakeDelayer.advance(1)
         wireMockServer.verify(2, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
     }
 
@@ -127,14 +126,14 @@ class HttpVideoIndexerClientIntegrationTest(
         videoIndexer.submitVideo("123", "http://videos.com/1", language = null)
 
         wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
-        fakeDelayer.advance(9);
+        fakeDelayer.advance(9)
         wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
 
-        wireMockServer.removeStub(rateLimited);
+        wireMockServer.removeStub(rateLimited)
 
         stubPostWithStatusAndBody(200, videoUploadResponseResource.inputStream.readBytes().toString())
 
-        fakeDelayer.advance(1);
+        fakeDelayer.advance(1)
         wireMockServer.verify(2, postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos")))
     }
 
