@@ -62,7 +62,7 @@ class HttpVideoIndexerClient(
                     submitVideo(videoId, videoUrl, language)
                 }
             } else {
-                logger.error { "Unhandled HTTP status code ${e.statusCode} with body: ${e.responseBodyAsString}" }
+                logger.error { "submitVideo: Unhandled HTTP status code ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
                 throw VideoIndexerException("Failed to submit video $videoId to Video Indexer")
             }
         }
@@ -87,7 +87,7 @@ class HttpVideoIndexerClient(
                 return null
             }
 
-            logger.error(e.responseBodyAsString)
+            logger.error { "resolveId: Unhandled HTTP status code ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
             throw VideoIndexerException("Failed to resolve Video Indexer ID for $videoId")
         }
         logger.info { "Resolved Video Indexer ID for $videoId: $microsoftId" }
@@ -109,7 +109,7 @@ class HttpVideoIndexerClient(
         val response = try {
             restTemplate.getForEntity(videoIndexUrl, String::class.java, params()).body
         } catch (e: HttpStatusCodeException) {
-            logger.error(e.responseBodyAsString)
+            logger.error { "getVideo - index: Unhandled HTTP status code ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
             throw VideoIndexerException("Failed to fetch video $videoId from Video Indexer")
         }
         val videoIndexResource = videoIndexResourceParser.parse(response!!)
@@ -121,7 +121,7 @@ class HttpVideoIndexerClient(
         val captionsResponse = try {
             restTemplate.getForEntity(videoCaptionsUrl, ByteArray::class.java, params()).body
         } catch (e: HttpStatusCodeException) {
-            logger.error(e.responseBodyAsString)
+            logger.error { "getVideo - caption: Unhandled HTTP status code ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
             throw VideoIndexerException("Failed to fetch captions of video $videoId from Video Indexer")
         }
 
