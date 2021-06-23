@@ -62,7 +62,7 @@ class HttpVideoIndexerClient(
                     submitVideo(videoId, videoUrl, language)
                 }
             } else {
-                logger.error(e.responseBodyAsString)
+                logger.error { "Unhandled HTTP status code ${e.statusCode} with body: ${e.responseBodyAsString}" }
                 throw VideoIndexerException("Failed to submit video $videoId to Video Indexer")
             }
         }
