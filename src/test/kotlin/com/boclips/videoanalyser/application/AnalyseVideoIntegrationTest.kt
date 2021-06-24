@@ -51,17 +51,6 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `video id immediately published as analysed if already indexed`() {
-        fakeVideoIndexer.submitVideo("1", "http://old.url", language = null)
-
-        eventBus.publish(videoAnalysisRequested)
-
-        val analysedVideoIdMessage = eventBus.getEventOfType(VideoIndexed::class.java)
-
-        assertThat(analysedVideoIdMessage.videoId).isEqualTo("1")
-    }
-
-    @Test
     fun `video indexer exceptions during submission are handled`() {
         val videoAnalyserService = mock<VideoAnalyserService>()
 
