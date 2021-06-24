@@ -67,7 +67,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         whenever(videoAnalyserService.submitVideo(any(), any(), any())).thenThrow(RuntimeException("something went wrong"))
 
-        val analyseVideo = AnalyseVideo(videoAnalyserService, eventBus)
+        val analyseVideo = AnalyseVideo(videoAnalyserService)
 
         assertThatCode { analyseVideo.execute(videoAnalysisRequested) }.doesNotThrowAnyException()
     }
@@ -78,7 +78,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         whenever(videoAnalyserService.isAnalysed(any())).thenThrow(RuntimeException("something went wrong"))
 
-        val analyseVideo = AnalyseVideo(videoAnalyserService, eventBus)
+        val analyseVideo = AnalyseVideo(videoAnalyserService)
 
         assertThatCode { analyseVideo.execute(videoAnalysisRequested) }.doesNotThrowAnyException()
     }

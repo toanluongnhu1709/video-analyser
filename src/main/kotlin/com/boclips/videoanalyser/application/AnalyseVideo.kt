@@ -7,8 +7,7 @@ import com.boclips.videoanalyser.domain.VideoAnalyserService
 import mu.KLogging
 
 class AnalyseVideo(
-        private val videoAnalyserService: VideoAnalyserService,
-        private val eventBus: EventBus
+    private val videoAnalyserService: VideoAnalyserService
 ) {
     companion object : KLogging()
 
@@ -20,21 +19,20 @@ class AnalyseVideo(
 
         val alreadyAnalysed = try {
             videoAnalyserService.isAnalysed(videoId)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             logger.warn(e) { "Check if video $videoId is already analysed failed and will not be retried." }
             return
         }
 
-        if(alreadyAnalysed) {
-            logger.info { "Video $videoId has already been analysed. Enqueuing it to be retrieved." }
-            eventBus.publish(VideoIndexed(videoId = videoId))
+        if (alreadyAnalysed) {
+            logger.info { "Video $videoId has already been analysed." }
             return
-        }
-
-        try {
-            videoAnalyserService.submitVideo(videoId, videoAnalysisRequested.videoUrl, videoAnalysisRequested.language)
-        } catch (e: Exception) {
-            logger.warn(e) { "Submission of video $videoId to the analyser failed and will not be retried." }
+        } else {
+            try {
+                videoAnalyserService.submitVideo(videoId, videoAnalysisRequested.videoUrl, videoAnalysisRequested.language)
+            } catch (e: Exception) {
+                logger.warn(e) { "Submission of video $videoId to the analyser failed and will not be retried." }
+            }
         }
     }
 }
