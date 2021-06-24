@@ -49,16 +49,7 @@ class HttpVideoIndexerClient(
             logger.info { "Video $videoId submitted to Video Indexer" }
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == HttpStatus.TOO_MANY_REQUESTS) {
-                val parsedSeconds : String? = ".*Try again in ([0-9]+) seconds.*".toRegex().let { pattern ->
-                    e.message?.let { pattern.matchEntire(it) }
-                        ?.groups
-                        ?.get(1)
-                        ?.value
-                }
-                val seconds = parsedSeconds?.toInt() ?: 10
-                logger.info { "Received request to delay analysing video $videoId further processing by $seconds seconds"}
-                delayer.delay(seconds) {
-                    logger.info { "Finished delaying for video $videoId, resubmitting." }
+                handleRateLimiting(message = e.message, videoId = videoId, operation = "submitVideo") {
                     submitVideo(videoId, videoUrl, language)
                 }
             } else {
@@ -66,6 +57,20 @@ class HttpVideoIndexerClient(
                 throw VideoIndexerException("Failed to submit video $videoId to Video Indexer")
             }
         }
+    }
+    private fun handleRateLimiting (message: String?, videoId: String, operation: String, retryFunction: () -> Unit) {
+                val parsedSeconds : String? = ".*Try again in ([0-9]+) seconds.*".toRegex().let { pattern ->
+                    message?.let { pattern.matchEntire(it) }
+                        ?.groups
+                        ?.get(1)
+                        ?.value
+                }
+                val seconds = parsedSeconds?.toInt() ?: 10
+                logger.info { "Received request to delay $operation on video $videoId further processing by $seconds seconds"}
+                delayer.delay(seconds) {
+                    logger.info { "Finished delaying $operation for video $videoId, resubmitting." }
+                    retryFunction()
+                }
     }
 
     override fun isIndexed(videoId: String): Boolean {
@@ -121,12 +126,33 @@ class HttpVideoIndexerClient(
         val captionsResponse = try {
             restTemplate.getForEntity(videoCaptionsUrl, ByteArray::class.java, params()).body
         } catch (e: HttpStatusCodeException) {
-            logger.error { "getVideo - caption: Unhandled HTTP status code ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
-            throw VideoIndexerException("Failed to fetch captions of video $videoId from Video Indexer")
+            if (e.statusCode == HttpStatus.TOO_MANY_REQUESTS) {
+                handleRateLimiting(message = e.message, videoId = videoId, operation = "submitVideo") {
+
+                }
+            } else {
+                logger.error { "getVideo - caption: Unhandled HTTP status code ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
+                throw VideoIndexerException("Failed to fetch captions of video $videoId from Video Indexer")
+            }
         }
 
 
         return VideoResource(index = videoIndexResource, captions = captionsResponse!!)
+    }
+
+    private fun getCaptions(videoCaptionsUrl: String, videoId: String) {
+        return try {
+            restTemplate.getForEntity(videoCaptionsUrl, ByteArray::class.java, params()).body
+        } catch (e: HttpStatusCodeException) {
+            if (e.statusCode == HttpStatus.TOO_MANY_REQUESTS) {
+                handleRateLimiting(message = e.message, videoId = videoId, operation = "submitVideo") {
+
+                }
+            } else {
+                logger.error { "getVideo - caption: Unhandled HTTP status code ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
+                throw VideoIndexerException("Failed to fetch captions of video $videoId from Video Indexer")
+            }
+        }
     }
 
     override fun deleteVideo(videoId: String) {
