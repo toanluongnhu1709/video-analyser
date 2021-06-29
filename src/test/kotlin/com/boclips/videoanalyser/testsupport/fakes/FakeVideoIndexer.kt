@@ -42,7 +42,7 @@ class FakeVideoIndexer : VideoIndexer {
         submittedVideos[videoId] = IndexerVideo(videoUrl = videoUrl, language = language, sourceFileAvailable = true)
     }
 
-    override fun getVideo(videoId: String): VideoResource {
+    override fun getVideo(videoId: String): VideoResource? {
         if (!submittedVideos.containsKey(videoId)) {
             throw RuntimeException("no such video")
         }

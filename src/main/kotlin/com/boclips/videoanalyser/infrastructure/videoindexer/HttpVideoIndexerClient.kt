@@ -100,22 +100,27 @@ class HttpVideoIndexerClient(
         return microsoftId
     }
 
-    override fun getVideo(videoId: String): VideoResource {
+    override fun getVideo(videoId: String): VideoResource? {
         val microsoftId = resolveId(videoId) ?: throw VideoIndexerException("Video $videoId not known by Video Indexer")
+        val videoIndex = getVideoIndexResource(microsoftId, videoId)
 
-        val videoIndexResource = getVideoIndexResource(microsoftId, videoId)
-
-        if (hasCaptionsProcessed(videoIndexResource)) {
-            return VideoResource(index = videoIndexResource, captions = null)
-        }
-        val captionsResponse = getCaptionsResource(microsoftId, videoId)
-
-        return VideoResource(index = videoIndexResource, captions = captionsResponse!!)
+        return if (isVideoProcessed(videoIndex)) {
+            val captionsResource = getCaptionsResource(microsoftId, videoId)
+            captionsResource?.let {
+                VideoResource(index = videoIndex, captions = it)
+            }
+        } else null
     }
 
-    private fun hasCaptionsProcessed(videoIndexResource: VideoIndexResource): Boolean {
-        val state = videoIndexResource.videos?.first()?.state
-        return state != VideoIndexItemResource.STATE_PROCESSED
+    private fun isVideoProcessed(videoIndexResource: VideoIndexResource?): Boolean {
+        val video = videoIndexResource?.videos?.first()
+        val isVideoProcessed = video?.state == VideoIndexItemResource.STATE_PROCESSED
+
+        if (!isVideoProcessed) {
+            logger.warn { "Video ${video?.externalId} has status ${video?.state}" }
+        }
+
+        return isVideoProcessed
     }
 
     private fun getCaptionsResource(microsoftId: String, videoId: String): ByteArray? {
@@ -123,23 +128,23 @@ class HttpVideoIndexerClient(
             "?accessToken={accessToken}" +
             "&format=vtt"
 
-        try {
-            return restTemplate.getForEntity(videoCaptionsUrl, ByteArray::class.java, params()).body
+        return try {
+            restTemplate.getForEntity(videoCaptionsUrl, ByteArray::class.java, params()).body
         } catch (e: HttpStatusCodeException) {
-            logger.error { "getVideo - caption: Unhandled HTTP status code ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
-            throw VideoIndexerException("Failed to fetch captions of video $videoId from Video Indexer")
+            logger.warn { "getVideo - caption: Got ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
+            null
         }
     }
 
-    private fun getVideoIndexResource(microsoftId: String, videoId: String): VideoIndexResource {
+    private fun getVideoIndexResource(microsoftId: String, videoId: String): VideoIndexResource? {
         val videoIndexUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId/Index" +
             "?accessToken={accessToken}"
 
         val response = try {
             restTemplate.getForEntity(videoIndexUrl, String::class.java, params()).body
         } catch (e: HttpStatusCodeException) {
-            logger.error { "getVideo - index: Unhandled HTTP status code ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
-            throw VideoIndexerException("Failed to fetch video $videoId from Video Indexer")
+            logger.warn { "getVideo - index: Got ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
+            return null
         }
         return videoIndexResourceParser.parse(response!!)
     }
@@ -162,7 +167,6 @@ class HttpVideoIndexerClient(
             logger.warn { "Video $videoId deletion failed with error ${ex.message}" }
         }
     }
-
 
     override fun deleteSourceFile(videoId: String) {
         val microsoftId = resolveId(videoId) ?: throw VideoIndexerException("Video $videoId not known by Video Indexer")

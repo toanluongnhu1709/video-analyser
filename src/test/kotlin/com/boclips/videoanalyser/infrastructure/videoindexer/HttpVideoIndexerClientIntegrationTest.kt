@@ -5,7 +5,14 @@ import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoInde
 import com.boclips.videoanalyser.presentation.PublishAnalysedVideoLinkFactory
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.boclips.videoanalyser.testsupport.fakes.FakeDelayer
-import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.delete
+import com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.equalTo
+import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.post
+import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -163,7 +170,7 @@ class HttpVideoIndexerClientIntegrationTest(
                 )
         )
 
-        val resource = videoIndexer.getVideo(videoId)
+        val resource = videoIndexer.getVideo(videoId)!!
 
         assertThat(resource.index?.videos?.first()?.insights?.sourceLanguage).isEqualTo("en-US")
         assertThat(resource.index?.videos?.first()?.state).isEqualTo("Processed")
@@ -187,10 +194,55 @@ class HttpVideoIndexerClientIntegrationTest(
         )
 
         val resource = videoIndexer.getVideo(videoId)
+        assertThat(resource).isNull()
+    }
 
-        assertThat(resource.index?.videos?.first()?.insights?.sourceLanguage).isEqualTo("en-US")
-        assertThat(resource.index?.videos?.first()?.state).isEqualTo("Processing")
-        assertThat(resource.captions).isNull()
+    @Test
+    fun `getVideo does not throw when Azure Video Indexer returns an exception`() {
+        val videoId = "video-id-1234"
+        val microsoftVideoId = "ms-id-1234"
+
+        stubLookupByExternalId(videoId, microsoftVideoId)
+
+        wireMockServer.stubFor(
+            get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Index"))
+                .withQueryParam("accessToken", equalTo("test-access-token"))
+                .willReturn(
+                    aResponse().withStatus(429).withBody("Too many requests")
+                )
+        )
+
+        val resource = videoIndexer.getVideo(videoId)
+        assertThat(resource).isNull()
+    }
+
+    @Test
+    fun `getCaptions does not throw when Azure Video Indexer returns an exception`() {
+        val videoId = "video-id-1234"
+        val microsoftVideoId = "ms-id-1234"
+
+        stubLookupByExternalId(videoId, microsoftVideoId)
+
+        val response = String(videoIndexResponseResource.inputStream.readBytes())
+        wireMockServer.stubFor(
+            get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Index"))
+                .withQueryParam("accessToken", equalTo("test-access-token"))
+                .willReturn(
+                    aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(response)
+                )
+        )
+
+        wireMockServer.stubFor(
+            get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Captions"))
+                .withQueryParam("accessToken", equalTo("test-access-token"))
+                .withQueryParam("format", equalTo("vtt"))
+                .willReturn(
+                    aResponse().withStatus(429).withBody("Too many requests")
+                )
+        )
+
+        val resource = videoIndexer.getVideo(videoId)
+        assertThat(resource).isNull()
     }
 
     @Test

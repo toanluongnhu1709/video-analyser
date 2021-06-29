@@ -22,13 +22,7 @@ class VideoIndexerAnalyserService(private val videoIndexer: VideoIndexer) : Vide
     }
 
     override fun getVideo(videoId: String): VideoAnalysed? {
-        val videoResource = videoIndexer.getVideo(videoId)
-        val state = videoResource.index?.videos?.first()?.state
-
-        if(state != VideoIndexItemResource.STATE_PROCESSED) {
-            logger.info { "Video $videoId has status $state" }
-            return null
-        }
+        val videoResource = videoIndexer.getVideo(videoId) ?: return null
 
         try {
             return VideoResourceToAnalysedVideoConverter.convert(videoResource)
@@ -45,5 +39,4 @@ class VideoIndexerAnalyserService(private val videoIndexer: VideoIndexer) : Vide
     override fun deleteVideo(videoId: String) {
         videoIndexer.deleteVideo(videoId)
     }
-
 }
