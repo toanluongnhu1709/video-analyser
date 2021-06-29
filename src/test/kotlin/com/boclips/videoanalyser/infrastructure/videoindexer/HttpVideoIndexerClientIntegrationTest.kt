@@ -18,13 +18,13 @@ import org.springframework.core.io.Resource
 import java.util.*
 
 class HttpVideoIndexerClientIntegrationTest(
-        @Autowired val restTemplateBuilder: RestTemplateBuilder,
-        @Autowired val videoIndexerProperties: VideoIndexerProperties,
-        @Autowired val videoIndexerTokenProvider: VideoIndexerTokenProvider,
-        @Autowired val publishAnalysedVideoLinkFactory: PublishAnalysedVideoLinkFactory,
-        @Autowired val videoIndexResourceParser: VideoIndexResourceParser,
-        @Value("classpath:videoindexer/responses/videoUpload.json") val videoUploadResponseResource: Resource,
-        @Value("classpath:videoindexer/responses/videoIndex.json") val videoIndexResponseResource: Resource
+    @Autowired val restTemplateBuilder: RestTemplateBuilder,
+    @Autowired val videoIndexerProperties: VideoIndexerProperties,
+    @Autowired val videoIndexerTokenProvider: VideoIndexerTokenProvider,
+    @Autowired val publishAnalysedVideoLinkFactory: PublishAnalysedVideoLinkFactory,
+    @Autowired val videoIndexResourceParser: VideoIndexResourceParser,
+    @Value("classpath:videoindexer/responses/videoUpload.json") val videoUploadResponseResource: Resource,
+    @Value("classpath:videoindexer/responses/videoIndex.json") val videoIndexResponseResource: Resource
 ) : AbstractSpringIntegrationTest() {
 
     lateinit var videoIndexer: HttpVideoIndexerClient
@@ -34,12 +34,12 @@ class HttpVideoIndexerClientIntegrationTest(
     fun setUp() {
         fakeDelayer = FakeDelayer()
         videoIndexer = HttpVideoIndexerClient(
-                restTemplate = restTemplateBuilder.build(),
-                properties = videoIndexerProperties,
-                videoIndexerTokenProvider = videoIndexerTokenProvider,
-                publishAnalysedVideoLinkFactory = publishAnalysedVideoLinkFactory,
-                videoIndexResourceParser = videoIndexResourceParser,
-                delayer = fakeDelayer
+            restTemplate = restTemplateBuilder.build(),
+            properties = videoIndexerProperties,
+            videoIndexerTokenProvider = videoIndexerTokenProvider,
+            publishAnalysedVideoLinkFactory = publishAnalysedVideoLinkFactory,
+            videoIndexResourceParser = videoIndexResourceParser,
+            delayer = fakeDelayer
         )
     }
 
@@ -66,7 +66,8 @@ class HttpVideoIndexerClientIntegrationTest(
 
         videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1", language = null)
 
-        wireMockServer.verify(postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
+        wireMockServer.verify(
+            postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
                 .withQueryParam("name", equalTo("video1"))
                 .withQueryParam("videoUrl", equalTo("https://cdnapisec.example.com/v/1"))
@@ -86,7 +87,8 @@ class HttpVideoIndexerClientIntegrationTest(
 
         videoIndexer.submitVideo("video1", "https://cdnapisec.example.com/v/1", language = Locale.ENGLISH)
 
-        wireMockServer.verify(postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
+        wireMockServer.verify(
+            postRequestedFor(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
                 .withQueryParam("language", equalTo("en-US"))
         )
     }
@@ -144,18 +146,20 @@ class HttpVideoIndexerClientIntegrationTest(
 
         stubLookupByExternalId(videoId, microsoftVideoId)
 
-        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Index"))
+        wireMockServer.stubFor(
+            get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Index"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
                 .willReturn(
-                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoIndexResponseResource.inputStream.readBytes())
+                    aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(videoIndexResponseResource.inputStream.readBytes())
                 )
         )
 
-        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Captions"))
+        wireMockServer.stubFor(
+            get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Captions"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
                 .withQueryParam("format", equalTo("vtt"))
                 .willReturn(
-                        aResponse().withStatus(200).withHeader("Content-Type", "application/octet-stream").withBody("contents of vtt file".toByteArray())
+                    aResponse().withStatus(200).withHeader("Content-Type", "application/octet-stream").withBody("contents of vtt file".toByteArray())
                 )
         )
 
@@ -174,10 +178,11 @@ class HttpVideoIndexerClientIntegrationTest(
         stubLookupByExternalId(videoId, microsoftVideoId)
 
         val response = String(videoIndexResponseResource.inputStream.readBytes()).replace(VideoIndexItemResource.STATE_PROCESSED, "Processing")
-        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Index"))
+        wireMockServer.stubFor(
+            get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Index"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
                 .willReturn(
-                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(response)
+                    aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(response)
                 )
         )
 
@@ -195,15 +200,19 @@ class HttpVideoIndexerClientIntegrationTest(
 
         stubLookupByExternalId(videoId, microsoftVideoId)
 
-        wireMockServer.stubFor(delete(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId"))
+        wireMockServer.stubFor(
+            delete(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId"))
                 .willReturn(aResponse().withStatus(204))
         )
 
         videoIndexer.deleteVideo(videoId)
 
-        wireMockServer.verify(1, deleteRequestedFor(
+        wireMockServer.verify(
+            1,
+            deleteRequestedFor(
                 urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId")
-        ).withQueryParam("accessToken", equalTo("test-access-token")))
+            ).withQueryParam("accessToken", equalTo("test-access-token"))
+        )
     }
 
     @Test
@@ -213,16 +222,19 @@ class HttpVideoIndexerClientIntegrationTest(
 
         stubLookupByExternalId(videoId, microsoftVideoId)
 
-        wireMockServer.stubFor(delete(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId"))
-            .willReturn(aResponse().withStatus(500))
+        wireMockServer.stubFor(
+            delete(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId"))
+                .willReturn(aResponse().withStatus(500))
         )
-
 
         videoIndexer.deleteVideo(videoId)
 
-        wireMockServer.verify(1, deleteRequestedFor(
-            urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId")
-        ).withQueryParam("accessToken", equalTo("test-access-token")))
+        wireMockServer.verify(
+            1,
+            deleteRequestedFor(
+                urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId")
+            ).withQueryParam("accessToken", equalTo("test-access-token"))
+        )
     }
 
     @Test
@@ -232,32 +244,37 @@ class HttpVideoIndexerClientIntegrationTest(
 
         stubLookupByExternalId(videoId, microsoftVideoId)
 
-        wireMockServer.stubFor(delete(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/SourceFile"))
+        wireMockServer.stubFor(
+            delete(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/SourceFile"))
                 .willReturn(aResponse().withStatus(204))
         )
 
         videoIndexer.deleteSourceFile(videoId)
 
-        wireMockServer.verify(1, deleteRequestedFor(
+        wireMockServer.verify(
+            1,
+            deleteRequestedFor(
                 urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/SourceFile")
-        ).withQueryParam("accessToken", equalTo("test-access-token")))
+            ).withQueryParam("accessToken", equalTo("test-access-token"))
+        )
     }
 
     fun stubLookupByExternalId(videoId: String, microsoftVideoId: String) {
-        wireMockServer.stubFor(get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/GetIdByExternalId"))
+        wireMockServer.stubFor(
+            get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/GetIdByExternalId"))
                 .withQueryParam("accessToken", equalTo("test-access-token"))
                 .withQueryParam("externalId", equalTo(videoId))
                 .willReturn(
-                        aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("\"$microsoftVideoId\"")
+                    aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("\"$microsoftVideoId\"")
                 )
         )
     }
 
-    private fun stubPostWithStatusAndBody(status: Int, body: String) : StubMapping =
-        wireMockServer.stubFor(post(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
-            .willReturn(
-                aResponse().withHeader("Content-Type", "application/json").withStatus(status).withBody(body)
-            )
+    private fun stubPostWithStatusAndBody(status: Int, body: String): StubMapping =
+        wireMockServer.stubFor(
+            post(urlPathEqualTo("/northeurope/Accounts/test-account/Videos"))
+                .willReturn(
+                    aResponse().withHeader("Content-Type", "application/json").withStatus(status).withBody(body)
+                )
         )
-
 }
