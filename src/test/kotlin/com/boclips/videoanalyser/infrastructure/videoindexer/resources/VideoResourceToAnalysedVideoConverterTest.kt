@@ -3,6 +3,7 @@ package com.boclips.videoanalyser.infrastructure.videoindexer.resources
 import com.boclips.eventbus.domain.video.CaptionsFormat
 import com.boclips.videoanalyser.infrastructure.videoindexer.VideoIndexerException
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoResourceToAnalysedVideoConverter.convert
+import joptsimple.internal.Strings
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -12,59 +13,59 @@ class VideoResourceToAnalysedVideoConverterTest {
 
     companion object {
         private val keywords = listOf(
-                KeywordResource(
-                        id = 0,
-                        text = "keyword",
-                        confidence = 0.6,
-                        language = "es-ES",
-                        instances = listOf(
-                                TimeRangeResource(
-                                        start = "0:01:28.298",
-                                        end = "0:01:29.376"
-                                )
-                        )
+            KeywordResource(
+                id = 0,
+                text = "keyword",
+                confidence = 0.6,
+                language = "es-ES",
+                instances = listOf(
+                    TimeRangeResource(
+                        start = "0:01:28.298",
+                        end = "0:01:29.376"
+                    )
                 )
+            )
         )
 
         private val topics = listOf(
-                TopicResource(
-                        id = 0,
-                        name = "Topic name",
-                        referenceId = "Parent topic/Child topic",
-                        confidence = 0.85,
-                        language = "pl-PL",
-                        instances = listOf(
-                                TimeRangeResource(
-                                        start = "0:00:00",
-                                        end = "0:01:14.376"
-                                )
-                        )
+            TopicResource(
+                id = 0,
+                name = "Topic name",
+                referenceId = "Parent topic/Child topic",
+                confidence = 0.85,
+                language = "pl-PL",
+                instances = listOf(
+                    TimeRangeResource(
+                        start = "0:00:00",
+                        end = "0:01:14.376"
+                    )
                 )
+            )
         )
 
         private val transcript = listOf(
-                TranscriptItemResource(
-                        id = 0,
-                        text = "First line.",
-                        confidence = 0.9,
-                        speakerId = 0,
-                        language = "en-US",
-                        instances = emptyList()
-                ),
-                TranscriptItemResource(
-                        id = 1,
-                        text = "Second line.",
-                        confidence = 0.9,
-                        speakerId = 0,
-                        language = "en-US",
-                        instances = emptyList()
-                )
+            TranscriptItemResource(
+                id = 0,
+                text = "First line.",
+                confidence = 0.9,
+                speakerId = 0,
+                language = "en-US",
+                instances = emptyList()
+            ),
+            TranscriptItemResource(
+                id = 1,
+                text = "Second line.",
+                confidence = 0.9,
+                speakerId = 0,
+                language = "en-US",
+                instances = emptyList()
+            )
         )
         private val insights = VideoInsightsResource(
-                sourceLanguage = "en-GB",
-                keywords = keywords,
-                topics = topics,
-                transcript = transcript
+            sourceLanguage = "en-GB",
+            keywords = keywords,
+            topics = topics,
+            transcript = transcript
 
         )
 
@@ -228,33 +229,26 @@ class VideoResourceToAnalysedVideoConverterTest {
     }
 
     @Test
-    fun `throws when transcripts are not set`() {
+    fun `returns empty string when transcripts are not set`() {
         val videoResource = createVideoResource(insights = insights.copy(transcript = null))
 
-        val exception = assertThrows<VideoIndexerException> {
-            convert(videoResource)
-        }
-        assertThat(exception.message).isEqualTo("No video transcript")
+        val analysedVideo = convert(videoResource)
+        assertThat(analysedVideo.transcript).isEqualTo(Strings.EMPTY)
     }
 
     @Test
     fun `throws when captions are not set`() {
         val videoResource = createVideoResource(captions = null)
 
-        val exception = assertThrows<VideoIndexerException> {
-            convert(videoResource)
-        }
-        assertThat(exception.message).isEqualTo("No video captions")
+        val analysedVideo = convert(videoResource)
+        assertThat(analysedVideo.captions.content).isEqualTo(Strings.EMPTY)
     }
 
     private fun createVideoResource(
-            videoId: String? = "123",
-            insights: VideoInsightsResource? = VideoResourceToAnalysedVideoConverterTest.insights,
-            captions: ByteArray? = VideoResourceToAnalysedVideoConverterTest.captions
+        videoId: String? = "123",
+        insights: VideoInsightsResource? = VideoResourceToAnalysedVideoConverterTest.insights,
+        captions: ByteArray? = VideoResourceToAnalysedVideoConverterTest.captions
     ): VideoResource {
         return VideoResource(index = VideoIndexResource(listOf(VideoIndexItemResource(externalId = videoId, insights = insights))), captions = captions)
     }
-
-
 }
-
