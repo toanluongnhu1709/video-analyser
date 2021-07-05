@@ -93,9 +93,13 @@ class HttpVideoIndexerClient(
                 logger.info { "Video $videoId not known by Video Indexer" }
                 return null
             }
+            if (e.statusCode == THIRD_PARTY_LIMITS_STATUS) {
+                logger.warn { "getVideo - resolveId: third party limits status for video $videoId with body: ${e.responseBodyAsString}" }
+            } else {
+                logger.error { "resolveId: Unhandled HTTP status code ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
+            }
 
-            logger.error { "resolveId: Unhandled HTTP status code ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
-            throw VideoIndexerException("Failed to resolve Video Indexer ID for $videoId")
+            throw CouldNotGetVideoAnalysisException(e.statusCode == THIRD_PARTY_LIMITS_STATUS)
         }
         logger.info { "Resolved Video Indexer ID for $videoId: $microsoftId" }
 
@@ -149,8 +153,12 @@ class HttpVideoIndexerClient(
         val response = try {
             restTemplate.getForEntity(videoIndexUrl, String::class.java, params()).body
         } catch (e: HttpStatusCodeException) {
-            logger.warn { "getVideo - index: Got ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
-            return null
+            if (e.statusCode == THIRD_PARTY_LIMITS_STATUS) {
+                logger.warn { "getVideo - index: third party limits status for video $videoId with body: ${e.responseBodyAsString}" }
+            } else {
+                logger.warn { "getVideo - index: Got ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
+            }
+            throw CouldNotGetVideoAnalysisException(e.statusCode == THIRD_PARTY_LIMITS_STATUS)
         }
         return videoIndexResourceParser.parse(response!!)
     }

@@ -198,7 +198,7 @@ class HttpVideoIndexerClientIntegrationTest(
     }
 
     @Test
-    fun `getVideo does not throw when Azure Video Indexer returns an exception`() {
+    fun `getVideo throws exception with property saying that it was caused by third party limits`() {
         val videoId = "video-id-1234"
         val microsoftVideoId = "ms-id-1234"
 
@@ -212,12 +212,14 @@ class HttpVideoIndexerClientIntegrationTest(
                 )
         )
 
-        val resource = videoIndexer.getVideo(videoId)
-        assertThat(resource).isNull()
+        val ex = assertThrows<CouldNotGetVideoAnalysisException> {
+            videoIndexer.getVideo(videoId)
+        }
+        assertThat(ex.becauseOfThirdPartyLimits).isTrue()
     }
 
     @Test
-    fun `getCaptions throws exception with prop saying that it was caused by third party limits `() {
+    fun `getCaptions throws exception with property saying that it was caused by third party limits`() {
         val videoId = "video-id-1234"
         val microsoftVideoId = "ms-id-1234"
 
