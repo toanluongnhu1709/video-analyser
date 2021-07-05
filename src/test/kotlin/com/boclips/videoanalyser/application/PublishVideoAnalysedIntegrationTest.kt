@@ -2,7 +2,9 @@ package com.boclips.videoanalyser.application
 
 import com.boclips.eventbus.events.video.VideoAnalysed
 import com.boclips.videoanalyser.domain.VideoAnalyserService
+import com.boclips.videoanalyser.infrastructure.videoindexer.CouldNotGetVideoAnalysisException
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
+import com.boclips.videoanalyser.testsupport.fakes.FakeDelayer
 import com.boclips.videoanalyser.testsupport.fakes.TestFactories
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
@@ -32,9 +34,25 @@ class PublishVideoAnalysedIntegrationTest : AbstractSpringIntegrationTest() {
 
         whenever(videoAnalyserService.getVideo(any())).thenThrow(RuntimeException("something went wrong"))
 
-        val publishAnalysedVideo = PublishVideoAnalysed(eventBus, videoAnalyserService)
+        val publishAnalysedVideo = PublishVideoAnalysed(eventBus, videoAnalyserService, FakeDelayer())
 
         Assertions.assertThatCode { publishAnalysedVideo.execute(VideoIndexed("video id")) }.doesNotThrowAnyException()
+    }
+
+    @Test
+    fun `third party repeatable exceptions send VideoIndexed event`() {
+        val videoAnalyserService = mock<VideoAnalyserService>()
+
+        whenever(videoAnalyserService.getVideo(any())).thenThrow(CouldNotGetVideoAnalysisException(becauseOfThirdPartyLimits = true))
+
+        val delayer = FakeDelayer()
+        val publishAnalysedVideo = PublishVideoAnalysed(eventBus, videoAnalyserService, delayer)
+
+        Assertions.assertThatCode { publishAnalysedVideo.execute(VideoIndexed("video id")) }.doesNotThrowAnyException()
+        eventBus.clearState()
+        delayer.advance(6)
+        val message = eventBus.getEventOfType(VideoIndexed::class.java)
+        assertThat(message.videoId).isEqualTo("video id")
     }
 
     @Test
@@ -53,7 +71,7 @@ class PublishVideoAnalysedIntegrationTest : AbstractSpringIntegrationTest() {
         whenever(videoAnalyserService.getVideo(any())).thenReturn(TestFactories.createVideoAnalysed())
         whenever(videoAnalyserService.deleteSourceFile(any())).thenThrow(RuntimeException("something went wrong"))
 
-        val publishAnalysedVideo = PublishVideoAnalysed(eventBus, videoAnalyserService)
+        val publishAnalysedVideo = PublishVideoAnalysed(eventBus, videoAnalyserService, FakeDelayer())
 
         Assertions.assertThatCode { publishAnalysedVideo.execute(VideoIndexed("video id")) }.doesNotThrowAnyException()
     }

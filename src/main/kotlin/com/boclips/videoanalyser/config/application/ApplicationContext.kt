@@ -6,6 +6,7 @@ import com.boclips.videoanalyser.application.PublishVideoAnalysed
 import com.boclips.videoanalyser.application.PublishVideoIndexed
 import com.boclips.videoanalyser.application.RetryVideoAnalysis
 import com.boclips.videoanalyser.domain.VideoAnalyserService
+import com.boclips.videoanalyser.infrastructure.RealDelayer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -29,7 +30,7 @@ class ApplicationContext(
 
     @Bean
     fun publishAnalysedVideo(): PublishVideoAnalysed {
-        return PublishVideoAnalysed(eventBus, videoAnalyserService)
+        return PublishVideoAnalysed(eventBus, videoAnalyserService, RealDelayer())
     }
 
     @Bean

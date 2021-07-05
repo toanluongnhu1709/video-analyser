@@ -217,7 +217,7 @@ class HttpVideoIndexerClientIntegrationTest(
     }
 
     @Test
-    fun `getCaptions does not throw when Azure Video Indexer returns an exception`() {
+    fun `getCaptions throws exception with prop saying that it was caused by third party limits `() {
         val videoId = "video-id-1234"
         val microsoftVideoId = "ms-id-1234"
 
@@ -241,8 +241,40 @@ class HttpVideoIndexerClientIntegrationTest(
                 )
         )
 
-        val resource = videoIndexer.getVideo(videoId)
-        assertThat(resource).isNull()
+        val ex = assertThrows<CouldNotGetVideoAnalysisException> {
+            videoIndexer.getVideo(videoId)
+        }
+        assertThat(ex.becauseOfThirdPartyLimits).isTrue()
+    }
+    @Test
+    fun `getCaptions throws exception with prop saying that it was not caused by third party limits `() {
+        val videoId = "video-id-1234"
+        val microsoftVideoId = "ms-id-1234"
+
+        stubLookupByExternalId(videoId, microsoftVideoId)
+
+        val response = String(videoIndexResponseResource.inputStream.readBytes())
+        wireMockServer.stubFor(
+            get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Index"))
+                .withQueryParam("accessToken", equalTo("test-access-token"))
+                .willReturn(
+                    aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(response)
+                )
+        )
+
+        wireMockServer.stubFor(
+            get(urlPathEqualTo("/northeurope/Accounts/test-account/Videos/$microsoftVideoId/Captions"))
+                .withQueryParam("accessToken", equalTo("test-access-token"))
+                .withQueryParam("format", equalTo("vtt"))
+                .willReturn(
+                    aResponse().withStatus(404).withBody("not found")
+                )
+        )
+
+        val ex = assertThrows<CouldNotGetVideoAnalysisException> {
+            videoIndexer.getVideo(videoId)
+        }
+        assertThat(ex.becauseOfThirdPartyLimits).isFalse()
     }
 
     @Test

@@ -22,7 +22,9 @@ class HttpVideoIndexerClient(
     private val videoIndexResourceParser: VideoIndexResourceParser,
     private val delayer: Delayer
 ) : VideoIndexer {
-    companion object : KLogging()
+    companion object : KLogging() {
+        private val THIRD_PARTY_LIMITS_STATUS: HttpStatus = HttpStatus.TOO_MANY_REQUESTS
+    }
 
     override fun submitVideo(videoId: String, videoUrl: String, language: Locale?) {
         logger.info { "Submitting $videoId to the Video Indexer" }
@@ -131,8 +133,12 @@ class HttpVideoIndexerClient(
         return try {
             restTemplate.getForEntity(videoCaptionsUrl, ByteArray::class.java, params()).body
         } catch (e: HttpStatusCodeException) {
-            logger.warn { "getVideo - caption: Got ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
-            null
+            if (e.statusCode == THIRD_PARTY_LIMITS_STATUS) {
+                logger.warn { "getVideo - caption: third party limits status for video $videoId with body: ${e.responseBodyAsString}" }
+            } else {
+                logger.warn { "getVideo - caption: Got ${e.statusCode} for video $videoId with body: ${e.responseBodyAsString}" }
+            }
+            throw CouldNotGetVideoAnalysisException(e.statusCode == THIRD_PARTY_LIMITS_STATUS)
         }
     }
 

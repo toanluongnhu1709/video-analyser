@@ -11,4 +11,11 @@ class RealDelayer : Delayer {
         logger.info { "Thread ${Thread.currentThread().id} is waking up" }
         onComplete()
     }
+
+    override fun delay(milliseconds: Long, onComplete: () -> Unit) {
+        logger.info { "Thread ${Thread.currentThread().id} is having a little rest" }
+        Thread.sleep(milliseconds)
+        logger.info { "Thread ${Thread.currentThread().id} is waking up" }
+        onComplete()
+    }
 }
