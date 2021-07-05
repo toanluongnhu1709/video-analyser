@@ -24,7 +24,7 @@ class PublishVideoAnalysed(
         } catch (e: CouldNotGetVideoAnalysisException) {
             if (e.becauseOfThirdPartyLimits) {
                 logger.warn(e) { "Repeating event for video: $videoId" }
-                delayer.delay(Random.nextLong(5000)) {
+                delayer.delay(Random.nextLong(60000)) {
                     eventBus.publish(VideoIndexed(videoId = videoId))
                 }
             }

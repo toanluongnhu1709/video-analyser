@@ -50,7 +50,7 @@ class PublishVideoAnalysedIntegrationTest : AbstractSpringIntegrationTest() {
 
         Assertions.assertThatCode { publishAnalysedVideo.execute(VideoIndexed("video id")) }.doesNotThrowAnyException()
         eventBus.clearState()
-        delayer.advance(6)
+        delayer.advance(61)
         val message = eventBus.getEventOfType(VideoIndexed::class.java)
         assertThat(message.videoId).isEqualTo("video id")
     }
