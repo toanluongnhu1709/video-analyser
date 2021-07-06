@@ -2,10 +2,13 @@ package com.boclips.videoanalyser.application
 
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videoanalyser.domain.VideoAnalyserService
+import com.boclips.videoanalyser.infrastructure.videoindexer.CouldNotGetVideoAnalysisException
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
+import com.boclips.videoanalyser.testsupport.fakes.FakeDelayer
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.BeforeEach
@@ -56,7 +59,7 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         whenever(videoAnalyserService.submitVideo(any(), any(), any())).thenThrow(RuntimeException("something went wrong"))
 
-        val analyseVideo = AnalyseVideo(videoAnalyserService, eventBus)
+        val analyseVideo = AnalyseVideo(videoAnalyserService, eventBus, FakeDelayer())
 
         assertThatCode { analyseVideo.execute(videoAnalysisRequested) }.doesNotThrowAnyException()
     }
@@ -67,8 +70,36 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
 
         whenever(videoAnalyserService.isAnalysed(any())).thenThrow(RuntimeException("something went wrong"))
 
-        val analyseVideo = AnalyseVideo(videoAnalyserService, eventBus)
+        val analyseVideo = AnalyseVideo(videoAnalyserService, eventBus, FakeDelayer())
 
         assertThatCode { analyseVideo.execute(videoAnalysisRequested) }.doesNotThrowAnyException()
+    }
+
+    @Test
+    fun `third party repeatable exceptions re-publishes AnalyseVideoRequest event`() {
+        val videoAnalyserService = mock<VideoAnalyserService>()
+
+        whenever(videoAnalyserService.isAnalysed(any())).thenThrow(CouldNotGetVideoAnalysisException(becauseOfThirdPartyLimits = true))
+
+        val analyseVideo = AnalyseVideo(videoAnalyserService, eventBus, FakeDelayer())
+
+        assertThatCode { analyseVideo.execute(videoAnalysisRequested) }.doesNotThrowAnyException()
+    }
+
+
+    @Test
+    fun `third party repeatable exceptions re-publish VideoIndexed event`() {
+        val videoAnalyserService = mock<VideoAnalyserService>()
+
+        whenever(videoAnalyserService.getVideo(any())).thenThrow(CouldNotGetVideoAnalysisException(becauseOfThirdPartyLimits = true))
+
+        val delayer = FakeDelayer()
+        val publishAnalysedVideo = PublishVideoAnalysed(eventBus, videoAnalyserService, delayer)
+
+        Assertions.assertThatCode { publishAnalysedVideo.execute(VideoIndexed("video id")) }.doesNotThrowAnyException()
+        eventBus.clearState()
+        delayer.advance(61)
+        val message = eventBus.getEventOfType(VideoIndexed::class.java)
+        assertThat(message.videoId).isEqualTo("video id")
     }
 }

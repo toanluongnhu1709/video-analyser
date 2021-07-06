@@ -40,7 +40,7 @@ class PublishVideoAnalysedIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `third party repeatable exceptions send VideoIndexed event`() {
+    fun `third party repeatable exceptions re-publishes VideoIndexed event`() {
         val videoAnalyserService = mock<VideoAnalyserService>()
 
         whenever(videoAnalyserService.getVideo(any())).thenThrow(CouldNotGetVideoAnalysisException(becauseOfThirdPartyLimits = true))
