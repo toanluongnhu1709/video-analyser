@@ -1,7 +1,9 @@
 package com.boclips.videoanalyser.application
 
 import com.boclips.eventbus.events.video.VideoAnalysed
+import com.boclips.eventbus.events.video.VideoAnalysisFailed
 import com.boclips.videoanalyser.domain.VideoAnalyserService
+import com.boclips.videoanalyser.infrastructure.VideoHasInvalidStateException
 import com.boclips.videoanalyser.infrastructure.videoindexer.CouldNotGetVideoAnalysisException
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.boclips.videoanalyser.testsupport.fakes.FakeDelayer
@@ -53,6 +55,21 @@ class PublishVideoAnalysedIntegrationTest : AbstractSpringIntegrationTest() {
         delayer.advance(61)
         val message = eventBus.getEventOfType(VideoIndexed::class.java)
         assertThat(message.videoId).isEqualTo("video id")
+    }
+
+    @Test
+    fun `VideoHasInvalidStateException results in VideoAnalysisFailed event`() {
+        val videoAnalyserService = mock<VideoAnalyserService>()
+
+        val videoId = "video id"
+        whenever(videoAnalyserService.getVideo(any())).thenThrow(VideoHasInvalidStateException(videoId, "Failed"))
+
+        val delayer = FakeDelayer()
+        val publishAnalysedVideo = PublishVideoAnalysed(eventBus, videoAnalyserService, delayer)
+
+        Assertions.assertThatCode { publishAnalysedVideo.execute(VideoIndexed(videoId)) }.doesNotThrowAnyException()
+        val message = eventBus.getEventOfType(VideoAnalysisFailed::class.java)
+        assertThat(message.videoId).isEqualTo(videoId)
     }
 
     @Test

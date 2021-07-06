@@ -1,5 +1,6 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer
 
+import com.boclips.videoanalyser.infrastructure.VideoHasInvalidStateException
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexItemResource
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
 import com.boclips.videoanalyser.presentation.PublishAnalysedVideoLinkFactory
@@ -170,7 +171,7 @@ class HttpVideoIndexerClientIntegrationTest(
                 )
         )
 
-        val resource = videoIndexer.getVideo(videoId)!!
+        val resource = videoIndexer.getVideo(videoId)
 
         assertThat(resource.index?.videos?.first()?.insights?.sourceLanguage).isEqualTo("en-US")
         assertThat(resource.index?.videos?.first()?.state).isEqualTo("Processed")
@@ -178,7 +179,7 @@ class HttpVideoIndexerClientIntegrationTest(
     }
 
     @Test
-    fun `getVideo when processing returns null captions`() {
+    fun `getVideo throws exception when video index has invalid state`() {
         val videoId = "video-id-1234"
         val microsoftVideoId = "ms-id-1234"
 
@@ -193,8 +194,10 @@ class HttpVideoIndexerClientIntegrationTest(
                 )
         )
 
-        val resource = videoIndexer.getVideo(videoId)
-        assertThat(resource).isNull()
+        val exception = assertThrows<VideoHasInvalidStateException> {
+            videoIndexer.getVideo(videoId)
+        }
+        assertThat(exception.state).isEqualTo("Processing")
     }
 
     @Test

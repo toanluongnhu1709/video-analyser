@@ -1,6 +1,7 @@
 package com.boclips.videoanalyser.infrastructure.videoindexer
 
 import com.boclips.videoanalyser.infrastructure.Delayer
+import com.boclips.videoanalyser.infrastructure.VideoHasInvalidStateException
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexItemResource
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResource
 import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexResourceParser
@@ -106,36 +107,32 @@ class HttpVideoIndexerClient(
         return microsoftId
     }
 
-    override fun getVideo(videoId: String): VideoResource? {
+    override fun getVideo(videoId: String): VideoResource {
         val microsoftId = resolveId(videoId) ?: throw VideoIndexerException("Video $videoId not known by Video Indexer")
         val videoIndex = getVideoIndexResource(microsoftId, videoId)
 
-        return if (isVideoProcessed(videoIndex)) {
-            val captionsResource = getCaptionsResource(microsoftId, videoId)
-            captionsResource?.let {
-                VideoResource(index = videoIndex, captions = it)
-            }
-        } else null
+        validateVideoStatus(videoIndex)
+
+        return VideoResource(index = videoIndex, captions = getCaptionsResource(microsoftId, videoId))
     }
 
-    private fun isVideoProcessed(videoIndexResource: VideoIndexResource?): Boolean {
+    private fun validateVideoStatus(videoIndexResource: VideoIndexResource?) {
         val video = videoIndexResource?.videos?.first()
         val isVideoProcessed = video?.state == VideoIndexItemResource.STATE_PROCESSED
 
         if (!isVideoProcessed) {
-            logger.warn { "Video ${video?.externalId} has status ${video?.state}" }
+            logger.error { "Video ${video?.externalId} has status ${video?.state}" }
+            throw VideoHasInvalidStateException(video?.externalId, video?.state)
         }
-
-        return isVideoProcessed
     }
 
-    private fun getCaptionsResource(microsoftId: String, videoId: String): ByteArray? {
+    private fun getCaptionsResource(microsoftId: String, videoId: String): ByteArray {
         val videoCaptionsUrl = "${properties.apiBaseUrl}/northeurope/Accounts/${properties.accountId}/Videos/$microsoftId/Captions" +
             "?accessToken={accessToken}" +
             "&format=vtt"
 
         return try {
-            restTemplate.getForEntity(videoCaptionsUrl, ByteArray::class.java, params()).body
+            restTemplate.getForEntity(videoCaptionsUrl, ByteArray::class.java, params()).body!!
         } catch (e: HttpStatusCodeException) {
             if (e.statusCode == THIRD_PARTY_LIMITS_STATUS) {
                 logger.warn { "getVideo - caption: third party limits status for video $videoId with body: ${e.responseBodyAsString}" }

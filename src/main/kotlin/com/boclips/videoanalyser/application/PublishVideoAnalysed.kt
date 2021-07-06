@@ -2,8 +2,10 @@ package com.boclips.videoanalyser.application
 
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.events.video.VideoAnalysisFailed
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.infrastructure.Delayer
+import com.boclips.videoanalyser.infrastructure.VideoHasInvalidStateException
 import com.boclips.videoanalyser.infrastructure.videoindexer.CouldNotGetVideoAnalysisException
 import mu.KLogging
 import kotlin.random.Random
@@ -29,14 +31,13 @@ class PublishVideoAnalysed(
                 }
             }
             return
+        } catch (e: VideoHasInvalidStateException) {
+            logger.error(e) { "Video: ${e.videoId} has invalid state: ${e.state}. Publishing VideoAnalysisFailed" }
+            eventBus.publish(VideoAnalysisFailed(videoId))
+            return
         } catch (e: Exception) {
             logger.warn(e) { "Request of analysed video $videoId failed. Deleting." }
             videoAnalyserService.deleteVideo(videoId)
-            return
-        }
-
-        if (video == null) {
-            logger.info { "NOT publishing video $videoId because it is not ready." }
             return
         }
 

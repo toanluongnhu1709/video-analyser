@@ -9,7 +9,7 @@ interface VideoIndexer {
 
     fun submitVideo(videoId: String, videoUrl: String, language: Locale?)
 
-    fun getVideo(videoId: String): VideoResource?
+    fun getVideo(videoId: String): VideoResource
 
     fun deleteSourceFile(videoId: String)
 

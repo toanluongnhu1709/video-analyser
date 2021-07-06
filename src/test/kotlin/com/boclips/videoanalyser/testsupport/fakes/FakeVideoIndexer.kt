@@ -42,20 +42,21 @@ class FakeVideoIndexer : VideoIndexer {
         submittedVideos[videoId] = IndexerVideo(videoUrl = videoUrl, language = language, sourceFileAvailable = true)
     }
 
-    override fun getVideo(videoId: String): VideoResource? {
+    override fun getVideo(videoId: String): VideoResource {
         if (!submittedVideos.containsKey(videoId)) {
             throw RuntimeException("no such video")
         }
 
         val video = VideoIndexItemResource(
-                state = VideoIndexItemResource.STATE_PROCESSED,
-                externalId = videoId,
-                insights = VideoInsightsResource(
-                        sourceLanguage = "en-GB",
-                        keywords = emptyList(),
-                        topics = emptyList(),
-                        transcript = emptyList()
-                ))
+            state = VideoIndexItemResource.STATE_PROCESSED,
+            externalId = videoId,
+            insights = VideoInsightsResource(
+                sourceLanguage = "en-GB",
+                keywords = emptyList(),
+                topics = emptyList(),
+                transcript = emptyList()
+            )
+        )
 
         return VideoResource(index = VideoIndexResource(videos = listOf(video)), captions = ByteArray(0))
     }

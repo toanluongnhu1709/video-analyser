@@ -21,8 +21,8 @@ class VideoIndexerAnalyserService(private val videoIndexer: VideoIndexer) : Vide
         videoIndexer.submitVideo(videoId, videoUrl, language)
     }
 
-    override fun getVideo(videoId: String): VideoAnalysed? {
-        val videoResource = videoIndexer.getVideo(videoId) ?: return null
+    override fun getVideo(videoId: String): VideoAnalysed {
+        val videoResource = videoIndexer.getVideo(videoId)
 
         try {
             return VideoResourceToAnalysedVideoConverter.convert(videoResource)
