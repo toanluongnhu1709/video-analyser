@@ -5,6 +5,7 @@ import com.boclips.eventbus.events.video.VideoAnalysisFailed
 import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.infrastructure.VideoHasInvalidStateException
 import com.boclips.videoanalyser.infrastructure.videoindexer.CouldNotGetVideoAnalysisException
+import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexItemResource
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.boclips.videoanalyser.testsupport.fakes.FakeDelayer
 import com.boclips.videoanalyser.testsupport.fakes.TestFactories
@@ -45,7 +46,11 @@ class PublishVideoAnalysedIntegrationTest : AbstractSpringIntegrationTest() {
     fun `third party repeatable exceptions re-publishes VideoIndexed event`() {
         val videoAnalyserService = mock<VideoAnalyserService>()
 
-        whenever(videoAnalyserService.getVideo(any())).thenThrow(CouldNotGetVideoAnalysisException(becauseOfThirdPartyLimits = true))
+        whenever(videoAnalyserService.getVideo(any())).thenThrow(
+            CouldNotGetVideoAnalysisException(
+                becauseOfThirdPartyLimits = true
+            )
+        )
 
         val delayer = FakeDelayer()
         val publishAnalysedVideo = PublishVideoAnalysed(eventBus, videoAnalyserService, delayer)
@@ -91,5 +96,40 @@ class PublishVideoAnalysedIntegrationTest : AbstractSpringIntegrationTest() {
         val publishAnalysedVideo = PublishVideoAnalysed(eventBus, videoAnalyserService, FakeDelayer())
 
         Assertions.assertThatCode { publishAnalysedVideo.execute(VideoIndexed("video id")) }.doesNotThrowAnyException()
+    }
+
+    @Test
+    fun `publishes VideoAnalysisFailed for videos with failed state`() {
+        val videoAnalyserService = mock<VideoAnalyserService>()
+
+        whenever(videoAnalyserService.getVideo(any())).thenThrow(
+            VideoHasInvalidStateException(
+                videoId = "Our-video",
+                state = VideoIndexItemResource.STATE_FAILED
+            )
+        )
+
+        val publishAnalysedVideo = PublishVideoAnalysed(eventBus, videoAnalyserService, FakeDelayer())
+        publishAnalysedVideo.execute(VideoIndexed("Our-video"))
+
+        assertThat(eventBus.getEventOfType(VideoAnalysisFailed::class.java).videoId).isEqualTo("Our-video")
+        assertThat(eventBus.getEventsOfType(VideoAnalysisFailed::class.java).size).isEqualTo(1)
+    }
+
+    @Test
+    fun `does not publish VideoAnalysisFailed for videos with processing state`() {
+        val videoAnalyserService = mock<VideoAnalyserService>()
+
+        whenever(videoAnalyserService.getVideo(any())).thenThrow(
+            VideoHasInvalidStateException(
+                videoId = "Our-video",
+                state = VideoIndexItemResource.STATE_PROCESSING
+            )
+        )
+
+        val publishAnalysedVideo = PublishVideoAnalysed(eventBus, videoAnalyserService, FakeDelayer())
+        publishAnalysedVideo.execute(VideoIndexed("Our-video"))
+
+        assertThat(eventBus.hasReceivedEventOfType(VideoAnalysisFailed::class.java)).isFalse()
     }
 }

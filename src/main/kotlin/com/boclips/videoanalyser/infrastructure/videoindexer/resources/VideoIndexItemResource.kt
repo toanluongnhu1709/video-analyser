@@ -7,5 +7,7 @@ data class VideoIndexItemResource(
 ) {
     companion object {
         final val STATE_PROCESSED = "Processed"
+        final val STATE_PROCESSING = "Processing"
+        final val STATE_FAILED = "Failed"
     }
 }

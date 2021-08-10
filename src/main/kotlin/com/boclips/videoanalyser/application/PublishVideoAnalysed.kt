@@ -7,6 +7,7 @@ import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.infrastructure.Delayer
 import com.boclips.videoanalyser.infrastructure.VideoHasInvalidStateException
 import com.boclips.videoanalyser.infrastructure.videoindexer.CouldNotGetVideoAnalysisException
+import com.boclips.videoanalyser.infrastructure.videoindexer.resources.VideoIndexItemResource
 import mu.KLogging
 import kotlin.random.Random
 
@@ -32,8 +33,12 @@ class PublishVideoAnalysed(
             }
             return
         } catch (e: VideoHasInvalidStateException) {
-            logger.error(e) { "Video: ${e.videoId} has invalid state: ${e.state}. Publishing VideoAnalysisFailed" }
-            eventBus.publish(VideoAnalysisFailed(videoId))
+            if (e.state == VideoIndexItemResource.STATE_FAILED) {
+                logger.error(e) { "Video: ${e.videoId} has failed state, publishing VideoAnalysisFailed to trigger reanalysis" }
+                eventBus.publish(VideoAnalysisFailed(videoId))
+            } else {
+                logger.error(e) { "Video: ${e.videoId} has state: ${e.state}" }
+            }
             return
         } catch (e: Exception) {
             logger.warn(e) { "Request of analysed video $videoId failed. Deleting." }
