@@ -1,14 +1,20 @@
 package com.boclips.videoanalyser.application
 
 import com.boclips.eventbus.BoclipsEventListener
+import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.video.RetryVideoAnalysisRequested
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videoanalyser.domain.VideoAnalyserService
+import com.boclips.videoanalyser.infrastructure.Delayer
+import com.boclips.videoanalyser.infrastructure.videoindexer.CouldNotGetVideoAnalysisException
 import mu.KLogging
+import kotlin.random.Random
 
 class RetryVideoAnalysis(
     private val videoAnalyserService: VideoAnalyserService,
-    private val analyseVideo: AnalyseVideo
+    private val analyseVideo: AnalyseVideo,
+    private val delayer: Delayer,
+    private val eventBus: EventBus
 ) {
 
     companion object : KLogging() {
@@ -17,16 +23,30 @@ class RetryVideoAnalysis(
 
 
     @BoclipsEventListener
-    fun execute(request: RetryVideoAnalysisRequested) {
-        val videoId = request.videoId
-        logger.info { "Video $videoId received to retry analysis (language: ${request.language?.toLanguageTag() ?: "detect"})" }
+    fun execute(retryVideoAnalysisRequest: RetryVideoAnalysisRequested) {
+        val videoId = retryVideoAnalysisRequest.videoId
+        logger.info { "Video $videoId received to retry analysis (language: ${retryVideoAnalysisRequest.language?.toLanguageTag() ?: "detect"})" }
 
         try {
             if (videoAnalyserService.isAnalysed(videoId)) {
                 videoAnalyserService.deleteVideo(videoId)
                 waitUntilVideoIsDeleted(videoId)
             }
-            analyseVideo.execute(VideoAnalysisRequested(videoId, request.videoUrl, request.language))
+            analyseVideo.execute(
+                VideoAnalysisRequested(
+                    videoId,
+                    retryVideoAnalysisRequest.videoUrl,
+                    retryVideoAnalysisRequest.language
+                )
+            )
+        } catch (e: CouldNotGetVideoAnalysisException) {
+            if (e.becauseOfThirdPartyLimits) {
+                logger.warn(e) { "Re-publishing VideoAnalysisRequested event for video: $videoId" }
+                delayer.delay(Random.nextLong(60000)) {
+                    eventBus.publish(retryVideoAnalysisRequest)
+                }
+            }
+            return
         } catch (e: Exception) {
             logger.warn(e) { "Retry analysis of video $videoId failed and will not be retried." }
         }

@@ -28,7 +28,7 @@ class ApplicationContext(
     fun retryVideoAnalysis(
         analyseVideo: AnalyseVideo
     ): RetryVideoAnalysis {
-        return RetryVideoAnalysis(videoAnalyserService, analyseVideo)
+        return RetryVideoAnalysis(videoAnalyserService, analyseVideo, delayer(), eventBus)
     }
 
     @Bean
