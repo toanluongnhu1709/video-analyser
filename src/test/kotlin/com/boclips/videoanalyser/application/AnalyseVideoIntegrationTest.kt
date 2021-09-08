@@ -5,9 +5,7 @@ import com.boclips.videoanalyser.domain.VideoAnalyserService
 import com.boclips.videoanalyser.infrastructure.videoindexer.CouldNotGetVideoAnalysisException
 import com.boclips.videoanalyser.testsupport.fakes.AbstractSpringIntegrationTest
 import com.boclips.videoanalyser.testsupport.fakes.FakeDelayer
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatCode
@@ -73,6 +71,17 @@ class AnalyseVideoIntegrationTest : AbstractSpringIntegrationTest() {
         val analyseVideo = AnalyseVideo(videoAnalyserService, eventBus, FakeDelayer())
 
         assertThatCode { analyseVideo.execute(videoAnalysisRequested) }.doesNotThrowAnyException()
+    }
+
+    @Test
+    fun `video indexer will still request videos if it can't tell if they've been analysed`() {
+        val videoAnalyserService = mock<VideoAnalyserService>()
+        whenever(videoAnalyserService.isAnalysed(any())).thenThrow(RuntimeException("something went wrong"))
+
+        val analyseVideo = AnalyseVideo(videoAnalyserService, eventBus, FakeDelayer())
+        analyseVideo.execute(VideoAnalysisRequested.builder().videoId("a-good-video").videoUrl("blah").build())
+
+        verify(videoAnalyserService, times(1)).submitVideo(videoId = eq("a-good-video"), videoUrl = eq("blah"), language = anyOrNull())
     }
 
     @Test

@@ -35,7 +35,7 @@ class AnalyseVideo(
             return
         } catch (e: Exception) {
             logger.warn(e) { "Check if video $videoId is already analysed failed and will not be retried." }
-            return
+            false
         }
 
         if (alreadyAnalysed) {
