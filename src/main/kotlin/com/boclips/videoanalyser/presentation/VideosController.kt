@@ -3,13 +3,15 @@ package com.boclips.videoanalyser.presentation
 import com.boclips.eventbus.events.video.VideoAnalysisRequested
 import com.boclips.videoanalyser.application.AnalyseVideo
 import com.boclips.videoanalyser.application.PublishVideoIndexed
+import io.sentry.Sentry
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import javax.annotation.PostConstruct
 
 @RestController
 class VideosController(
-        val analyseVideo: AnalyseVideo,
-        val publishAnalysedVideoId: PublishVideoIndexed
+    val analyseVideo: AnalyseVideo,
+    val publishAnalysedVideoId: PublishVideoIndexed
 ) {
     companion object {
         const val VIDEO_PATH_TEMPLATE = "/v1/videos/{videoId}"

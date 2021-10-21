@@ -31,7 +31,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.microutils:kotlin-logging:1.6.24")
     implementation("net.logstash.logback:logstash-logback-encoder:5.3")
-    implementation('io.sentry:sentry-logback:1.7.23')
+    implementation('io.sentry:sentry-logback:5.2.4')
+    implementation('io.sentry:sentry-spring-boot-starter:5.2.4')
     implementation("io.opentracing.contrib:opentracing-spring-jaeger-web-starter:2.0.3")
 
     testImplementation("com.nhaarman:mockito-kotlin:1.5.0")
